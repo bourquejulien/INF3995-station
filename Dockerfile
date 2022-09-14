@@ -3,7 +3,7 @@ RUN apt-get update
 RUN apt-get install -y --no-install-recommends build-essential gcc git
 
 WORKDIR /usr/app
-RUN python -m venv /usr/src/venv
+RUN python -m venv ./venv
 ENV PATH="/usr/app/venv/bin:$PATH"
 
 COPY requirements.txt .
