@@ -1,0 +1,65 @@
+image: docker:22.06-rc
+
+# services:
+#   - docker:22.06-rc-dind
+
+.only-client: &only-client
+    only:
+        refs:
+            - main
+            - merge_requests
+        # changes:
+            # - client/**/*
+    before_script:
+        - docker info
+
+.only-server: &only-server
+    only:
+        refs:
+            - main
+            - merge_requests
+        changes:
+            - server/**/*
+    before_script:
+        - docker info
+
+stages:
+    - build
+    - test
+
+build:client:
+    stage: build
+    <<: *only-client
+    script:
+        - cd client
+        - docker build -t "backend-client-$CI_COMMIT_SHORT_SHA" .
+
+build:server:
+    stage: build
+    <<: *only-server
+    script:
+        - cd server
+        - docker build -t "backend-server-$CI_COMMIT_SHORT_SHA" .
+
+# test:client:
+#     stage: test
+#     needs: ["build:client"]
+#     <<: *only-client
+#     script:
+#         - Xvfb :99 -ac -screen 0 1920x1080x24 &
+#         - cd client
+#         - npm run coverage -- --browsers=ChromeHeadlessNoSandbox --watch=false
+#     artifacts:
+#         paths:
+#             - client/coverage/
+
+# test:server:
+#     stage: test
+#     needs: ["build:server"]
+#     <<: *only-server
+#     script:
+#         - cd server
+#         - npm run coverage
+#     artifacts:
+#         paths:
+#             - server/coverage/
