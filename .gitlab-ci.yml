@@ -1,15 +1,12 @@
 image: docker:22.06-rc
 
-# services:
-#   - docker:22.06-rc-dind
-
 .only-client: &only-client
     only:
         refs:
             - main
             - merge_requests
-        # changes:
-            # - client/**/*
+        changes:
+            - client/**/*
     before_script:
         - docker info
 
@@ -39,27 +36,22 @@ build:server:
     <<: *only-server
     script:
         - cd server
-        - docker build -t "backend-server-$CI_COMMIT_SHORT_SHA" .
+        - docker build -t "backend-server-build-$CI_COMMIT_SHORT_SHA" .
 
-# test:client:
-#     stage: test
-#     needs: ["build:client"]
-#     <<: *only-client
-#     script:
-#         - Xvfb :99 -ac -screen 0 1920x1080x24 &
-#         - cd client
-#         - npm run coverage -- --browsers=ChromeHeadlessNoSandbox --watch=false
-#     artifacts:
-#         paths:
-#             - client/coverage/
+test:client:
+    stage: test
+    needs: ["build:client"]
+    <<: *only-client
+    script:
+        - cd client
+        - docker build --target=test -t="backend-client-test-$CI_COMMIT_SHORT_SHA" .
+        - docker run "backend-client-test-$CI_COMMIT_SHORT_SHA"
 
-# test:server:
-#     stage: test
-#     needs: ["build:server"]
-#     <<: *only-server
-#     script:
-#         - cd server
-#         - npm run coverage
-#     artifacts:
-#         paths:
-#             - server/coverage/
+test:server:
+    stage: test
+    needs: ["build:server"]
+    <<: *only-server
+    script:
+        - cd server
+        - docker build --target=test -t="backend-server-test-$CI_COMMIT_SHORT_SHA" .
+        - docker run "backend-server-test-$CI_COMMIT_SHORT_SHA"

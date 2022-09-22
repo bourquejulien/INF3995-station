@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Flask (app.py)" type="Python.FlaskServer" nameIsGenerated="true">
+  <configuration default="false" name="Flask (../../../projet3/backend/app.py)" type="Python.FlaskServer" nameIsGenerated="true">
     <module name="backend" />
     <option name="target" value="C:\Users\bourq\Desktop\projet3\backend\app.py" />
     <option name="targetType" value="PATH" />
