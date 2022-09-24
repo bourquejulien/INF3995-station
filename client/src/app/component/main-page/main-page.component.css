@@ -1,0 +1,43 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 100vh;
+
+    background-color: seashell;
+}
+
+.button {
+    background-color:midnightblue;
+    border: 60px;
+    border-radius: 8px;
+    padding: 10px 32px;
+    display: inline-block;
+    text-align: center;
+    font-size: 40px;
+    color: seashell;
+}
+
+.school-name {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+    font-size: 20px;
+    font-family: sans-serif;
+}
+
+.header-item {
+    justify-content: center;
+    text-align: center;
+    font-family: sans-serif;
+    font-size: 100px;
+    margin-top: 100px;
+    color: midnightblue;
+}
+
+.footer-item {
+    text-align: center;
+    font-family: sans-serif;
+    font-size: 30px;
+    color: midnightblue;
+}
