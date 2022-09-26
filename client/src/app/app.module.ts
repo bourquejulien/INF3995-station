@@ -35,4 +35,4 @@ import { MissionPageComponent } from './component/mission-page/mission-page.comp
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

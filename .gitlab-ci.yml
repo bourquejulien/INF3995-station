@@ -1,0 +1,57 @@
+image: docker:22.06-rc
+
+.only-client: &only-client
+    only:
+        refs:
+            - main
+            - merge_requests
+        changes:
+            - client/**/*
+    before_script:
+        - docker info
+
+.only-server: &only-server
+    only:
+        refs:
+            - main
+            - merge_requests
+        changes:
+            - server/**/*
+    before_script:
+        - docker info
+
+stages:
+    - build
+    - test
+
+build:client:
+    stage: build
+    <<: *only-client
+    script:
+        - cd client
+        - docker build -t "backend-client-$CI_COMMIT_SHORT_SHA" .
+
+build:server:
+    stage: build
+    <<: *only-server
+    script:
+        - cd server
+        - docker build -t "backend-server-build-$CI_COMMIT_SHORT_SHA" .
+
+test:client:
+    stage: test
+    needs: ["build:client"]
+    <<: *only-client
+    script:
+        - cd client
+        - docker build --target=test -t="backend-client-test-$CI_COMMIT_SHORT_SHA" .
+        - docker run "backend-client-test-$CI_COMMIT_SHORT_SHA"
+
+test:server:
+    stage: test
+    needs: ["build:server"]
+    <<: *only-server
+    script:
+        - cd server
+        - docker build --target=test -t="backend-server-test-$CI_COMMIT_SHORT_SHA" .
+        - docker run "backend-server-test-$CI_COMMIT_SHORT_SHA"
