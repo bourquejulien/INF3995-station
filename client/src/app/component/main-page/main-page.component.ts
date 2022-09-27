@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { CommandService } from '@app/services/command/command.service';
 
 @Component({
   selector: 'app-main-page',
@@ -10,19 +10,18 @@ import { Router } from '@angular/router';
 export class MainPageComponent implements OnInit {
   readonly title: string = 'Système aérien d’exploration';
 
-  constructor(private router:Router) {
+  constructor(private router:Router, private commandService:CommandService) {
   }
 
   startSimulation() : void {
-    // TODO: communicate with server
+    this.commandService.init({command: "init", isSimulation: true})
     this.router.navigateByUrl("/mission");
   }
 
   startDrone() : void {
-    // TODO: communicate with server
+    this.commandService.init({command: "init", isSimulation: false})
     this.router.navigateByUrl("/mission");
   }
-
 
   ngOnInit(): void {
   }

@@ -2,6 +2,7 @@
   <configuration default="false" name="Dockerfile" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
     <deployment type="dockerfile">
       <settings>
+        <option name="buildCliOptions" value="--target final" />
         <option name="buildKitEnabled" value="true" />
         <option name="containerName" value="backend" />
         <option name="portBindings">
