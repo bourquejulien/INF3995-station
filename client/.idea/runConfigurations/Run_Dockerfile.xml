@@ -2,7 +2,7 @@
   <configuration default="false" name="Run Dockerfile" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
     <deployment type="dockerfile">
       <settings>
-        <option name="buildKitEnabled" value="true" />
+        <option name="buildCliOptions" value="--target final" />
         <option name="containerName" value="web-ui" />
         <option name="portBindings">
           <list>
