@@ -1,10 +1,10 @@
+import logging
+import struct
 import time
-
-import cflib.crtp
-from cflib.positioning.motion_commander import MotionCommander
-
+import cflib
 from cflib.crazyflie import Crazyflie
-from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
+
+logging.basicConfig(level=logging.ERROR)
 
 
 class SwarmClient:
@@ -13,30 +13,45 @@ class SwarmClient:
         'radio://0/80/2M/E7E7E7E752'
     ]
 
+    commands = {"identify": 0}
+
     def __init__(self, uri):
-        self.scf = SyncCrazyflie(uri, cf=Crazyflie(rw_cache='./cache'))
+        cflib.crtp.init_drivers(enable_debug_driver=False)
+        self._cf = Crazyflie()
 
-    def __enter__(self):
-        cflib.crtp.init_drivers()
-        self.scf.__enter__()
-        return self
+        self._cf.connected.add_callback(self._connected)
+        self._cf.disconnected.add_callback(self._disconnected)
+        self._cf.connection_failed.add_callback(self._connection_failed)
+        self._cf.connection_lost.add_callback(self._connection_lost)
+        self._cf.console.receivedChar.add_callback(self._console_incoming)
+        self._cf.appchannel.packet_received.add_callback(self._packet_received)
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.scf.__exit__(exc_type, exc_val, exc_tb)
+        self._cf.open_link(uri)
 
-    def blink(self, rounds=20, delay=0.05):
-        for i in range(rounds):
-            self.scf.cf.param.set_value('led.onoff', 1)
-            time.sleep(delay)
-            self.scf.cf.param.set_value('led.onoff', 0)
-            time.sleep(delay)
+        print('Connecting to %s' % uri)
 
-        self.scf.cf.param.set_value('led.bitmask', 0)
+    def _connected(self, link_uri):
+        print("Connected!")
 
-    def demo(self, height=0.2):
-        with MotionCommander(self.scf, default_height=height) as mc:
-            time.sleep(0.5)
-            mc.forward(0.5)
-            time.sleep(0.5)
-            mc.back(0.5)
-            time.sleep(0.5)
+    def _connection_failed(self, link_uri, msg):
+        print('Connection to %s failed: %s' % (link_uri, msg))
+
+    def _connection_lost(self, link_uri, msg):
+        print('Connection to %s lost: %s' % (link_uri, msg))
+
+    def _disconnected(self, link_uri):
+        print('Disconnected from %s' % link_uri)
+
+    def _console_incoming(self, console_text):
+        print(console_text, end='')
+
+    def _packet_received(self, data):
+        (data, ) = struct.unpack("<f", data)
+        print(f"Received packet: {data}")
+
+    def _send_packet(self, packet):
+        self._cf.appchannel.send_packet(packet)
+
+    def identify(self):
+        data = struct.pack("<d", self.commands["identify"])
+        self._send_packet(data)
