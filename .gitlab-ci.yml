@@ -3,7 +3,6 @@ image: docker:22.06-rc
 .only-client: &only-client
     only:
         refs:
-            - main
             - merge_requests
         changes:
             - client/**/*
@@ -13,7 +12,6 @@ image: docker:22.06-rc
 .only-server: &only-server
     only:
         refs:
-            - main
             - merge_requests
         changes:
             - server/**/*

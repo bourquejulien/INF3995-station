@@ -13,7 +13,7 @@ describe('MainPageComponent', () => {
       declarations: [ MainPageComponent ],
       imports: [ RouterTestingModule, HttpClientTestingModule ]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {

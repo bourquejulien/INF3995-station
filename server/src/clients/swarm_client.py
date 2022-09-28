@@ -5,6 +5,7 @@ import time
 import cflib
 from cflib import crtp
 from cflib.crazyflie import Crazyflie
+from cflib.crazyflie.swarm import CachedCfFactory, Swarm
 
 from src.clients.drone_client import DroneClient
 
@@ -74,10 +75,28 @@ class SwarmClient(DroneClient):
         return available_devices
 
 
-# client = SwarmClient()
-# client.connect(client.discover()[0])
-#
-# client.identify()
-# time.sleep(1)
-# client.disconnect()
-#
+def discover():
+    available_devices = []
+    for i in range(5):
+        devices_on_address = cflib.crtp.scan_interfaces(0xE7E7E7E750 + i)
+        print(devices_on_address)
+        available_devices.extend(device[0] for device in devices_on_address)
+    return available_devices
+
+uris = discover()
+
+print(uris)
+
+client1 = SwarmClient()
+client1.connect("radio://0/80/2M/E7E7E7E752")
+
+client2 = SwarmClient()
+client2.connect("radio://0/80/2M/E7E7E7E751")
+
+client1.identify()
+client2.identify()
+time.sleep(5)
+
+client1.disconnect()
+client2.disconnect()
+
