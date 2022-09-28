@@ -1,5 +1,4 @@
 import logging
-import time
 
 import cflib
 from cflib import crtp
