@@ -5,7 +5,7 @@ from flask_restful import Api
 
 import src.controllers.web_controllers
 from src.controllers import discover_controller
-from src.controllers.web_controllers import ActionController, DiscoveryController, MissionController
+from src.controllers.web_controllers import ActionController, MissionController
 from src.injector import Injector
 from src.services.persistent_service import PersistentService
 
@@ -25,7 +25,6 @@ def setup():
     injector.generate()
     src.controllers.web_controllers.injector = injector
     app.register_blueprint(discover_controller.blueprint, url_prefix="/discovery")
-    api.add_resource(DiscoveryController, "/discovery")
     api.add_resource(MissionController, "/mission")
     api.add_resource(ActionController, "/end")
 

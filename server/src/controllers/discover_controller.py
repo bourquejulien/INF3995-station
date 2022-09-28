@@ -13,8 +13,8 @@ def discover():
 
 @blueprint.route('/connect', methods=['POST'])
 def connect():
-    uri = request.args.get('uri')
-    persistentService.connect(uri)
+    uris = request.args.get('uris')
+    persistentService.connect(uris)
     return 'success', 200
 
 

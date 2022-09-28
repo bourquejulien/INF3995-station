@@ -1,17 +1,16 @@
-from src.clients.drone_client import DroneClient
+from src.clients.swarm_client import SwarmClient
 
 
 class PersistentService:
-    def __init__(self, drone_client: DroneClient):
-        self._droneClient = drone_client
+    def __init__(self, swarm_client: SwarmClient):
+        self._swarmCLient = swarm_client
         self.drones_ids = []
 
     def start(self):
-        self.drones_ids = self._droneClient.discover()
+        self.drones_ids = self._swarmCLient.discover()
 
-    def connect(self, uri):
-        self._droneClient.connect(uri)
+    def connect(self, uris):
+        self._swarmCLient.connect(uris)
 
     def disconnect(self):
-        self._droneClient.disconnect()
-
+        self._swarmCLient.disconnect()

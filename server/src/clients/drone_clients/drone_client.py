@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 
 class DroneClient(ABC):
+    uri: str
+
     @abstractmethod
     def identify(self):
         pass
@@ -15,13 +17,10 @@ class DroneClient(ABC):
         pass
 
     @abstractmethod
-    def connect(self, uri):
+    def connect(self):
         pass
 
     @abstractmethod
     def disconnect(self):
         pass
 
-    @abstractmethod
-    def discover(self):
-        pass

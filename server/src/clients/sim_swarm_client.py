@@ -1,5 +1,9 @@
-from src.clients.drone_client import DroneClient
 import socket
+
+from src.clients.swarm_client import SwarmClient
+from src.config import config
+
+
 class BasicService:
 
     __instance = None
@@ -34,9 +38,10 @@ class BasicService:
             return data
 
 
-class SimulationClient(DroneClient):
-    def identify(self):
-        pass
+class SimSwarmClient(SwarmClient):
+    @property
+    def drone_clients(self):
+        return self._drone_clients
 
     def start_mission(self):
         pass
