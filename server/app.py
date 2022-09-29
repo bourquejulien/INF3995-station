@@ -42,7 +42,6 @@ def main():
         return 1
 
     app.run(host="0.0.0.0")
-
     startup_service.disconnect()
 
 
