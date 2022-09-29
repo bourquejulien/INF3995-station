@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class DroneClient(ABC):
+class AbstractDroneClient(ABC):
     uri: str
 
     @abstractmethod

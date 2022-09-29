@@ -3,10 +3,10 @@ import struct
 from cflib.crazyflie import Crazyflie
 from cflib import crtp
 
-from src.clients.drone_clients.drone_client import DroneClient
+from src.clients.drone_clients.abstract_drone_client import AbstractDroneClient
 
 
-class PhyDroneClient(DroneClient):
+class PhysicalDroneClient(AbstractDroneClient):
     commands = {"identify": 0}
 
     def __init__(self, uri):

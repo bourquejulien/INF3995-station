@@ -1,10 +1,10 @@
-from src.clients.swarm_client import SwarmClient
-from src.services.persistent_service import PersistentService
+from src.clients.abstract_swarm_client import AbstractSwarmClient
+from src.services.startup_service import StartupService
 
 
 class CommandService:
 
-    def __init__(self, swarm_client: SwarmClient, persistent_service: PersistentService):
+    def __init__(self, swarm_client: AbstractSwarmClient, persistent_service: StartupService):
         self.swarm_client = swarm_client
 
     def start_mission(self, request_data):

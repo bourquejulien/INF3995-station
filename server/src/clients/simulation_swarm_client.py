@@ -1,12 +1,10 @@
-import grpc
+from src.clients.drone_clients.simulation_drone_client import SimulationDroneClient
 
-from src.clients.drone_clients.sim_drone_client import SimDroneClient
-
-from src.clients.swarm_client import SwarmClient
+from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.config import config
 
 
-class SimSwarmClient(SwarmClient):
+class SimulationSwarmClient(AbstractSwarmClient):
     @property
     def drone_clients(self):
         return self._drone_clients
@@ -21,7 +19,7 @@ class SimSwarmClient(SwarmClient):
 
     def connect(self, uris):
         for uri in uris:
-            client = SimDroneClient(uri)
+            client = SimulationDroneClient(uri)
             client.connect()
             self._drone_clients.append(client)
 

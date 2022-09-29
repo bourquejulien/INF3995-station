@@ -3,13 +3,13 @@ import logging
 import cflib
 from cflib import crtp
 
-from src.clients.drone_clients.phy_drone_client import PhyDroneClient
-from src.clients.swarm_client import SwarmClient
+from src.clients.drone_clients.physical_drone_client import PhysicalDroneClient
+from src.clients.abstract_swarm_client import AbstractSwarmClient
 
 logging.basicConfig(level=logging.ERROR)
 
 
-class PhySwarmClient(SwarmClient):
+class PhysicalSwarmClient(AbstractSwarmClient):
     base_uri = 0xE7E7E7E750
 
     def __init__(self):
@@ -22,7 +22,7 @@ class PhySwarmClient(SwarmClient):
 
     def connect(self, uris):
         for uri in uris:
-            client = PhyDroneClient(uri)
+            client = PhysicalDroneClient(uri)
             client.connect()
             self._drone_clients.append(client)
 

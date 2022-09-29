@@ -1,10 +1,11 @@
 import grpc
 
 from out import simulation_pb2_grpc, simulation_pb2
-from src.clients.drone_clients.drone_client import DroneClient
+from src.clients.drone_clients.abstract_drone_client import AbstractDroneClient
+from src.config import config
 
 
-class SimDroneClient(DroneClient):
+class SimulationDroneClient(AbstractDroneClient):
     def __init__(self, uri):
         self.uri = uri
         self.channel = None

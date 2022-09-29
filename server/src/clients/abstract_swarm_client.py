@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class SwarmClient(ABC):
+class AbstractSwarmClient(ABC):
     _drone_clients: list
 
     @property

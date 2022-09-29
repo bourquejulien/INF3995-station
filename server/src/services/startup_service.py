@@ -1,8 +1,8 @@
-from src.clients.swarm_client import SwarmClient
+from src.clients.abstract_swarm_client import AbstractSwarmClient
 
 
-class PersistentService:
-    def __init__(self, swarm_client: SwarmClient):
+class StartupService:
+    def __init__(self, swarm_client: AbstractSwarmClient):
         self._swarm_client = swarm_client
         self.drones_ids = []
 

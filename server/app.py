@@ -7,10 +7,10 @@ import src.controllers.web_controllers
 from src.controllers import discover_controller
 from src.controllers.web_controllers import ActionController, MissionController
 from src.injector import Injector
-from src.services.persistent_service import PersistentService
+from src.services.startup_service import StartupService
 
 app = Flask(__name__)
-is_simulation = env.get("IS_SIMULATION") if env.get("IS_SIMULATION") is not None else False
+is_simulation = env.get("IS_SIMULATION") if env.get("IS_SIMULATION") is not None else True
 injector = Injector(is_simulation)
 
 
@@ -24,6 +24,7 @@ def setup():
     api = Api(app)
     injector.generate()
     src.controllers.web_controllers.injector = injector
+    src.controllers.discover_controller.startupService = injector.get(StartupService)
     app.register_blueprint(discover_controller.blueprint, url_prefix="/discovery")
     api.add_resource(MissionController, "/mission")
     api.add_resource(ActionController, "/end")
@@ -31,10 +32,13 @@ def setup():
 
 def main():
     setup()
-    persistentService = injector.get(PersistentService)
-    persistentService.start()
+    startup_service = injector.get(StartupService)
+    startup_service.start()
 
-    if len(persistentService.drones_ids) == 0:
+    startup_service.start()
+    startup_service.
+
+    if len(startup_service.drones_ids) == 0:
         print("No drone detected")
         return 1
 
