@@ -1,18 +1,15 @@
 from os import environ as env
 from flask import Flask
 from flask_cors import CORS
-from flask_restful import Api
 
-import src.controllers.web_controllers
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.controllers import discover_controller, mission_controller, action_controller
-from src.controllers.web_controllers import ActionController, MissionController
 from src.injector import Injector
 from src.services.command_service import CommandService
 from src.services.startup_service import StartupService
 
 app = Flask(__name__)
-is_simulation = env.get("IS_SIMULATION") if env.get("IS_SIMULATION") is not None else True
+is_simulation = bool(env.get("IS_SIMULATION")) if env.get("IS_SIMULATION") is not None else True
 injector = Injector(is_simulation)
 
 
