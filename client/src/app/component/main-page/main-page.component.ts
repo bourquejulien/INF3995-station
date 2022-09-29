@@ -14,13 +14,13 @@ export class MainPageComponent implements OnInit {
   }
 
   startSimulation() : void {
-    this.commandService.init({command: "init", isSimulation: true})
-    this.router.navigateByUrl("/mission");
+    this.commandService.set_up({isSimulation: true})
+    this.router.navigateByUrl("/mission"); // go to the mission page
   }
 
   startDrone() : void {
-    this.commandService.init({command: "init", isSimulation: false})
-    this.router.navigateByUrl("/mission");
+    this.commandService.set_up({isSimulation: false})
+    this.router.navigateByUrl("/mission"); // go to the mission page
   }
 
   ngOnInit(): void {

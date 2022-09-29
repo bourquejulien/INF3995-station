@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environment';
-import { Init } from '@app/interface/commands';
+import { EndMission, Initialize, SetUp, StartMission } from '@app/interface/commands';
 
 @Injectable({
     providedIn: 'root',
@@ -9,12 +9,11 @@ import { Init } from '@app/interface/commands';
 export class CommandService {
     constructor(private httpClient: HttpClient) {}
 
-    async init(command: Init): Promise<void> {
+    async set_up(command: SetUp): Promise<void> {
         await this.httpClient
             .post(
-                `${environment.serverURL}/command`,
+                `${environment.serverURL}/command/set_up`,
                 {
-                    command: command.command,
                     isSimulation: command.isSimulation,
                 },
                 {
@@ -24,18 +23,40 @@ export class CommandService {
             .toPromise();
     }
 
-    async startMission(droneId: string): Promise<void> {
+    async initialize(command: Initialize): Promise<void> {
         await this.httpClient
-            .post(`${environment.serverURL}/basic/init`, droneId, {
-                responseType: 'text',
+            .post(
+                `${environment.serverURL}/command/initialize`,
+                {
+                    drones: command.drones,
+                },
+                {
+                    responseType: 'json',
+                },
+            )
+            .toPromise();
+    }
+
+    async start_mission(command: StartMission): Promise<void> {
+        await this.httpClient
+            .post(`${environment.serverURL}/command/start_mission`, 
+            {
+                drones: command.drones,
+            }, 
+            {
+                responseType: 'json',
             })
             .toPromise();
     }
 
-    async endMission(droneId: string): Promise<void> {
+    async end_mission(command: EndMission): Promise<void> {
         await this.httpClient
-            .post(`${environment.serverURL}/basic/init`, droneId, {
-                responseType: 'text',
+            .post(`${environment.serverURL}/command/end_mission`, 
+            {
+                drones: command.drones,
+            }, 
+            {
+                responseType: 'json',
             })
             .toPromise();
     }
