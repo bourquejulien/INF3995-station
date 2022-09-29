@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environment';
-import { EndMission, Initialize, SetUp, StartMission } from '@app/interface/commands';
+import { EndMission, Identify, Initialize, SetUp, StartMission } from '@app/interface/commands';
 
 @Injectable({
     providedIn: 'root',
@@ -23,11 +23,12 @@ export class CommandService {
             .toPromise();
     }
 
-    async identify(): Promise<void> {
+    async identify(command: Identify): Promise<void> {
         await this.httpClient
             .post(
                 `${environment.serverURL}/command/identify`,
                 {
+                    drones: command.drones
                 },
                 {
                     responseType: 'json',

@@ -2,6 +2,10 @@ export interface SetUp {
     isSimulation: boolean
 }
 
+export interface Identify{
+    drones: string[]
+}
+
 export interface Initialize{
     drones: string[]
 }

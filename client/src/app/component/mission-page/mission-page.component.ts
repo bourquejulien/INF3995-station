@@ -16,7 +16,7 @@ export class MissionPageComponent implements OnInit {
   }
 
   identify() : void {
-    this.commandService.identify()
+    this.commandService.identify({drones: []})
   }
 
   initialize() : void {
