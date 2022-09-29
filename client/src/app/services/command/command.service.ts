@@ -23,6 +23,19 @@ export class CommandService {
             .toPromise();
     }
 
+    async identify(): Promise<void> {
+        await this.httpClient
+            .post(
+                `${environment.serverURL}/command/identify`,
+                {
+                },
+                {
+                    responseType: 'json',
+                },
+            )
+            .toPromise();
+    }
+
     async initialize(command: Initialize): Promise<void> {
         await this.httpClient
             .post(

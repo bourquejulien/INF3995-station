@@ -15,6 +15,10 @@ export class MissionPageComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  identify() : void {
+    this.commandService.identify()
+  }
+
   initialize() : void {
     this.commandService.initialize({drones: []})
   }
