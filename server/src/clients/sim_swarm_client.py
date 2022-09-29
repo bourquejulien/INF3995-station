@@ -1,41 +1,9 @@
-import socket
+import grpc
+
+from src.clients.drone_clients.sim_drone_client import SimDroneClient
 
 from src.clients.swarm_client import SwarmClient
 from src.config import config
-
-
-class BasicService:
-
-    __instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if cls.__instance is None:
-            cls.__instance = super(BasicService, cls).__new__(cls)
-            cls.__instance.__isInit = False
-
-        return cls.__instance
-
-    def __init__(self):
-        if self.__isInit:
-            pass
-        self.__isInit = True
-
-    def init(self):
-        self.__send(("init", "0"))
-
-    def takeoff(self):
-        self.__send(("takeoff", "0"))
-
-    @staticmethod
-    def __send(data: (str, str)):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect((config["argos_url"]["host"], config["argos_url"]["port"]))
-            s.sendall(f"{data[0]},{data[1]}".encode("utf-8"))
-            data = s.recv(1024)
-
-            print(data.decode("utf-8"))
-
-            return data
 
 
 class SimSwarmClient(SwarmClient):
@@ -44,16 +12,23 @@ class SimSwarmClient(SwarmClient):
         return self._drone_clients
 
     def start_mission(self):
-        pass
+        for drone in self.drone_clients:
+            drone.start_mission()
 
     def end_mission(self):
-        pass
+        for drone in self.drone_clients:
+            drone.end_mission()
 
-    def connect(self, uri):
-        pass
+    def connect(self, uris):
+        for uri in uris:
+            client = SimDroneClient(uri)
+            client.connect()
+            self._drone_clients.append(client)
 
     def disconnect(self):
-        pass
+        for drone in self.drone_clients:
+            drone.disconnect()
 
     def discover(self):
-        pass
+        port = config["argos_url"]["port"]
+        return [port, port + 1]

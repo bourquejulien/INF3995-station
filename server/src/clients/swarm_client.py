@@ -17,7 +17,7 @@ class SwarmClient(ABC):
         pass
 
     @abstractmethod
-    def connect(self, uri):
+    def connect(self, uris):
         pass
 
     @abstractmethod

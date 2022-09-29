@@ -1,4 +1,4 @@
 venv/
-build/
+out/
 cache/
 .pytest_cache/
