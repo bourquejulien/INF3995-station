@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MissionPageComponent } from './mission-page.component';
+import { RouterTestingModule } from '@angular/router/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { MatList, MatListModule } from '@angular/material/list';
 
 describe('MissionPageComponent', () => {
   let component: MissionPageComponent;
@@ -8,7 +11,8 @@ describe('MissionPageComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ MissionPageComponent ]
+      declarations: [ MissionPageComponent, MatList ],
+      imports: [RouterTestingModule, HttpClientTestingModule]
     })
     .compileComponents();
   });
