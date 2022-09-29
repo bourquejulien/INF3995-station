@@ -14,12 +14,10 @@ export class MainPageComponent implements OnInit {
   }
 
   startSimulation() : void {
-    this.commandService.set_up({isSimulation: true})
     this.router.navigateByUrl("/mission"); // go to the mission page
   }
 
   startDrone() : void {
-    this.commandService.set_up({isSimulation: false})
     this.router.navigateByUrl("/mission"); // go to the mission page
   }
 

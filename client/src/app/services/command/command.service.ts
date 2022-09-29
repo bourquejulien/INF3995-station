@@ -7,21 +7,11 @@ import { EndMission, Identify, Initialize, SetUp, StartMission } from '@app/inte
     providedIn: 'root',
 })
 export class CommandService {
-    constructor(private httpClient: HttpClient) {}
-
-    async set_up(command: SetUp): Promise<void> {
-        await this.httpClient
-            .post(
-                `${environment.serverURL}/command/set_up`,
-                {
-                    isSimulation: command.isSimulation,
-                },
-                {
-                    responseType: 'json',
-                },
-            )
-            .toPromise();
+    constructor(private httpClient: HttpClient) {
+      this.uris = []
     }
+
+  uris: string[]
 
     async identify(command: Identify): Promise<void> {
         await this.httpClient
@@ -37,26 +27,10 @@ export class CommandService {
             .toPromise();
     }
 
-    async initialize(command: Initialize): Promise<void> {
-        await this.httpClient
-            .post(
-                `${environment.serverURL}/command/initialize`,
-                {
-                    drones: command.drones,
-                },
-                {
-                    responseType: 'json',
-                },
-            )
-            .toPromise();
-    }
-
     async start_mission(command: StartMission): Promise<void> {
         await this.httpClient
-            .post(`${environment.serverURL}/command/start_mission`, 
-            {
-                drones: command.drones,
-            }, 
+            .post(`${environment.serverURL}/mission/start`,
+            {} ,
             {
                 responseType: 'json',
             })
@@ -65,10 +39,8 @@ export class CommandService {
 
     async end_mission(command: EndMission): Promise<void> {
         await this.httpClient
-            .post(`${environment.serverURL}/command/end_mission`, 
-            {
-                drones: command.drones,
-            }, 
+            .post(`${environment.serverURL}/mission/end`,
+            {},
             {
                 responseType: 'json',
             })
@@ -76,10 +48,8 @@ export class CommandService {
     }
 
     async discover(): Promise<void> {
-        await this.httpClient
-            .get(`${environment.serverURL}/discovery`, {
-                responseType: 'json',
-            })
+        this.uris = await this.httpClient
+            .get<string[]>(`${environment.serverURL}/discovery`)
             .toPromise();
     }
 }

@@ -9,26 +9,29 @@ import { CommandService } from '@app/services/command/command.service';
 })
 export class MissionPageComponent implements OnInit {
 
-  constructor(private router:Router, private commandService:CommandService) {
+  constructor(private router:Router, public commandService:CommandService) {
+    this.selectedUris = []
   }
 
+  selectedUris: string[]
+
   ngOnInit(): void {
+    this.commandService.discover()
   }
 
   identify() : void {
-    this.commandService.identify({drones: []})
-  }
-
-  initialize() : void {
-    this.commandService.initialize({drones: []})
+    if (this.selectedUris.length == 0) {
+      return
+    }
+    this.commandService.identify({uris: this.selectedUris})
   }
 
   start_mission() : void {
-    this.commandService.start_mission({drones: []})
+    this.commandService.start_mission({})
   }
 
   end_mission() : void {
-    this.commandService.end_mission({drones: []})
+    this.commandService.end_mission({})
   }
 
 }

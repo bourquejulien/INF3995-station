@@ -8,6 +8,7 @@ class StartupService:
 
     def start(self):
         self.drones_ids = self._swarm_client.discover()
+        self.connect(self.drones_ids)
 
     def connect(self, uris):
         self._swarm_client.connect(uris)

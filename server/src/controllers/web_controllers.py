@@ -8,7 +8,7 @@ from src.services.command_service import CommandService
 injector: Injector
 
 
-class MissionController(MethodView):
+class MissionController():
 
     def __init__(self):
         self.commandService: CommandService = injector.get(CommandService)

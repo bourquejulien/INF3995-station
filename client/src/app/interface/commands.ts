@@ -3,17 +3,15 @@ export interface SetUp {
 }
 
 export interface Identify{
-    drones: string[]
+    uris: string[]
 }
 
 export interface Initialize{
-    drones: string[]
+    uris: string[]
 }
 
 export interface StartMission{
-    drones: string[]
 }
 
 export interface EndMission{
-    drones: string[]
 }
