@@ -35,9 +35,6 @@ def main():
     startup_service = injector.get(StartupService)
     startup_service.start()
 
-    startup_service.start()
-    startup_service.
-
     if len(startup_service.drones_ids) == 0:
         print("No drone detected")
         return 1
