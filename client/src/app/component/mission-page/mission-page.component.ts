@@ -34,4 +34,17 @@ export class MissionPageComponent implements OnInit {
     this.commandService.end_mission({})
   }
 
+  isUriSelected(uri: string) : boolean {
+    return this.selectedUris.findIndex((elem) => uri === elem ) != -1;
+  }
+
+  toggleUri(uri: string) : void {
+    let uriPosition = this.selectedUris.findIndex((elem) => uri === elem )
+    if(uriPosition == -1){
+      this.selectedUris.push(uri)
+      return
+    }
+    this.selectedUris.splice(uriPosition, 1)
+  }
+
 }

@@ -5,9 +5,10 @@ from flask_restful import Api
 
 import src.controllers.web_controllers
 from src.clients.abstract_swarm_client import AbstractSwarmClient
-from src.controllers import discover_controller, mission_controller
+from src.controllers import discover_controller, mission_controller, action_controller
 from src.controllers.web_controllers import ActionController, MissionController
 from src.injector import Injector
+from src.services.command_service import CommandService
 from src.services.startup_service import StartupService
 
 app = Flask(__name__)
@@ -23,13 +24,12 @@ def health():
 def setup():
     CORS(app)
     injector.generate()
-    src.controllers.web_controllers.injector = injector
-    src.controllers.discover_controller.startupService = injector.get(StartupService)
+    discover_controller.startupService = injector.get(StartupService)
+    action_controller.command_service = injector.get(CommandService)
     mission_controller.swarm_client = injector.get(AbstractSwarmClient)
     app.register_blueprint(discover_controller.blueprint, url_prefix="/discovery")
     app.register_blueprint(mission_controller.blueprint, url_prefix="/mission")
-    # api.add_resource(MissionController, "/mission")
-    # api.add_resource(ActionController, "/end")
+    app.register_blueprint(action_controller.blueprint, url_prefix="/action")
 
 
 def main():

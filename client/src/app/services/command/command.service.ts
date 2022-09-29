@@ -16,10 +16,8 @@ export class CommandService {
     async identify(command: Identify): Promise<void> {
         await this.httpClient
             .post(
-                `${environment.serverURL}/command/identify`,
-                {
-                    drones: command.drones
-                },
+                `${environment.serverURL}/action/identify`,
+                command,
                 {
                     responseType: 'json',
                 },
@@ -49,7 +47,7 @@ export class CommandService {
 
     async discover(): Promise<void> {
         this.uris = await this.httpClient
-            .get<string[]>(`${environment.serverURL}/discovery`)
+            .get<string[]>(`${environment.serverURL}/discovery/discover`)
             .toPromise();
     }
 }

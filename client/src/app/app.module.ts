@@ -8,21 +8,22 @@ import { MainPageComponent } from '@app/component/main-page/main-page.component'
 import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
 import { MissionPageComponent } from './component/mission-page/mission-page.component';
+import { MatListModule } from '@angular/material/list';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    MainPageComponent,
-    MissionPageComponent
-  ],
-  imports: [
-    HttpClientModule,
-    BrowserModule,
-    BrowserAnimationsModule,
-    RouterModule,
-    AppRoutingModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+    declarations: [AppComponent, MainPageComponent, MissionPageComponent],
+    imports: [
+        HttpClientModule,
+        BrowserModule,
+        BrowserAnimationsModule,
+        RouterModule,
+        AppRoutingModule,
+        MatListModule,
+        MatCheckboxModule,
+    ],
+    providers: [],
+    bootstrap: [AppComponent],
 })
 export class AppModule {}
