@@ -6,8 +6,9 @@ WORKDIR /usr/app
 RUN python -m venv ./venv
 ENV PATH="/usr/app/venv/bin:$PATH"
 
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+COPY . .
+COPY ./requirements.* .
+RUN python3 requirements.py
 
 COPY . .
 
