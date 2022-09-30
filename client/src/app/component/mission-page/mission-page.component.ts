@@ -16,6 +16,7 @@ export class MissionPageComponent implements OnInit {
 
     ngOnInit(): void {
         this.commandService.discover();
+        this.commandService.retrieveMode()
     }
 
     identify(): void {

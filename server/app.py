@@ -1,5 +1,5 @@
 from os import environ as env
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 
 from src.clients.abstract_swarm_client import AbstractSwarmClient
@@ -16,6 +16,11 @@ injector = Injector(is_simulation)
 @app.route('/health')
 def health():
     return 'healthy'
+
+
+@app.route('/is_simulation', methods=['GET'])
+def run_mode():
+    return jsonify(is_simulation)
 
 
 def setup():

@@ -13,9 +13,11 @@ import {
 export class CommandService {
     constructor(private httpClient: HttpClient) {
         this.uris = [];
+        this.isSimulation = false;
     }
 
     uris: string[];
+    isSimulation: boolean;
 
     async identify(command: Identify): Promise<void> {
         await this.httpClient
@@ -53,5 +55,11 @@ export class CommandService {
         this.uris = await this.httpClient
             .get<string[]>(`${environment.serverURL}/discovery/discover`)
             .toPromise();
+    }
+
+    async retrieveMode(): Promise<void> {
+      this.isSimulation = await this.httpClient
+        .get<boolean>(`${environment.serverURL}/is_simulation`)
+        .toPromise();
     }
 }
