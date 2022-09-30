@@ -1,13 +1,24 @@
-# Server
-This server contains the gound station's code.
+# Station au sol - Serveur
+Contient le code de la section "serveur" de la station au sol.
+## Prérequis
 
-## Prerequisite
+### Sans docker :
+```bash
+python3 requirements.py
 ```
-pip install -r requirements.txt 
-```
-## Run
 
-### Debug mode
+### Avec docker :
+```bash
+docker build -t serveur .
 ```
+## Exécution
+
+### Sans docker
+```bash
 python3 app.py
+```
+
+### Avec docker :
+```bash
+docker run -p 5000:5000 serveur
 ```

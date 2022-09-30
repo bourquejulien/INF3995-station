@@ -1,15 +1,14 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Dockerfile" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
+  <configuration default="false" name="Dockerfile run" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
     <deployment type="dockerfile">
       <settings>
         <option name="buildCliOptions" value="--target final" />
-        <option name="buildKitEnabled" value="true" />
-        <option name="containerName" value="backend" />
+        <option name="containerName" value="web-ui" />
         <option name="portBindings">
           <list>
             <DockerPortBindingImpl>
-              <option name="containerPort" value="5000" />
-              <option name="hostPort" value="5000" />
+              <option name="containerPort" value="5001" />
+              <option name="hostPort" value="5001" />
             </DockerPortBindingImpl>
           </list>
         </option>

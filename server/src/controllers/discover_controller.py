@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify, request
 from src.services.startup_service import StartupService
 
 startupService: StartupService | None = None
-blueprint = Blueprint('basic-blueprint', __name__)
+blueprint = Blueprint('discovery', __name__)
 
 
 @blueprint.route('/discover', methods=['get'])

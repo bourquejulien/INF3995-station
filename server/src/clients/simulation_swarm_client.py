@@ -5,6 +5,9 @@ from src.config import config
 
 
 class SimulationSwarmClient(AbstractSwarmClient):
+    def __init__(self):
+        self.drone_clients = []
+
     @property
     def drone_clients(self):
         return self._drone_clients
@@ -29,4 +32,8 @@ class SimulationSwarmClient(AbstractSwarmClient):
 
     def discover(self):
         port = config["argos_url"]["port"]
-        return [port, port + 1]
+        return [str(port), str(port + 1)]
+
+    @drone_clients.setter
+    def drone_clients(self, value):
+        self._drone_clients = value

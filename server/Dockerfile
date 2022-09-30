@@ -24,4 +24,6 @@ CMD ["app.py"]
 
 FROM build AS test
 
+ENV IS_SIMULATION=False
+
 ENTRYPOINT ["pytest", "tests"]

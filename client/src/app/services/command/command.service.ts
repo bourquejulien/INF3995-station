@@ -1,22 +1,37 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environment';
-import { Init } from '@app/interface/commands';
+import {
+    EndMission,
+    Identify,
+    StartMission,
+} from '@app/interface/commands';
 
 @Injectable({
     providedIn: 'root',
 })
 export class CommandService {
-    constructor(private httpClient: HttpClient) {}
+    constructor(private httpClient: HttpClient) {
+        this.uris = [];
+        this.isSimulation = false;
+    }
 
-    async init(command: Init): Promise<void> {
+    uris: string[];
+    isSimulation: boolean;
+
+    async identify(command: Identify): Promise<void> {
+        await this.httpClient
+            .post(`${environment.serverURL}/action/identify`, command, {
+                responseType: 'json',
+            })
+            .toPromise();
+    }
+
+    async start_mission(command: StartMission): Promise<void> {
         await this.httpClient
             .post(
-                `${environment.serverURL}/command`,
-                {
-                    command: command.command,
-                    isSimulation: command.isSimulation,
-                },
+                `${environment.serverURL}/mission/start`,
+                {},
                 {
                     responseType: 'json',
                 },
@@ -24,27 +39,27 @@ export class CommandService {
             .toPromise();
     }
 
-    async startMission(droneId: string): Promise<void> {
+    async end_mission(command: EndMission): Promise<void> {
         await this.httpClient
-            .post(`${environment.serverURL}/basic/init`, droneId, {
-                responseType: 'text',
-            })
-            .toPromise();
-    }
-
-    async endMission(droneId: string): Promise<void> {
-        await this.httpClient
-            .post(`${environment.serverURL}/basic/init`, droneId, {
-                responseType: 'text',
-            })
+            .post(
+                `${environment.serverURL}/mission/end`,
+                {},
+                {
+                    responseType: 'json',
+                },
+            )
             .toPromise();
     }
 
     async discover(): Promise<void> {
-        await this.httpClient
-            .get(`${environment.serverURL}/discovery`, {
-                responseType: 'json',
-            })
+        this.uris = await this.httpClient
+            .get<string[]>(`${environment.serverURL}/discovery/discover`)
             .toPromise();
+    }
+
+    async retrieveMode(): Promise<void> {
+      this.isSimulation = await this.httpClient
+        .get<boolean>(`${environment.serverURL}/is_simulation`)
+        .toPromise();
     }
 }
