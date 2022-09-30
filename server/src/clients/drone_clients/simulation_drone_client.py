@@ -16,10 +16,10 @@ class SimulationDroneClient(AbstractDroneClient):
         pass
 
     def start_mission(self):
-        _ = self.stub.StartMission(simulation_pb2.MissionRequest(uri=self.uri))
+        self.stub.StartMission(simulation_pb2.MissionRequest(uri=self.uri))
 
     def end_mission(self):
-        _ = self.stub.EndMission(simulation_pb2.MissionRequest(uri=self.uri))
+        self.stub.EndMission(simulation_pb2.MissionRequest(uri=self.uri))
 
     def connect(self):
         self.channel = grpc.insecure_channel(self.address)
