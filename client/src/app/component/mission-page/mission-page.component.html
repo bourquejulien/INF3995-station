@@ -2,13 +2,13 @@
     <div class="row header">
         <h1 class="title">Système aérien d'exploration</h1>
     </div>
-    <div class="row mission-board flex-grow-1">
+    <div class="row flex-grow-1">
         <div class="col-sm-2 commands">
             <div class="row"><h1 class="col command-name">Commandes</h1></div>
             <div *ngIf="!commandService.isSimulation" class="row"><button class="col button" (click)="identify()">Identifier</button></div>
             <div *ngIf="commandService.isSimulation" class="row"><button class="col button" (click)="start_mission()">Lancer la mission</button></div>
             <div *ngIf="commandService.isSimulation" class="row"><button class="col button" (click)="end_mission()">Terminer la mission</button></div> 
-            <div *ngIf="!commandService.isSimulation" class="row">
+            <div *ngIf="!commandService.isSimulation">
                 <div class="row"><h1 class="col command-name">Interfaces</h1></div>
                 <mat-list class="row">
                     <mat-list-item *ngFor="let uri of commandService.uris">
