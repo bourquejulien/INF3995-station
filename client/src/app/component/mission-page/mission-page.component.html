@@ -5,14 +5,17 @@
     <div class="row mission-board flex-grow-1">
         <div class="col-sm-2 commands">
             <div class="row"><h1 class="col command-name">Commandes</h1></div>
-            <div class="row"><button class="col button" (click)="identify()">Identifier</button></div>
-            <div class="row"><button class="col button" (click)="start_mission()">Lancer la mission</button></div>
-            <div class="row"><button class="col button" (click)="end_mission()">Terminer la mission</button></div>
-            <mat-list class="row">
-                <mat-list-item *ngFor="let uri of commandService.uris">
-                    <mat-checkbox mat-list-icon [checked]="isUriSelected(uri)" (change)="toggleUri(uri)">{{uri}}</mat-checkbox>
-                </mat-list-item>
-            </mat-list>
+            <div *ngIf="!commandService.isSimulation" class="row"><button class="col button" (click)="identify()">Identifier</button></div>
+            <div *ngIf="commandService.isSimulation" class="row"><button class="col button" (click)="start_mission()">Lancer la mission</button></div>
+            <div *ngIf="commandService.isSimulation" class="row"><button class="col button" (click)="end_mission()">Terminer la mission</button></div> 
+            <div *ngIf="!commandService.isSimulation" class="row">
+                <div class="row"><h1 class="col command-name">Interfaces</h1></div>
+                <mat-list class="row">
+                    <mat-list-item *ngFor="let uri of commandService.uris">
+                        <mat-checkbox mat-list-icon [checked]="isUriSelected(uri)" (change)="toggleUri(uri)">{{uri}}</mat-checkbox>
+                    </mat-list-item>
+                </mat-list>
+            </div>
         </div>
        <div class="col mission">
             <h1>Information de mission</h1>
