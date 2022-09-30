@@ -9,7 +9,7 @@ from src.services.command_service import CommandService
 from src.services.startup_service import StartupService
 
 app = Flask(__name__)
-is_simulation = bool(env.get("IS_SIMULATION")) if env.get("IS_SIMULATION") is not None else True
+is_simulation = env.get("IS_SIMULATION").lower() == "true" if env.get("IS_SIMULATION") is not None else True
 injector = Injector(is_simulation)
 
 
