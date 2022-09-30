@@ -1,45 +1,41 @@
 .header {
+    background-color: var(--primary);
+    border-bottom: 1px var(--border-color) solid;
     padding: 40px;
-    background-color: midnightblue;
-    border: 5px solid black;
 }
 
 .title {
     font-size: 40px;
-    color: seashell;
-}
-
-.mission-board{
 }
 
 .commands{
-    border-left: 5px solid black;
-    border-bottom: 5px solid black;
-    border-right: 5px solid black;
-    background-color: cadetblue;
+    background-color: var(--secondary);
+    border-right: 1px var(--border-color) solid;
 }
 
 .command-name{
-    padding: 5px;
+    background-color: var(--accent);
+    border-bottom: 1px var(--border-color) solid;
+    border-top: 1px var(--border-color) solid;
+    padding: 10px;
     font-size: 30px;
-    color: seashell;
     text-align: center;
+    margin-bottom: 0px;
 }
 
 .button{
-    background-color: midnightblue;
-    border-radius: 8px;
-    border-color: midnightblue;
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--font-color);
     padding-top: 10px;
     padding-bottom: 10px;
     text-align: center;
-    color: seashell;
-    margin-top: 10px;
+}
+
+.button:hover{
+    background-color: var(--secondary);  
 }
 
 .mission{
-    border-bottom: 5px solid black;
-    border-right: 5px solid black;
-    background-color: seashell;
+    background-color: var(--background);
 }
-
