@@ -14,7 +14,8 @@ Ce répertoire inclus le client Web de la station au sol.
 
 ## Comment démarrer l'interface **sans** Docker
 ### Prérequis
-- Node.js et npm. La version 16.17.1 est testé conseillé.
+1. Node.js et npm. La version 16.17.1 est conseillée
+2. yarn avec la commande ``npm install --global yarn``
 ### Procédure
 1. Lancer la commande ``yarn install``
 2. Pour compiler il suffit ensuite de lancer ``ng build``
