@@ -1,6 +1,6 @@
 # INF3995 - Station au sol - Interface Web
 
-Ce répertoire inclus le client Web de la station au sol.
+Ce répertoire inclut le client Web de la station au sol.
 
 ## Comment démarrer l'interface **avec** Docker
 
@@ -20,4 +20,4 @@ Ce répertoire inclus le client Web de la station au sol.
 1. Lancer la commande ``yarn install``
 2. Pour compiler il suffit ensuite de lancer ``ng build``
 3. La commande ``ng serve`` permet de lancer la simulation
-4. Enfin, il faut navigate à l'adresse ``http://localhost:4200/``
+4. Enfin, il faut naviguer à l'adresse ``http://localhost:4200/``
