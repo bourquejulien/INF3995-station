@@ -1,4 +1,4 @@
-# Station au sol - Serveur
+# INF3995 - Station au sol - Interface Web
 Contient le code de la section "serveur" de la station au sol.
 ## Prérequis
 
