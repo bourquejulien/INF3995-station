@@ -7,7 +7,8 @@ RUN python -m venv ./venv
 ENV PATH="/usr/app/venv/bin:$PATH"
 
 COPY . .
-COPY ./requirements.* .
+COPY ./requirements.py .
+COPY ./requirements.txt .
 RUN python3 requirements.py
 
 COPY . .

@@ -3,8 +3,12 @@ Contient le code de la section "serveur" de la station au sol.
 ## Prérequis
 
 ### Sans docker :
+On roule le serveur dans un environement virtuel python nommé venv (garder le même nom pour que le gitignore fonctionne bien)
 ```bash
-python3 requirements.py
+sudo python3 -m venv venv
+source venv/bin/activate
+sudo pip install -r requirements.txt
+sudo python3 requirements.py
 ```
 
 ### Avec docker :
@@ -14,8 +18,9 @@ docker build -t serveur .
 ## Exécution
 
 ### Sans docker
+Toujours dans l'environement virtuel, on fait
 ```bash
-python3 app.py
+sudo python3 app.py
 ```
 
 ### Avec docker :
