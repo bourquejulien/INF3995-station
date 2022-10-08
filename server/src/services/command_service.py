@@ -24,9 +24,7 @@ class CommandService:
         return response
 
     def identify(self, uris):
-        for client in self.swarm_client.drone_clients:
-            if client.uri in uris:
-                client.identify()
+        self.swarm_client.identify(uris)
 
         response = {
             "status": "success",
