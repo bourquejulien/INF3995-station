@@ -21,7 +21,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
 
     def connect(self, uris):
         self._swarm = Swarm(uris, factory=self._factory)
-        self._swarm.parallel_safe(lambda scf: self._enable_callbacks(scf))
+        self._swarm.parallel_safe(self._enable_callbacks)
         self._swarm.open_links()
 
     def _enable_callbacks(self, scf: SyncCrazyflie):
@@ -61,7 +61,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         self._swarm.parallel_safe(end_mission)
 
     def identify(self, uris):
-        self._swarm.parallel_safe(identify, {uri: [True] for uri in uris})
+        self._swarm.parallel_safe(identify, {uri: [uri in uris] for uri in self._swarm._cfs})
 
     def discover(self):
         available_devices = []

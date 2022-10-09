@@ -5,6 +5,8 @@ from src.config import config
 
 
 class SimulationDroneClient:
+    uri: str
+
     def __init__(self, uri):
         self.uri = uri
         self.channel = None
