@@ -3,7 +3,6 @@ import logging
 import cflib
 from cflib import crtp
 from cflib.crazyflie.swarm import CachedCfFactory, Swarm
-from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 
 from src.clients.drone_clients.physical_drone_client import *
 from src.clients.abstract_swarm_client import AbstractSwarmClient
@@ -31,6 +30,13 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         scf.cf.connection_lost.add_callback(self._connection_lost)
         scf.cf.console.receivedChar.add_callback(self._console_incoming)
         scf.cf.appchannel.packet_received.add_callback(self._packet_received)
+        scf.cf.param.add_update_callback(group="deck", name="bcFlow2", cb=self.param_deck_flow)
+
+    def param_deck_flow(self, scf, value_str):
+        if int(value_str):
+            print('Deck is attached!')
+        else:
+            print('Deck is NOT attached!')
 
     def _connected(self, link_uri):
         print("Connected!")
