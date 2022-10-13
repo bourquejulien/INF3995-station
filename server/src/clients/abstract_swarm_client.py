@@ -1,19 +1,16 @@
 from abc import ABC, abstractmethod
 
-
 class AbstractSwarmClient(ABC):
-    _drone_clients: list
-
-    @property
-    def drone_clients(self):
-        return self._drone_clients
-
     @abstractmethod
     def start_mission(self):
         pass
 
     @abstractmethod
     def end_mission(self):
+        pass
+
+    @abstractmethod
+    def identify(self, uris):
         pass
 
     @abstractmethod
