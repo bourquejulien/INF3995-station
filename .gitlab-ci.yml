@@ -57,6 +57,8 @@ test:server:
 
 push:server:
     stage: push
+    tags:
+        - x86
     only:
         refs:
             - main
@@ -73,6 +75,8 @@ push:server:
 
 push:client:
     stage: push
+    tags:
+        - x86
     only:
         refs:
             - main
