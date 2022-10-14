@@ -16,6 +16,10 @@ class SimulationSwarmClient(AbstractSwarmClient):
         for drone in self._drone_clients:
             drone.end_mission()
 
+    def force_end_mission(self):
+        # TODO
+        pass
+
     def identify(self, uris):
         for drone in self._drone_clients:
             if drone.uri in uris:

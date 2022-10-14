@@ -16,3 +16,9 @@ def start():
 def end():
     swarm_client.end_mission()
     return 'success', 200
+
+
+@blueprint.route('/force_end', methods=['POST'])
+def end():
+    swarm_client.force_end_mission()
+    return 'success', 200
