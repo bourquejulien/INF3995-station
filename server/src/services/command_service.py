@@ -23,6 +23,14 @@ class CommandService:
         }
         return response
 
+    def force_end_mission(self, request_data):
+        # TODO implement changing from simulation to swarm mode
+        self.swarm_client.force_end_mission()
+        response = {
+            "status": "success",
+        }
+        return response
+
     def identify(self, uris):
         self.swarm_client.identify(uris)
 
