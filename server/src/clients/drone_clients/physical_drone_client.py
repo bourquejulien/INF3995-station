@@ -29,4 +29,3 @@ def start_mission(scf: SyncCrazyflie):
 def end_mission(scf: SyncCrazyflie):
     data = struct.pack("<i", commands["end_mission"])
     _send_packet(scf, data)
-    pass

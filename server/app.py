@@ -28,7 +28,7 @@ def setup():
     injector.generate()
     discover_controller.startupService = injector.get(StartupService)
     action_controller.command_service = injector.get(CommandService)
-    mission_controller.swarm_client = injector.get(AbstractSwarmClient)
+    mission_controller.command_service = injector.get(CommandService)
     app.register_blueprint(discover_controller.blueprint, url_prefix="/discovery")
     app.register_blueprint(mission_controller.blueprint, url_prefix="/mission")
     app.register_blueprint(action_controller.blueprint, url_prefix="/action")
