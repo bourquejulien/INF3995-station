@@ -1,5 +1,6 @@
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.services.startup_service import StartupService
+from src.exceptions.custom_exception import CustomException
 
 
 class CommandService:
@@ -8,33 +9,25 @@ class CommandService:
         self.swarm_client = swarm_client
 
     def start_mission(self, request_data):
-        # TODO implement changing from simulation to swarm mode
-        self.swarm_client.start_mission()
-        response = {
-            "status": "success",
-        }
-        return response
+        try:
+            self.swarm_client.start_mission()
+        except CustomException as e:
+            raise e
 
     def end_mission(self, request_data):
-        # TODO implement changing from simulation to swarm mode
-        self.swarm_client.end_mission()
-        response = {
-            "status": "success",
-        }
-        return response
+        try:
+            self.swarm_client.end_mission()
+        except CustomException as e:
+            raise e
 
     def force_end_mission(self, request_data):
-        # TODO implement changing from simulation to swarm mode
-        self.swarm_client.force_end_mission()
-        response = {
-            "status": "success",
-        }
-        return response
+        try:
+            self.swarm_client.force_end_mission()
+        except CustomException as e:
+            raise e
 
     def identify(self, uris):
-        self.swarm_client.identify(uris)
-
-        response = {
-            "status": "success",
-        }
-        return response
+        try:
+            self.swarm_client.identify(uris)
+        except CustomException as e:
+            raise e
