@@ -21,6 +21,7 @@ image: docker:22.06-rc
 stages:
     - build
     - test
+    - push
 
 build:client:
     stage: build
@@ -53,3 +54,39 @@ test:server:
         - cd server
         - docker build --target=test -t="backend-server-test-$CI_COMMIT_SHORT_SHA" .
         - docker run "backend-server-test-$CI_COMMIT_SHORT_SHA"
+
+push:server:
+    stage: push
+    tags:
+        - x86
+    only:
+        refs:
+            - main
+        changes:
+            - server/**/*
+    before_script:
+        - docker info
+    variables:
+        IMAGE_NAME: "$CI_REGISTRY_IMAGE/server:latest"
+    script:
+        - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+        - docker build --target final -t "$IMAGE_NAME" server
+        - docker push "$IMAGE_NAME"
+
+push:client:
+    stage: push
+    tags:
+        - x86
+    only:
+        refs:
+            - main
+        changes:
+            - client/**/*
+    before_script:
+        - docker info
+    variables:
+        IMAGE_NAME: "$CI_REGISTRY_IMAGE/client:latest"
+    script:
+        - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+        - docker build --target final -t "$IMAGE_NAME" client
+        - docker push "$IMAGE_NAME"
