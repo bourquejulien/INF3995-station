@@ -14,7 +14,7 @@ RUN python -m venv ./venv
 ENV PATH="/usr/app/venv/bin:$PATH"
 
 COPY protos/simulation.proto protos/simulation.proto
-COPY ./requirements.* .
+COPY ./requirements.* ./
 RUN python3 requirements.py
 
 COPY . .
@@ -34,3 +34,4 @@ FROM build AS test
 ENV IS_SIMULATION=False
 
 ENTRYPOINT ["pytest", "tests"]
+

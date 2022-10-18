@@ -1,12 +1,12 @@
 from src.clients.drone_clients.simulation_drone_client import SimulationDroneClient
-
 from src.clients.abstract_swarm_client import AbstractSwarmClient
-from src.config import config
 
 
 class SimulationSwarmClient(AbstractSwarmClient):
-    def __init__(self):
+    def __init__(self, config):
         self._drone_clients = []
+        self.config = config
+        self.connect(self.discover())
 
     def start_mission(self):
         for drone in self._drone_clients:
@@ -23,7 +23,7 @@ class SimulationSwarmClient(AbstractSwarmClient):
 
     def connect(self, uris):
         for uri in uris:
-            client = SimulationDroneClient(uri)
+            client = SimulationDroneClient(self.config['argos']['hostname'], uri)
             client.connect()
             self._drone_clients.append(client)
 
@@ -32,5 +32,4 @@ class SimulationSwarmClient(AbstractSwarmClient):
             drone.disconnect()
 
     def discover(self):
-        port = config["argos_url"]["port"]
-        return [str(port), str(port + 1)]
+        return [str(self.config['argos']['port']), str(self.config['argos']['port'] + 1)]

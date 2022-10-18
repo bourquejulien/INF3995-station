@@ -1,18 +1,16 @@
 import grpc
-
 from out import simulation_pb2_grpc, simulation_pb2
-from src.config import config
 from src.exceptions.custom_exception import CustomException
 
 
 class SimulationDroneClient:
     uri: str
 
-    def __init__(self, uri):
+    def __init__(self, hostname, uri):
         self.uri = uri
         self.channel = None
         self.stub = None
-        self.address = f"{config['argos_url']['host']}:{uri}"
+        self.address = f"{hostname}:{uri}"
 
     def identify(self):
         try:
