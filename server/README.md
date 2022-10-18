@@ -7,7 +7,6 @@ On roule le serveur dans un environement virtuel python nommé venv (garder le m
 ```bash
 sudo python3 -m venv venv
 source venv/bin/activate
-sudo pip install -r requirements.txt
 sudo python3 requirements.py
 ```
 
