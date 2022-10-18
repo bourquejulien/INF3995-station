@@ -1,13 +1,14 @@
 from flask import Blueprint, request
-from src.services.command_service import CommandService
+from dependency_injector.wiring import inject, Provide
+from src.container import Container
 from src.exceptions.custom_exception import CustomException
 
-command_service = None | CommandService
 blueprint = Blueprint('mission', __name__)
 
 
 @blueprint.route('/start', methods=['POST'])
-def start():
+@inject
+def start(command_service=Provide[Container.command_service]):
     try:
         command_service.start_mission(request)
     except CustomException as e:
@@ -16,7 +17,8 @@ def start():
 
 
 @blueprint.route('/end', methods=['POST'])
-def end():
+@inject
+def end(command_service=Provide[Container.command_service]):
     try:
         command_service.end_mission(request)
     except CustomException as e:

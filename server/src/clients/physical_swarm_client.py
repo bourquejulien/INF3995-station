@@ -1,9 +1,7 @@
 import logging
-
 import cflib
 from cflib import crtp
 from cflib.crazyflie.swarm import CachedCfFactory, Swarm
-
 from src.clients.drone_clients.physical_drone_client import *
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 
@@ -17,6 +15,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
     def __init__(self):
         self._factory = CachedCfFactory(rw_cache='./cache')
         crtp.init_drivers(enable_debug_driver=False)
+        self.connect(self.discover())
 
     def connect(self, uris):
         self._swarm = Swarm(uris, factory=self._factory)
