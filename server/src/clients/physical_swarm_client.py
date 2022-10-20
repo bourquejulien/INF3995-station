@@ -1,9 +1,13 @@
 import logging
 import cflib
+import struct
 from cflib import crtp
 from cflib.crazyflie.swarm import CachedCfFactory, Swarm
-from src.clients.drone_clients.physical_drone_client import *
+from src.clients.drone_clients.physical_drone_client import identify, start_mission, end_mission
 from src.clients.abstract_swarm_client import AbstractSwarmClient
+from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
+from src.exceptions.hardware_exception import HardwareException
+from src.exceptions.custom_exception import CustomException
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -32,13 +36,18 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         scf.cf.param.add_update_callback(group="deck", name="bcFlow2", cb=self.param_deck_flow)
 
     def param_deck_flow(self, scf, value_str):
-        if int(value_str):
-            print('Deck is attached!')
+        try:
+            int_value = int(value_str)
+        except Exception as e:
+            raise CustomException('Callback error: ', 'expected an integer as string') from e
+
+        if int_value != 0:
+            print('Deck is attached')
         else:
-            print('Deck is NOT attached!')
+            raise HardwareException('Deck is not attached: ', 'Check deck connection')
 
     def _connected(self, link_uri):
-        print("Connected!")
+        print("Connected to %s" % (link_uri))
 
     def _connection_failed(self, link_uri, msg):
         print('Connection to %s failed: %s' % (link_uri, msg))
@@ -54,7 +63,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
 
     def _packet_received(self, data):
         (data,) = struct.unpack("<f", data)
-        print(f"Received packet: {data}")
+        print("Received packet: %f" % (data))
 
     def disconnect(self):
         self._swarm.close_links()

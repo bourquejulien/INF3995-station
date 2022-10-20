@@ -6,13 +6,13 @@ class CommandService:
     def __init__(self, swarm_client: AbstractSwarmClient):
         self.swarm_client = swarm_client
 
-    def start_mission(self, request_data):
+    def start_mission(self):
         try:
             self.swarm_client.start_mission()
         except CustomException as e:
             raise e
 
-    def end_mission(self, request_data):
+    def end_mission(self):
         try:
             self.swarm_client.end_mission()
         except CustomException as e:
@@ -38,6 +38,6 @@ class CommandService:
 
     def discover(self):
         try:
-            self._swarm_client.discover()
+            self.swarm_client.discover()
         except CustomException as e:
             raise e
