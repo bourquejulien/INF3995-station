@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class AbstractSwarmClient(ABC):
     @abstractmethod
     def start_mission(self):

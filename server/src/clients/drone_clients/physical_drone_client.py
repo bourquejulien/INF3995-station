@@ -1,5 +1,4 @@
 import struct
-
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 
 commands = {"identify": 0, "start_mission": 1, "end_mission": 2, "force_end_mission": 3}
