@@ -20,7 +20,6 @@ class PhysicalSwarmClient(AbstractSwarmClient):
     def __init__(self):
         self._factory = CachedCfFactory(rw_cache='./cache')
         crtp.init_drivers(enable_debug_driver=False)
-        self.connect(self.discover())
 
     def connect(self, uris):
         self._swarm = Swarm(uris, factory=self._factory)

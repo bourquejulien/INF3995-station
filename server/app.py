@@ -9,7 +9,7 @@ from src.services.command_service import CommandService
 
 @inject
 def main(app, command_service: CommandService = Provide[Container.command_service]):
-    command_service.discover()
+    command_service.connect(command_service.discover())
     app.run(host="0.0.0.0")
 
 

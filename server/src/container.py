@@ -1,3 +1,4 @@
+import os
 import sys
 
 from dependency_injector import containers, providers
@@ -8,7 +9,7 @@ from src.clients.physical_swarm_client import PhysicalSwarmClient
 
 class Container(containers.DeclarativeContainer):
     config = providers.Configuration(strict=True)
-    config.from_yaml('config.yml', required=True)
+    config.from_yaml(f'{os.path.dirname(__file__)}/../config.yml', required=True)
 
     if config.get("is_simulation"):
         abstract_swarm_client = providers.Factory(

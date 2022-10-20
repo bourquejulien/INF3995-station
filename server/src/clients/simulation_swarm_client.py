@@ -6,7 +6,6 @@ class SimulationSwarmClient(AbstractSwarmClient):
     def __init__(self, config):
         self._drone_clients = []
         self.config = config
-        self.connect(self.discover())
 
     def start_mission(self):
         for drone in self._drone_clients:
