@@ -24,3 +24,13 @@ def end(command_service=Provide[Container.command_service]):
     except CustomException as e:
         return "{}: {}".format(e.name, e.message), 500
     return 'success', 200
+
+
+@blueprint.route('/force_end', methods=['post'])
+@inject
+def force_end(command_service=Provide[Container.command_service]):
+    try:
+        command_service.force_end_mission()
+    except CustomException as e:
+        return "{}: {}".format(e.name, e.message), 500
+    return 'success', 200

@@ -1,3 +1,6 @@
+import os
+import sys
+
 from dependency_injector import containers, providers
 from src.services.command_service import CommandService
 from src.clients.simulation_swarm_client import SimulationSwarmClient
@@ -5,14 +8,10 @@ from src.clients.physical_swarm_client import PhysicalSwarmClient
 
 
 class Container(containers.DeclarativeContainer):
-    wiring_config = containers.WiringConfiguration(
-            modules=['.application'],
-            packages=[".controllers"]
-    )
     config = providers.Configuration(strict=True)
-    config.from_yaml('config.yml', required=True)
+    config.from_yaml(f'{os.path.dirname(__file__)}/../config.yml', required=True)
 
-    if config.is_simulation.required():
+    if config.get("is_simulation"):
         abstract_swarm_client = providers.Factory(
             SimulationSwarmClient,
             config=config

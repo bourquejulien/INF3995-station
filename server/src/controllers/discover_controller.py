@@ -13,7 +13,6 @@ def discover(command_service=Provide[Container.command_service]):
         return jsonify(command_service.discover()), 200
     except CustomException as e:
         return "{}: {}".format(e.name, e.message), 500
-    return 'success', 200
 
 
 @blueprint.route('/connect', methods=['post'])

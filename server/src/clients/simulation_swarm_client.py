@@ -6,7 +6,6 @@ class SimulationSwarmClient(AbstractSwarmClient):
     def __init__(self, config):
         self._drone_clients = []
         self.config = config
-        self.connect(self.discover())
 
     def start_mission(self):
         for drone in self._drone_clients:
@@ -15,6 +14,10 @@ class SimulationSwarmClient(AbstractSwarmClient):
     def end_mission(self):
         for drone in self._drone_clients:
             drone.end_mission()
+
+    def force_end_mission(self):
+        # TODO
+        pass
 
     def identify(self, uris):
         for drone in self._drone_clients:

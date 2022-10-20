@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
-from src.controllers import server_status_controller, discover_controller,\
-                            mission_controller, action_controller
+from src.controllers import server_status_controller, discover_controller, \
+    mission_controller, action_controller
 from dependency_injector.wiring import inject, Provide
 from src.container import Container
 from src.services.command_service import CommandService
@@ -18,10 +18,10 @@ def create_app():
     app.register_blueprint(mission_controller.blueprint, url_prefix="/mission")
     app.register_blueprint(action_controller.blueprint, url_prefix="/action")
 
-    return app
+    return app, container
 
 
 @inject
-def exit_app(command_service=Provide[Container.command_service]):
+def exit_app(command_service: CommandService = Provide[Container.command_service]):
     print("Exiting app...")
     command_service.disconnect()

@@ -1,11 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environment';
-import {
-    EndMission,
-    Identify,
-    StartMission,
-} from '@app/interface/commands';
+import { EndMission, Identify, StartMission } from '@app/interface/commands';
 
 @Injectable({
     providedIn: 'root',
@@ -27,7 +23,7 @@ export class CommandService {
             .toPromise();
     }
 
-    async start_mission(command: StartMission): Promise<void> {
+    async startMission(command: StartMission): Promise<void> {
         await this.httpClient
             .post(
                 `${environment.serverURL}/mission/start`,
@@ -39,10 +35,22 @@ export class CommandService {
             .toPromise();
     }
 
-    async end_mission(command: EndMission): Promise<void> {
+    async endMission(command: EndMission): Promise<void> {
         await this.httpClient
             .post(
                 `${environment.serverURL}/mission/end`,
+                {},
+                {
+                    responseType: 'json',
+                },
+            )
+            .toPromise();
+    }
+
+    async forceEndMission(command: EndMission): Promise<void> {
+        await this.httpClient
+            .post(
+                `${environment.serverURL}/mission/force_end`,
                 {},
                 {
                     responseType: 'json',
@@ -58,8 +66,8 @@ export class CommandService {
     }
 
     async retrieveMode(): Promise<void> {
-      this.isSimulation = await this.httpClient
-        .get<boolean>(`${environment.serverURL}/is_simulation`)
-        .toPromise();
+        this.isSimulation = await this.httpClient
+            .get<boolean>(`${environment.serverURL}/is_simulation`)
+            .toPromise();
     }
 }

@@ -1,3 +1,5 @@
+import types
+
 import pytest
 import struct
 from src.clients.physical_swarm_client import PhysicalSwarmClient
@@ -27,7 +29,7 @@ def test_connect(app, mocker, swarm_client):
 
     swarm_client.connect(uris)
 
-    swarm_mock.parallel_safe.assert_called_once()
+    swarm_mock.parallel_safe.assert_called()
     swarm_mock.open_links.assert_called_once()
 
 
@@ -128,14 +130,7 @@ def test_packet_received_callback(app, mocker, swarm_client, print_mock):
 
 
 def test_disconnect(app, mocker, swarm_client):
-    swarm_client._swarm.close_links = mocker.stub()
-
-    swarm_client.disconnect()
-
-    swarm_client._swarm.close_links.assert_called_once()
-
-
-def test_disconnect(app, mocker, swarm_client):
+    swarm_client._swarm = types.SimpleNamespace()
     swarm_client._swarm.close_links = mocker.stub()
 
     swarm_client.disconnect()
@@ -144,6 +139,7 @@ def test_disconnect(app, mocker, swarm_client):
 
 
 def test_start_mission(app, mocker, swarm_client):
+    swarm_client._swarm = types.SimpleNamespace()
     swarm_client._swarm.parallel_safe = mocker.stub()
 
     swarm_client.start_mission()
@@ -152,6 +148,7 @@ def test_start_mission(app, mocker, swarm_client):
 
 
 def test_end_mission(app, mocker, swarm_client):
+    swarm_client._swarm = types.SimpleNamespace()
     swarm_client._swarm.parallel_safe = mocker.stub()
 
     swarm_client.end_mission()
@@ -161,6 +158,7 @@ def test_end_mission(app, mocker, swarm_client):
 
 def test_identify(app, mocker, swarm_client):
     uris = ['test1', 'test2']
+    swarm_client._swarm = types.SimpleNamespace()
     swarm_client._swarm._cfs = ['test2']
     swarm_client._swarm.parallel_safe = mocker.stub()
 

@@ -18,6 +18,12 @@ class CommandService:
         except CustomException as e:
             raise e
 
+    def force_end_mission(self, request_data):
+        try:
+            self.swarm_client.force_end_mission()
+        except CustomException as e:
+            raise e
+
     def identify(self, uris):
         try:
             self.swarm_client.identify(uris)

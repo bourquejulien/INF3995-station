@@ -26,12 +26,16 @@ export class MissionPageComponent implements OnInit {
         this.commandService.identify({ uris: this.selectedUris });
     }
 
-    start_mission(): void {
-        this.commandService.start_mission({});
+    startMission(): void {
+        this.commandService.startMission({});
     }
 
-    end_mission(): void {
-        this.commandService.end_mission({});
+    endMission(): void {
+        this.commandService.endMission({});
+    }
+
+    forceEndMission(): void {
+        this.commandService.forceEndMission({});
     }
 
     isUriSelected(uri: string): boolean {

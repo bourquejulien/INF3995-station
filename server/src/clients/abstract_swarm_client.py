@@ -11,6 +11,10 @@ class AbstractSwarmClient(ABC):
         pass
 
     @abstractmethod
+    def force_end_mission(self):
+        pass
+
+    @abstractmethod
     def identify(self, uris):
         pass
 
