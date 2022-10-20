@@ -1,34 +1,43 @@
 from src.clients.abstract_swarm_client import AbstractSwarmClient
-from src.services.startup_service import StartupService
+from src.exceptions.custom_exception import CustomException
 
 
 class CommandService:
-
-    def __init__(self, swarm_client: AbstractSwarmClient, persistent_service: StartupService):
+    def __init__(self, swarm_client: AbstractSwarmClient):
         self.swarm_client = swarm_client
 
-    def start_mission(self, request_data):
-        # TODO implement changing from simulation to swarm mode
-        self.swarm_client.start_mission()
-        response = {
-            "status": "success",
-        }
-        return response
+    def start_mission(self):
+        try:
+            self.swarm_client.start_mission()
+        except CustomException as e:
+            raise e
 
-    def end_mission(self, request_data):
-        # TODO implement changing from simulation to swarm mode
-        self.swarm_client.end_mission()
-        response = {
-            "status": "success",
-        }
-        return response
+    def end_mission(self):
+        try:
+            self.swarm_client.end_mission()
+        except CustomException as e:
+            raise e
 
     def identify(self, uris):
-        for client in self.swarm_client.drone_clients:
-            if client.uri in uris:
-                client.identify()
+        try:
+            self.swarm_client.identify(uris)
+        except CustomException as e:
+            raise e
 
-        response = {
-            "status": "success",
-        }
-        return response
+    def connect(self, uris):
+        try:
+            self.swarm_client.connect(uris)
+        except CustomException as e:
+            raise e
+
+    def disconnect(self):
+        try:
+            self.swarm_client.disconnect()
+        except CustomException as e:
+            raise e
+
+    def discover(self):
+        try:
+            self.swarm_client.discover()
+        except CustomException as e:
+            raise e

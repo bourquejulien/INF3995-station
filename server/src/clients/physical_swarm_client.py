@@ -1,42 +1,81 @@
 import logging
-
 import cflib
+import struct
 from cflib import crtp
-
-from src.clients.drone_clients.physical_drone_client import PhysicalDroneClient
+from cflib.crazyflie.swarm import CachedCfFactory, Swarm
+from src.clients.drone_clients.physical_drone_client import identify, start_mission, end_mission
 from src.clients.abstract_swarm_client import AbstractSwarmClient
+from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
+from src.exceptions.hardware_exception import HardwareException
+from src.exceptions.custom_exception import CustomException
 
 logging.basicConfig(level=logging.ERROR)
 
 
 class PhysicalSwarmClient(AbstractSwarmClient):
     base_uri = 0xE7E7E7E750
+    _swarm: Swarm
 
     def __init__(self):
+        self._factory = CachedCfFactory(rw_cache='./cache')
         crtp.init_drivers(enable_debug_driver=False)
-        self._drone_clients = []
-
-    @property
-    def drone_clients(self):
-        return self._drone_clients
+        self.connect(self.discover())
 
     def connect(self, uris):
-        for uri in uris:
-            client = PhysicalDroneClient(uri)
-            client.connect()
-            self._drone_clients.append(client)
+        self._swarm = Swarm(uris, factory=self._factory)
+        self._swarm.parallel_safe(self._enable_callbacks)
+        self._swarm.open_links()
+
+    def _enable_callbacks(self, scf: SyncCrazyflie):
+        scf.cf.connected.add_callback(self._connected)
+        scf.cf.disconnected.add_callback(self._disconnected)
+        scf.cf.connection_failed.add_callback(self._connection_failed)
+        scf.cf.connection_lost.add_callback(self._connection_lost)
+        scf.cf.console.receivedChar.add_callback(self._console_incoming)
+        scf.cf.appchannel.packet_received.add_callback(self._packet_received)
+        scf.cf.param.add_update_callback(group="deck", name="bcFlow2", cb=self.param_deck_flow)
+
+    def param_deck_flow(self, scf, value_str):
+        try:
+            int_value = int(value_str)
+        except Exception as e:
+            raise CustomException('Callback error: ', 'expected an integer as string') from e
+
+        if int_value != 0:
+            print('Deck is attached')
+        else:
+            raise HardwareException('Deck is not attached: ', 'Check deck connection')
+
+    def _connected(self, link_uri):
+        print("Connected to %s" % (link_uri))
+
+    def _connection_failed(self, link_uri, msg):
+        print('Connection to %s failed: %s' % (link_uri, msg))
+
+    def _connection_lost(self, link_uri, msg):
+        print('Connection to %s lost: %s' % (link_uri, msg))
+
+    def _disconnected(self, link_uri):
+        print('Disconnected from %s' % link_uri)
+
+    def _console_incoming(self, console_text):
+        print(console_text, end='')
+
+    def _packet_received(self, data):
+        (data,) = struct.unpack("<f", data)
+        print("Received packet: %f" % (data))
 
     def disconnect(self):
-        for drone in self.drone_clients:
-            drone.disconnect()
+        self._swarm.close_links()
 
     def start_mission(self):
-        for drone in self.drone_clients:
-            drone.start_mission()
+        self._swarm.parallel_safe(start_mission)
 
     def end_mission(self):
-        for drone in self.drone_clients:
-            drone.end_mission()
+        self._swarm.parallel_safe(end_mission)
+
+    def identify(self, uris):
+        self._swarm.parallel_safe(identify, {uri: [uri in uris] for uri in self._swarm._cfs})
 
     def discover(self):
         available_devices = []

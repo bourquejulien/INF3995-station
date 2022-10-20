@@ -1,25 +1,37 @@
 import grpc
-
 from out import simulation_pb2_grpc, simulation_pb2
-from src.clients.drone_clients.abstract_drone_client import AbstractDroneClient
-from src.config import config
+from src.exceptions.custom_exception import CustomException
 
 
-class SimulationDroneClient(AbstractDroneClient):
-    def __init__(self, uri):
+class SimulationDroneClient:
+    uri: str
+
+    def __init__(self, hostname, uri):
         self.uri = uri
         self.channel = None
         self.stub = None
-        self.address = f"{config['argos_url']['host']}:{uri}"
+        self.address = f"{hostname}:{uri}"
 
     def identify(self):
-        pass
+        try:
+            pass
+        except grpc.RpcError as e:
+            print(e)
+            raise CustomException("RPCError: ", e.code()) from e
 
     def start_mission(self):
-        self.stub.StartMission(simulation_pb2.MissionRequest(uri=self.uri))
+        try:
+            self.stub.StartMission(simulation_pb2.MissionRequest(uri=self.uri))
+        except grpc.RpcError as e:
+            print(e)
+            raise CustomException("RPCError: ", e.code()) from e
 
     def end_mission(self):
-        self.stub.EndMission(simulation_pb2.MissionRequest(uri=self.uri))
+        try:
+            self.stub.EndMission(simulation_pb2.MissionRequest(uri=self.uri))
+        except grpc.RpcError as e:
+            print(e)
+            raise CustomException("RPCError: ", e.code()) from e
 
     def connect(self):
         self.channel = grpc.insecure_channel(self.address)

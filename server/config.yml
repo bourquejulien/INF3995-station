@@ -1,0 +1,4 @@
+is_simulation: ${IS_SIMULATION:true}
+argos:
+  hostname: ${ARGOS_HOSTNAME:localhost}
+  port: 9854

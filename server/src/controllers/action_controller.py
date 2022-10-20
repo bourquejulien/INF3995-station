@@ -1,13 +1,17 @@
 from flask import Blueprint, request
+from dependency_injector.wiring import inject, Provide
+from src.container import Container
+from src.exceptions.custom_exception import CustomException
 
-from src.services.command_service import CommandService
-
-command_service: CommandService | None
 blueprint = Blueprint('action', __name__)
 
 
 @blueprint.route('/identify', methods=['post'])
-def identify():
-    uris = request.json["uris"]
-    command_service.identify(uris)
+@inject
+def identify(command_service=Provide[Container.command_service]):
+    try:
+        uris = request.json["uris"]
+        command_service.identify(uris)
+    except CustomException as e:
+        return "{}: {}".format(e.name, e.message), 500
     return 'success', 200
