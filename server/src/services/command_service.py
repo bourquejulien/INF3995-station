@@ -42,8 +42,8 @@ class CommandService:
         except CustomException as e:
             raise e
 
-    def discover(self):
+    def discover(self) -> list:
         try:
-            self.swarm_client.discover()
+            return self.swarm_client.discover()
         except CustomException as e:
             raise e
