@@ -15,9 +15,7 @@ class Event:
         data = asdict(self)
         if self.id is not None:
             data["_id"] = self.id
-
         data.pop("id")
-
         return data
 
     def __str__(self):
