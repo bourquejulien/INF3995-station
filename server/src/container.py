@@ -1,10 +1,10 @@
 import os
-import sys
 
 from dependency_injector import containers, providers
 from src.services.command_service import CommandService
 from src.clients.simulation_swarm_client import SimulationSwarmClient
 from src.clients.physical_swarm_client import PhysicalSwarmClient
+from src.services.database_service import DatabaseService
 
 
 class Container(containers.DeclarativeContainer):
@@ -24,4 +24,9 @@ class Container(containers.DeclarativeContainer):
     command_service = providers.Factory(
         CommandService,
         swarm_client=abstract_swarm_client,
+    )
+
+    database_service = providers.Factory(
+        DatabaseService,
+        config=config,
     )

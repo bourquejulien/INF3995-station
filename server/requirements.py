@@ -1,21 +1,23 @@
 #!/bin/python3
 
+#######################
+# Install dependencies
+#######################
 import pip
 import os
 
 out_folder = "out"
-
-#Install dependencies
 pip.main(["install", "-r", "requirements.txt"])
 
+#######################
 # Generate protos
+#######################
+import grpc_tools.protoc as protoc
+
 if not os.path.exists(out_folder):
     os.mkdir(out_folder)
 
-import grpc_tools.protoc as protoc
-
-protoc.main(["-Iprotos.", f"--python_out=.", f"--grpc_python_out=.", "protos/simulation.proto"])
-
+protoc.main(["-Iprotos.", "--python_out=.", "--grpc_python_out=.", "protos/simulation.proto"])
 
 newlines = []
 with open("protos/simulation_pb2_grpc.py", 'r') as file:
@@ -31,5 +33,3 @@ with open("protos/simulation_pb2_grpc.py", 'w') as file:
 
 os.replace("protos/simulation_pb2_grpc.py", f"{out_folder}/simulation_pb2_grpc.py")
 os.replace("protos/simulation_pb2.py", f"{out_folder}/simulation_pb2.py")
-
-
