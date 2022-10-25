@@ -29,3 +29,7 @@ class AbstractSwarmClient(ABC):
     @abstractmethod
     def discover(self):
         pass
+
+    @abstractmethod
+    def get_position(self):
+        pass
