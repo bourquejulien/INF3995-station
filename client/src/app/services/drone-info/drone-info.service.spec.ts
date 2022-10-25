@@ -1,15 +1,15 @@
 import { TestBed } from '@angular/core/testing';
-import { CommandService } from './command.service';
 import { HttpClientModule } from '@angular/common/http';
+import { DroneInfoService } from './drone-info.service';
 
-describe('CommandService', () => {
-    let service: CommandService;
+describe('DroneInfoService', () => {
+    let service: DroneInfoService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientModule],
         });
-        service = TestBed.inject(CommandService);
+        service = TestBed.inject(DroneInfoService);
     });
 
     it('should be created', () => {

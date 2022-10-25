@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { CommandService } from '@app/services/command/command.service';
 
 @Component({
@@ -8,11 +7,8 @@ import { CommandService } from '@app/services/command/command.service';
     styleUrls: ['./mission-page.component.css'],
 })
 export class MissionPageComponent implements OnInit {
-    constructor(private router: Router, public commandService: CommandService) {
-        this.selectedUris = [];
+    constructor(public commandService: CommandService) {
     }
-
-    selectedUris: string[];
 
     ngOnInit(): void {
         this.commandService.discover();
@@ -20,10 +16,7 @@ export class MissionPageComponent implements OnInit {
     }
 
     identify(): void {
-        if (this.selectedUris.length == 0) {
-            return;
-        }
-        this.commandService.identify({ uris: this.selectedUris });
+        this.commandService.identify({ uris: this.commandService.uris});
     }
 
     startMission(): void {
@@ -36,18 +29,5 @@ export class MissionPageComponent implements OnInit {
 
     forceEndMission(): void {
         this.commandService.forceEndMission({});
-    }
-
-    isUriSelected(uri: string): boolean {
-        return this.selectedUris.findIndex((elem) => uri === elem) != -1;
-    }
-
-    toggleUri(uri: string): void {
-        let uriPosition = this.selectedUris.findIndex((elem) => uri === elem);
-        if (uriPosition == -1) {
-            this.selectedUris.push(uri);
-            return;
-        }
-        this.selectedUris.splice(uriPosition, 1);
     }
 }

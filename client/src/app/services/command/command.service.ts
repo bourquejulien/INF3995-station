@@ -18,44 +18,32 @@ export class CommandService {
     async identify(command: Identify): Promise<void> {
         await this.httpClient
             .post(`${environment.serverURL}/action/identify`, command, {
-                responseType: 'json',
+                responseType: 'text',
             })
             .toPromise();
     }
 
     async startMission(command: StartMission): Promise<void> {
         await this.httpClient
-            .post(
-                `${environment.serverURL}/mission/start`,
-                {},
-                {
-                    responseType: 'json',
-                },
-            )
+            .post(`${environment.serverURL}/mission/start`, {}, {
+                responseType: 'text',
+            })
             .toPromise();
     }
 
     async endMission(command: EndMission): Promise<void> {
         await this.httpClient
-            .post(
-                `${environment.serverURL}/mission/end`,
-                {},
-                {
-                    responseType: 'json',
-                },
-            )
+            .post(`${environment.serverURL}/mission/end`, {}, {
+                responseType: 'text',
+            })
             .toPromise();
     }
 
     async forceEndMission(command: EndMission): Promise<void> {
         await this.httpClient
-            .post(
-                `${environment.serverURL}/mission/force_end`,
-                {},
-                {
-                    responseType: 'json',
-                },
-            )
+            .post(`${environment.serverURL}/mission/force_end`, {}, {
+                responseType: 'text',
+            })
             .toPromise();
     }
 

@@ -39,3 +39,7 @@
 .mission{
     background-color: var(--background);
 }
+
+.drone-panel{
+    padding: 0px;
+}

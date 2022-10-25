@@ -12,21 +12,21 @@ class Container(containers.DeclarativeContainer):
     config.from_yaml(f'{os.path.dirname(__file__)}/../config.yml', required=True)
 
     if config.get("is_simulation"):
-        abstract_swarm_client = providers.Factory(
+        abstract_swarm_client = providers.Singleton(
             SimulationSwarmClient,
             config=config
         )
     else:
-        abstract_swarm_client = providers.Factory(
+        abstract_swarm_client = providers.Singleton(
             PhysicalSwarmClient,
         )
 
-    command_service = providers.Factory(
+    command_service = providers.Singleton(
         CommandService,
         swarm_client=abstract_swarm_client,
     )
 
-    database_service = providers.Factory(
+    database_service = providers.Singleton(
         DatabaseService,
         config=config,
     )
