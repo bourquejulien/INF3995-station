@@ -1,0 +1,26 @@
+.pane{
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--font-color);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;order-right: 1px var(--border-color) solid;
+}
+
+.button{
+    width: 100%;
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--font-color);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+.button:hover{
+    background-color: var(--secondary);  
+}
+
+.card{
+    background-color: var(--secondary);
+}
