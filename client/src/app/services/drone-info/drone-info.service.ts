@@ -26,10 +26,11 @@ export class DroneInfoService {
             });
         });
         this._positions = new Observable((observer) => {
+            const self = this
             interval(1000).subscribe((x) => {
                 this.getPositions().subscribe({
                     next(response: any): void {
-                        observer.next(new Map<string, string>(Object.entries(response)));
+                        observer.next(self.mapPositionResponse(response));
                     },
                     error(): void {
                         console.log("error");
@@ -44,7 +45,7 @@ export class DroneInfoService {
     }
 
     private getPositions(): Observable<any> {
-        return this.httpClient.get(`${environment.serverURL}/drone-info/position`).pipe(catchError(this.handleError('getPositions', [])));
+        return this.httpClient.get(`${environment.serverURL}/drone-info/position`, {responseType:"json"}).pipe(catchError(this.handleError('getPositions', [])));
     }
 
     private handleError<T>(operation = 'operation', result?: T) {
@@ -54,6 +55,17 @@ export class DroneInfoService {
         };
     }
 
+    private mapPositionResponse(response: any): Map<string, string> {
+        let map = new Map();
+        let position = ""
+        for(let drone_info of response["positions"]) {
+            position = "x: " + drone_info["posX"] + " y: " + drone_info["posY"]
+                + " z: " + drone_info["posZ"];
+            map.set(drone_info["uri"], position);
+        }
+        return map;
+    }
+
     get statuses(): Observable<Map<string, string>> {
         return this._statuses;
     }
@@ -61,4 +73,5 @@ export class DroneInfoService {
     get positions(): Observable<Map<string, string>> {
         return this._positions;
     } 
+
 }

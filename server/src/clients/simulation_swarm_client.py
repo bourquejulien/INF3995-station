@@ -1,3 +1,4 @@
+import json
 from src.clients.drone_clients.simulation_drone_client import SimulationDroneClient
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 
@@ -36,3 +37,16 @@ class SimulationSwarmClient(AbstractSwarmClient):
 
     def discover(self):
         return [str(self.config['argos']['port']), str(self.config['argos']['port'] + 1)]
+
+    def get_position(self):
+        drone_dict = {"positions" :[]}
+        for drone in self._drone_clients:
+            drone_position = drone.get_position()
+            pos_dict = {}
+            pos_dict["uri"] = drone.uri
+            pos_dict["posX"] = drone_position.posX
+            pos_dict["posY"] = drone_position.posY
+            pos_dict["posZ"] = drone_position.posZ
+            drone_dict['positions'].append(pos_dict)
+        json_list = json.dumps(drone_dict)
+        return json_list

@@ -39,3 +39,11 @@ class SimulationDroneClient:
 
     def disconnect(self):
         self.channel.close()
+
+    def get_position(self):
+        try:
+            reply = self.stub.GetPosition(simulation_pb2.MissionRequest(uri=self.uri))
+            return reply
+        except grpc.RpcError as e:
+            print(e)
+            raise CustomException("RPCError: ", e.code()) from e

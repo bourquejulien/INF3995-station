@@ -38,3 +38,9 @@ docker compose -f docker-compose.db.yml up -d
 ```
 
 **À noter** : Cette commande lance également *mongoexpress* sur le port 8081. Ce second conteneur permet de mettre à jour manuellement la BD.
+
+## Test
+Lancer la commande 
+```bash
+pytest tests
+```
