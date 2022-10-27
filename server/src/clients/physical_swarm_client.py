@@ -3,6 +3,11 @@ import cflib
 import struct
 from cflib import crtp
 from cflib.crazyflie.swarm import CachedCfFactory, Swarm
+
+from src.classes.events.log import generate_log
+from src.classes.events.metric import generate_metric
+from src.classes.position import Position
+from src.classes.distance import Distance
 from src.clients.drone_clients.physical_drone_client import identify, start_mission, end_mission, force_end_mission
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
@@ -28,12 +33,13 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         self._swarm.parallel_safe(self._set_params)
 
     def _enable_callbacks(self, scf: SyncCrazyflie):
+        uri = scf.cf.link_uri
         scf.cf.connected.add_callback(self._connected)
         scf.cf.disconnected.add_callback(self._disconnected)
         scf.cf.connection_failed.add_callback(self._connection_failed)
         scf.cf.connection_lost.add_callback(self._connection_lost)
-        scf.cf.console.receivedChar.add_callback(self._console_incoming)
-        scf.cf.appchannel.packet_received.add_callback(self._packet_received)
+        scf.cf.console.receivedChar.add_callback(lambda data: self._console_incoming(uri, data))
+        scf.cf.appchannel.packet_received.add_callback(lambda text: self._packet_received(uri, text))
         scf.cf.param.add_update_callback(group="deck", name="bcFlow2", cb=self.param_deck_flow)
 
     def _set_params(self, scf: SyncCrazyflie):
@@ -65,12 +71,27 @@ class PhysicalSwarmClient(AbstractSwarmClient):
     def _disconnected(self, link_uri):
         print("Disconnected from %s" % link_uri)
 
-    def _console_incoming(self, console_text):
-        print(console_text, end='')
+    def _console_incoming(self, uri, console_text):
+        log = generate_log('', console_text, "INFO", uri)
+        print(log)
 
-    def _packet_received(self, data):
-        (data,) = struct.unpack("<f", data)
-        print("Received packet: %f" % (data))
+    def _packet_received(self, uri: str, data):
+        data_type, data = data[0], data[1:]
+
+        match data_type:
+            case 0:
+                status = data[0]
+                position = Position(*struct.unpack("<fff", data[1:]))
+                metric = generate_metric(position, status, uri)
+
+                print(metric)
+
+            case 1:
+                distance = Distance(*struct.unpack("<ffffff", data))
+                print(distance)
+
+            case _:
+                raise CustomException("Unpack error: ", f"Unknown data type: {data_type}")
 
     def disconnect(self):
         self._swarm.close_links()
@@ -95,4 +116,4 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         return available_devices
 
     def get_position(self):
-        return 
+        return
