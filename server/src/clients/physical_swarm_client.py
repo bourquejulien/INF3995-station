@@ -17,6 +17,8 @@ from src.exceptions.hardware_exception import HardwareException
 
 logging.basicConfig(level=logging.ERROR)
 
+STATUS = ["Identify", "Takeoff", "Landing", "EmergencyStop"]
+
 
 class PhysicalSwarmClient(AbstractSwarmClient):
     base_uri = 0xE7E7E7E750
@@ -76,13 +78,13 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         print(log)
 
     def _packet_received(self, uri: str, data):
-        data_type, data = data[0], data[1:]
+        data_type, data = int(struct.unpack("<c", data[0:1])[0]), data[1:]
 
         match data_type:
             case 0:
-                status = data[0]
+                status = int(struct.unpack("<c", data[0:1])[0])
                 position = Position(*struct.unpack("<fff", data[1:]))
-                metric = generate_metric(position, status, uri)
+                metric = generate_metric(position, STATUS[status], uri)
 
                 print(metric)
 
