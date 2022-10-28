@@ -130,6 +130,7 @@ def test_disconnected_callback(app, mocker, swarm_client, print_mock):
 def test_console_incoming_callback(app, mocker, swarm_client, print_mock):
     swarm_client._console_incoming('1', 'test')
     print_mock.assert_called_once()
+    # TODO
     # print_mock.assert_called_once_with(generate_log('', 'test', 'INFO', '1'))
 
 
