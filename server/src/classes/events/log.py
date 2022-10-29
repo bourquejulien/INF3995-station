@@ -14,3 +14,6 @@ class Log(Event):
     message: str
     level: str
     origin: str
+
+    def __lt__(self, other):
+        return self.timestamp_ms < other.timestamp_ms

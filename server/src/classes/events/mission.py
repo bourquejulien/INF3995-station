@@ -16,3 +16,6 @@ class Mission(Event):
     total_distance: float
     start_time_ms: int
     end_time_ms: int
+
+    def __lt__(self, other):
+        return self.end_time_ms < other.end_time_ms
