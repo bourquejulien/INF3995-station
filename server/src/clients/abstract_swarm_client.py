@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 
 
 class AbstractSwarmClient(ABC):
+    def __init__(self):
+        self._callbacks = {}
+
     @abstractmethod
     def start_mission(self):
         pass
@@ -33,3 +36,6 @@ class AbstractSwarmClient(ABC):
     @abstractmethod
     def get_position(self):
         pass
+
+    def add_callback(self, name: str, func):
+        self._callbacks[name] = func

@@ -1,4 +1,5 @@
 import logging
+
 import cflib
 import struct
 from cflib import crtp
@@ -6,10 +7,12 @@ from cflib.crazyflie.swarm import CachedCfFactory, Swarm
 
 from src.classes.events.log import generate_log
 from src.classes.events.metric import generate_metric
+from src.classes.mapping_point import MappingPoint
 from src.classes.position import Position
 from src.classes.distance import Distance
 from src.clients.drone_clients.physical_drone_client import identify, start_mission, end_mission, force_end_mission
 from src.clients.abstract_swarm_client import AbstractSwarmClient
+
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 
 from src.exceptions.custom_exception import CustomException
@@ -25,14 +28,9 @@ class PhysicalSwarmClient(AbstractSwarmClient):
     _swarm: Swarm
 
     def __init__(self):
+        super().__init__()
         self._factory = CachedCfFactory(rw_cache="./cache")
         crtp.init_drivers(enable_debug_driver=False)
-
-    def connect(self, uris):
-        self._swarm = Swarm(uris, factory=self._factory)
-        self._swarm.open_links()
-        self._swarm.parallel_safe(self._enable_callbacks)
-        self._swarm.parallel_safe(self._set_params)
 
     def _enable_callbacks(self, scf: SyncCrazyflie):
         uri = scf.cf.link_uri
@@ -75,7 +73,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
 
     def _console_incoming(self, uri, console_text):
         log = generate_log('', console_text, "INFO", uri)
-        print(log)
+        self._callbacks["logging"](log)
 
     def _packet_received(self, uri: str, data):
         data_type, data = int(struct.unpack("<c", data[0:1])[0]), data[1:]
@@ -86,14 +84,21 @@ class PhysicalSwarmClient(AbstractSwarmClient):
                 position = Position(*struct.unpack("<fff", data[1:]))
                 metric = generate_metric(position, STATUS[status], uri)
 
-                print(metric)
+                self._callbacks["metric"](metric)
 
             case 1:
-                distance = Distance(*struct.unpack("<ffffff", data))
-                print(distance)
+                position = Position(*struct.unpack("<fff", data[0:3]))
+                distance = Distance(*struct.unpack("<ffffff", data[3:]))
+                self._callbacks["mapping"](uri, MappingPoint(position, distance))
 
             case _:
                 raise CustomException("Unpack error: ", f"Unknown data type: {data_type}")
+
+    def connect(self, uris):
+        self._swarm = Swarm(uris, factory=self._factory)
+        self._swarm.open_links()
+        self._swarm.parallel_safe(self._enable_callbacks)
+        self._swarm.parallel_safe(self._set_params)
 
     def disconnect(self):
         self._swarm.close_links()

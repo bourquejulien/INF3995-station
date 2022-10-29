@@ -1,18 +1,26 @@
 import json
+from sched import scheduler
+
 from src.clients.drone_clients.simulation_drone_client import SimulationDroneClient
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 
 
 class SimulationSwarmClient(AbstractSwarmClient):
     def __init__(self, config):
+        super().__init__()
         self._drone_clients = []
         self.config = config
 
     def start_mission(self):
+        # TODO Ajouter un fonction periodique pour aller checher les position
+        # scheduler.enter(interval, 1, periodic, (scheduler, interval, action, actionargs))
+        # action(*actionargs)
         for drone in self._drone_clients:
             drone.start_mission()
 
+
     def end_mission(self):
+        # TODO Arrêter la fonction periodique
         for drone in self._drone_clients:
             drone.end_mission()
 
@@ -39,7 +47,8 @@ class SimulationSwarmClient(AbstractSwarmClient):
         return [str(self.config['argos']['port']), str(self.config['argos']['port'] + 1)]
 
     def get_position(self):
-        drone_dict = {"positions" :[]}
+        # TODO Format using Position dataclass
+        drone_dict = {"positions": []}
         for drone in self._drone_clients:
             drone_position = drone.get_position()
             pos_dict = {}
