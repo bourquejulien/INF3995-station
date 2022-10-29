@@ -17,9 +17,9 @@ def exit_handler():
     exit_app()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app, container = create_app()
-    container.wire(modules=['.application', __name__], packages=['.controllers'], from_package="src")
+    container.wire(modules=[".application", __name__], packages=[".controllers", ".services"], from_package="src")
 
     atexit.register(exit_handler)
 

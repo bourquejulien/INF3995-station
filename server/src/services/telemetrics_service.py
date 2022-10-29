@@ -1,3 +1,5 @@
+from dependency_injector.wiring import inject, Provide, Container
+
 from src.classes.events.metric import Metric
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.services.mission_service import MissionService
@@ -6,13 +8,13 @@ from src.services.mission_service import MissionService
 class TelemetricsService:
     _metrics: list[Metric]
 
-    def __init__(self, mission_service: MissionService, swarm_client: AbstractSwarmClient):
-        self._mission_service = mission_service
+    def __init__(self, swarm_client: AbstractSwarmClient):
         swarm_client.add_callback("metric", self._add)
         self._metrics = []
 
-    def _add(self, metric: Metric):
-        current_mission = self._mission_service.current_mission
+    @inject
+    def _add(self, metric: Metric, mission_service: MissionService = Provide[Container.mission_service]):
+        current_mission = mission_service.current_mission
         if current_mission is not None:
             metric.mission_id = current_mission.id
         self._metrics.append(metric)
@@ -34,7 +36,7 @@ class TelemetricsService:
 
     def flush(self):
         # TODO Add data to DB and clean
-        # TODO A appeler quelque part
+        # TODO Il faut ajouter les Metric au DatabaseService
         self._metrics.clear()
 
     @property
