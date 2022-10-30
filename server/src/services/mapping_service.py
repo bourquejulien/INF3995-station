@@ -1,16 +1,14 @@
 import math
 
-from dependency_injector.providers import Configuration, Container
-from dependency_injector.wiring import Provide, inject
+from dependency_injector.providers import Configuration
 
 from src.classes.distance import Distance
 from src.classes.position import Position
 from src.clients.abstract_swarm_client import AbstractSwarmClient
+from src.services.mission_service import MissionService
 
 
-@inject
-def _compute_position(position: Position, distance: Distance, config: Configuration = Provide[Container.config]):
-    trigger = float(config["mapping"]["distance_trigger"])
+def _compute_position(position: Position, distance: Distance, trigger: float):
     points = []
 
     if distance.front < trigger:
@@ -25,11 +23,7 @@ def _compute_position(position: Position, distance: Distance, config: Configurat
     return points
 
 
-@inject
-def _remove_duplicate(points: list[Position], new_points: list[Position],
-                      config: Configuration = Provide[Container.config]):
-    duplicate_distance = float(config["mapping"]["duplicate_distance"])
-
+def _remove_duplicate(points: list[Position], new_points: list[Position], duplicate_distance: float):
     distance = lambda a, b: math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2 + (a.z - b.z) ** 2)
 
     for point in points:
@@ -37,27 +31,30 @@ def _remove_duplicate(points: list[Position], new_points: list[Position],
         for i, new_point in enumerate(new_points):
             if (distance(point, new_point)) < duplicate_distance:
                 duplicates.append(i)
-        for x in duplicates:
+        for x in reversed(duplicates):
             new_points.pop(x)
 
 
 class MappingService:
+    _config: Configuration
     _maps: dict[str, list[Position]]
 
-    def __init__(self, swarm_client: AbstractSwarmClient):
+    def __init__(self, config: Configuration, swarm_client: AbstractSwarmClient, mission_service: MissionService):
         self._maps = {}
+        self._config = config
         swarm_client.add_callback("mapping", self._add)
+        mission_service.add_flush_action(self.flush)
 
     def _add(self, uri, position: Position, distance: Distance):
-        new_points = _compute_position(position, distance)
-
+        new_points = _compute_position(position, distance, float(self._config["mapping"]["trigger_distance"]))
+        print(distance)
         if uri in self._maps:
             points = self._maps.get(uri)
         else:
             points = []
             self._maps[uri] = points
 
-        _remove_duplicate(points, new_points)
+        _remove_duplicate(points, new_points, float(self._config["mapping"]["duplicate_distance"]))
         points.extend(new_points)
 
     def get_map(self, uri):

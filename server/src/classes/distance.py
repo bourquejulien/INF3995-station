@@ -7,5 +7,3 @@ class Distance:
     back: float
     left: float
     right: float
-    up: float
-    down: float

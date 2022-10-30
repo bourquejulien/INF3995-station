@@ -75,19 +75,19 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         self._callbacks["logging"](log)
 
     def _packet_received(self, uri: str, data):
-        data_type, data = int(struct.unpack("<c", data[0:1])[0]), data[1:]
+        data_type, data = int.from_bytes(data[0:1], "little"), data[1:]
 
         match data_type:
             case 0:
-                status = int(struct.unpack("<c", data[0:1])[0])
+                status = int.from_bytes(data[0:1], "little")
                 position = Position(*struct.unpack("<fff", data[1:]))
                 metric = generate_metric(position, STATUS[status], uri)
 
                 self._callbacks["metric"](metric)
 
             case 1:
-                position = Position(*struct.unpack("<fff", data[0:3]))
-                distance = Distance(*struct.unpack("<ffffff", data[3:]))
+                distance = Distance(*struct.unpack("<ffff", data[:16]))
+                position = Position(*struct.unpack("<fff", data[16:]))
                 self._callbacks["mapping"](uri, position, distance)
 
             case _:

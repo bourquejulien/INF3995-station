@@ -30,29 +30,29 @@ class Container(containers.DeclarativeContainer):
         config=config,
     )
 
+    mission_service = providers.Singleton(
+        MissionService,
+        config=config,
+        database_service=database_service,
+    )
+
     logging_service = providers.Singleton(
         LoggingService,
         swarm_client=abstract_swarm_client,
+        mission_service=mission_service
     )
 
     telemetrics_service = providers.Singleton(
         TelemetricsService,
-        swarm_client=abstract_swarm_client
+        swarm_client=abstract_swarm_client,
+        mission_service=mission_service,
     )
 
     mapping_service = providers.Singleton(
         MappingService,
         config=config,
         swarm_client=abstract_swarm_client,
-    )
-
-    mission_service = providers.Singleton(
-        MissionService,
-        config=config,
-        logging_service=logging_service,
-        telemetrics_service=telemetrics_service,
-        database_service=database_service,
-        mapping_service=mapping_service
+        mission_service=mission_service,
     )
 
     command_service = providers.Singleton(

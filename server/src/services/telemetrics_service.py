@@ -1,20 +1,20 @@
-from dependency_injector.wiring import inject, Provide, Container
-
 from src.classes.events.metric import Metric
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.services.mission_service import MissionService
 
 
 class TelemetricsService:
+    _mission_service: MissionService
     _metrics: list[Metric]
 
-    def __init__(self, swarm_client: AbstractSwarmClient):
-        swarm_client.add_callback("metric", self._add)
+    def __init__(self, swarm_client: AbstractSwarmClient, mission_service: MissionService):
+        self._mission_service = mission_service
         self._metrics = []
+        swarm_client.add_callback("metric", self._add)
 
-    @inject
-    def _add(self, metric: Metric, mission_service: MissionService = Provide[Container.mission_service]):
-        current_mission = mission_service.current_mission
+    def _add(self, metric: Metric):
+        print(metric)
+        current_mission = self._mission_service.current_mission
         if current_mission is not None:
             metric.mission_id = current_mission.id
         self._metrics.append(metric)
