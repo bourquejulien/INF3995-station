@@ -37,11 +37,12 @@ class Container(containers.DeclarativeContainer):
 
     telemetrics_service = providers.Singleton(
         TelemetricsService,
-        swarm_client=abstract_swarm_client,
+        swarm_client=abstract_swarm_client
     )
 
     mapping_service = providers.Singleton(
         MappingService,
+        config=config,
         swarm_client=abstract_swarm_client,
     )
 
@@ -50,7 +51,8 @@ class Container(containers.DeclarativeContainer):
         config=config,
         logging_service=logging_service,
         telemetrics_service=telemetrics_service,
-        database_service=database_service
+        database_service=database_service,
+        mapping_service=mapping_service
     )
 
     command_service = providers.Singleton(

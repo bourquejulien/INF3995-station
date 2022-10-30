@@ -34,6 +34,8 @@ class TelemetricsService:
 
         return None
 
+    # TODO Ajouter un call pour aller rechercher dans l'historique de la DB
+
     def flush(self):
         # TODO Add data to DB and clean
         # TODO Il faut ajouter les Metric au DatabaseService
