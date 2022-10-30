@@ -7,7 +7,6 @@ from cflib.crazyflie.swarm import CachedCfFactory, Swarm
 
 from src.classes.events.log import generate_log
 from src.classes.events.metric import generate_metric
-from src.classes.mapping_point import MappingPoint
 from src.classes.position import Position
 from src.classes.distance import Distance
 from src.clients.drone_clients.physical_drone_client import identify, start_mission, end_mission, force_end_mission
@@ -89,7 +88,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
             case 1:
                 position = Position(*struct.unpack("<fff", data[0:3]))
                 distance = Distance(*struct.unpack("<ffffff", data[3:]))
-                self._callbacks["mapping"](uri, MappingPoint(position, distance))
+                self._callbacks["mapping"](uri, position, distance)
 
             case _:
                 raise CustomException("Unpack error: ", f"Unknown data type: {data_type}")
