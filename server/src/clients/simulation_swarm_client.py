@@ -3,6 +3,7 @@ from sched import scheduler
 
 from src.clients.drone_clients.simulation_drone_client import SimulationDroneClient
 from src.clients.abstract_swarm_client import AbstractSwarmClient
+from src.classes.position import Position
 
 
 class SimulationSwarmClient(AbstractSwarmClient):
@@ -25,8 +26,9 @@ class SimulationSwarmClient(AbstractSwarmClient):
             drone.end_mission()
 
     def force_end_mission(self):
-        # TODO
-        pass
+        # TODO vérifier
+        for drone in self._drone_clients:
+            drone.force_end_mission()
 
     def identify(self, uris):
         for drone in self._drone_clients:
@@ -51,11 +53,13 @@ class SimulationSwarmClient(AbstractSwarmClient):
         drone_dict = {"positions": []}
         for drone in self._drone_clients:
             drone_position = drone.get_position()
-            pos_dict = {}
-            pos_dict["uri"] = drone.uri
-            pos_dict["posX"] = drone_position.posX
-            pos_dict["posY"] = drone_position.posY
-            pos_dict["posZ"] = drone_position.posZ
-            drone_dict['positions'].append(pos_dict)
+            # pos_dict = {}
+            # pos_dict["uri"] = drone.uri
+            # pos_dict["posX"] = drone_position.posX
+            # pos_dict["posY"] = drone_position.posY
+            # pos_dict["posZ"] = drone_position.posZ
+            # drone_dict['positions'].append(pos_dict)
+            pos = Position(drone_position.posX, drone_position.posY, drone_position.posZ)
+            drone_dict['positions'].append(pos)
         json_list = json.dumps(drone_dict)
         return json_list

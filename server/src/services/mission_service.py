@@ -47,6 +47,7 @@ class MissionService:
 
     def get_mission_by_id(self, id: str):
         # TODO USE DB
+        self._database_service.get_mission(id)
         ...
 
     def add_flush_action(self, action):

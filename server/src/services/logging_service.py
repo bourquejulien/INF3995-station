@@ -1,15 +1,18 @@
 from src.classes.events.log import Log
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.services.mission_service import MissionService
+from src.services.database_service import DatabaseService
 
 
 class LoggingService:
     _logs: list[Log]
     _mission_service: MissionService
+    _database_service: DatabaseService
 
-    def __init__(self, swarm_client: AbstractSwarmClient, mission_service: MissionService):
+    def __init__(self, swarm_client: AbstractSwarmClient, mission_service: MissionService, database_service: DatabaseService):
         self._logs = []
         self._mission_service = mission_service
+        self._database_service = database_service
         swarm_client.add_callback("logging", self._add)
         mission_service.add_flush_action(self.flush)
 
@@ -29,6 +32,8 @@ class LoggingService:
         return None
 
     # TODO Ajouter un call pour aller rechercher dans l'historique de la DB
+    def get_logs(self, mission_id: str):
+        return self._database_service.get_logs(mission_id)
 
     def flush(self):
         # TODO Add data to DB and clean

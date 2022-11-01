@@ -26,10 +26,11 @@ class PhysicalSwarmClient(AbstractSwarmClient):
     base_uri = 0xE7E7E7E750
     _swarm: Swarm
 
-    def __init__(self):
+    def __init__(self, config):
         super().__init__()
         self._factory = CachedCfFactory(rw_cache="./cache")
         crtp.init_drivers(enable_debug_driver=False)
+        self.config = config
 
     def _enable_callbacks(self, scf: SyncCrazyflie):
         uri = scf.cf.link_uri
@@ -43,9 +44,12 @@ class PhysicalSwarmClient(AbstractSwarmClient):
 
     def _set_params(self, scf: SyncCrazyflie):
         # TODO Pass values as config / update from UI
-        scf.cf.param.set_value("app.updateTime", 2.0)
-        scf.cf.param.set_value("app.defaultZ", 0.5)
-        scf.cf.param.set_value("app.distanceTrigger", 0.3)
+        # scf.cf.param.set_value("app.updateTime", 2.0)
+        # scf.cf.param.set_value("app.defaultZ", 0.5)
+        # scf.cf.param.set_value("app.distanceTrigger", 0.3)
+        scf.cf.param.set_value("app.updateTime", self.config['updateTime'])
+        scf.cf.param.set_value("app.defaultZ", self.config['defaultZ'])
+        scf.cf.param.set_value("app.distanceTrigger", self.config['distanceTrigger'])
 
     def param_deck_flow(self, scf, value_str):
         try:
