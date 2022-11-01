@@ -48,6 +48,7 @@ class Container(containers.DeclarativeContainer):
         TelemetricsService,
         swarm_client=abstract_swarm_client,
         mission_service=mission_service,
+        database_service=database_service
     )
 
     mapping_service = providers.Singleton(
