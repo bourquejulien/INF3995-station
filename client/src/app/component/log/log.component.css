@@ -1,0 +1,8 @@
+.log{
+    color: black;
+}
+
+.log-box{
+    overflow-y: auto;
+    height: 100%;
+}
