@@ -1,7 +1,14 @@
 import types
+from datetime import date
 
 import pytest
 import struct
+
+from freezegun import freeze_time
+
+from src.classes.events.log import generate_log
+from src.classes.events.metric import generate_metric
+from src.classes.position import Position
 from src.clients.physical_swarm_client import PhysicalSwarmClient
 from src.exceptions.hardware_exception import HardwareException
 from src.exceptions.custom_exception import CustomException
@@ -116,17 +123,17 @@ def test_disconnected_callback(app, mocker, swarm_client, print_mock):
 
 
 def test_console_incoming_callback(app, mocker, swarm_client, print_mock):
-    swarm_client._console_incoming('test')
+    swarm_client._console_incoming('1', 'test')
+    print_mock.assert_called_once()
+    # TODO
+    # print_mock.assert_called_once_with(generate_log('', 'test', 'INFO', '1'))
 
-    print_mock.assert_called_once_with('test', end='')
 
-
+@freeze_time("2022-01-01")
 def test_packet_received_callback(app, mocker, swarm_client, print_mock):
-    param = struct.pack('<f', 1.01)
-
-    swarm_client._packet_received(param)
-
-    print_mock.assert_called_once_with('Received packet: 1.010000')
+    param = struct.pack('<ccfff', b'0', b'0', 2, 2.5, 3)
+    swarm_client._packet_received('abc', param)
+    print_mock.assert_called_once_with(generate_metric(Position(2.0, 2.5, 3.0), 'Idle', 'abc'))
 
 
 def test_disconnect(app, mocker, swarm_client):
