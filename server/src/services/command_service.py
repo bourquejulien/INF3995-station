@@ -56,9 +56,3 @@ class CommandService:
             return self.swarm_client.discover()
         except CustomException as e:
             raise e
-
-    def get_position(self):
-        try:
-            return self.swarm_client.get_position()
-        except CustomException as e:
-            raise e
