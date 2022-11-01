@@ -15,7 +15,7 @@ from src.services.telemetrics_service import TelemetricsService
 def main(app, command_service: CommandService = Provide[Container.command_service],
          mapping_service: MappingService = Provide[Container.mapping_service],
          logging_service: LoggingService = Provide[Container.logging_service],
-         mission_service: MissionService = Provide[Container.logging_service], # TODO ca serait pas Container.mission_service?
+         mission_service: MissionService = Provide[Container.mission_service],
          telemetrics_service: TelemetricsService = Provide[Container.telemetrics_service]):
     command_service.connect(command_service.discover())
     app.run(host="0.0.0.0")
