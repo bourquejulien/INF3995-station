@@ -1,8 +1,8 @@
-<div class="container-fluid h-100 d-flex flex-column">
+<div class="container-fluid vh-100">
     <div class="row header">
         <h1 class="title">Système aérien d'exploration</h1>
     </div>
-    <div class="row flex-grow-1">
+    <div class="row body">
         <div class="col-sm-2 commands">
             <div class="row"><h1 class="col command-name">Commandes</h1></div>
             <div class="row"><button class="col button" (click)="identify()">Identifier</button></div>
@@ -14,8 +14,20 @@
                 <app-drone-panel class="col drone-panel" uri={{uri}}></app-drone-panel>
             </div>
         </div>
-       <div class="col mission">
+        <div class="col mission">
             <h1>Information de mission</h1>
+        </div>
+        <div class="col-sm-4 h-100" [hidden]="logsCollapsed">
+            <app-log></app-log>
+        </div>
+        <div class="col-md-auto collapse-button-col">
+            <div class="row">
+                <button
+                    class="button" 
+                    (click)="logsCollapsed = !logsCollapsed">
+                    Logs
+                </button>
+            </div>
         </div>
     </div>
 </div>

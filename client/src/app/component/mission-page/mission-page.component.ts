@@ -9,6 +9,8 @@ import { CommandService } from '@app/services/command/command.service';
 export class MissionPageComponent implements OnInit {
     constructor(public commandService: CommandService) {
     }
+    
+    logsCollapsed: boolean = false;
 
     ngOnInit(): void {
         this.commandService.discover();
@@ -20,14 +22,14 @@ export class MissionPageComponent implements OnInit {
     }
 
     startMission(): void {
-        this.commandService.startMission({});
+        this.commandService.startMission();
     }
 
     endMission(): void {
-        this.commandService.endMission({});
+        this.commandService.endMission();
     }
 
     forceEndMission(): void {
-        this.commandService.forceEndMission({});
+        this.commandService.forceEndMission();
     }
 }
