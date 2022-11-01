@@ -31,10 +31,11 @@ class LoggingService:
 
         return None
 
-    # TODO Ajouter un call pour aller rechercher dans l'historique de la DB
-    def get_logs(self, mission_id: str):
+    # TODO Ajouter un call pour aller rechercher dans l'historique de la DB (done?)
+    def get_history(self, mission_id: str):
         return self._database_service.get_logs(mission_id)
 
     def flush(self):
-        # TODO Add data to DB and clean
+        # TODO Add data (logs) to DB and clean (done?)
+        self._database_service.add_many(self._logs)
         self._logs.clear()
