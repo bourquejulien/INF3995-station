@@ -14,22 +14,25 @@ export class MissionPageComponent implements OnInit {
     constructor(private router: Router, public commandService: CommandService) {
         this.selectedUris = [];
         this.mapContext = null;
-        this.pixelSize = 6;
+        this.resolution = 80;
+        this.pointsToDraw = [];
     }
 
     selectedUris: string[];
     mapContext: CanvasRenderingContext2D | null;
-    pixelSize: number;
+    resolution: number; // NUmber of pixels to include in the map. The higher the number, the finer the image
+    pointsToDraw: {x: number; y: number}[]; // Contains the coordinates to draw to the map. Both x and y go from 0 to 100
 
     ngOnInit(): void {
         this.commandService.discover();
         this.commandService.retrieveMode();
-        window.addEventListener("resize", this.resizeMap.bind(this), false);
+        this.generateCircle(40, 60, 30);
+        window.addEventListener("resize", this.redrawMap.bind(this), false); // Redraws the map when the window is resized
     }
     
     ngAfterViewInit(): void {
-        this.mapContext = this.canvas.nativeElement.getContext("2d") as CanvasRenderingContext2D;
-        this.resizeMap();
+        this.mapContext = this.canvas.nativeElement.getContext("2d") as CanvasRenderingContext2D; // Get a reference to the canvas
+        this.redrawMap();
         
     }
 
@@ -65,33 +68,42 @@ export class MissionPageComponent implements OnInit {
         this.selectedUris.splice(uriPosition, 1);
     }
 
-    drawPixel(X: number, Y: number): void {
-        let Xpixelized = Math.floor(X / this.pixelSize) * this.pixelSize; // Rounds to the previous multiple of the pixel size
-        let Ypixelized = Math.floor(Y / this.pixelSize) * this.pixelSize;
-        this.mapContext!.fillRect(Xpixelized, Ypixelized, this.pixelSize, this.pixelSize);
+    drawPixel(x: number, y: number, size: number): void {
+        let pixelSize = size / this.resolution;
+        let xCanvased = (x / 100.0) * size; // Gives the location of the point in the canvas' coordinates
+        let xPixelized = Math.floor(Math.floor(xCanvased / pixelSize) * pixelSize); // Rounds to the previous multiple of the pixel size
+        let yCanvased = (y / 100.0) * size;
+        let yPixelized = Math.floor(Math.floor(yCanvased / pixelSize) * pixelSize);
+
+        this.mapContext!.fillRect(xPixelized, yPixelized, pixelSize, pixelSize);
     }
 
-    drawCircle(Xcenter: number, Ycenter: number, radius: number): void {
+    generateCircle(Xcenter: number, Ycenter: number, radius: number): void {
+        this.pointsToDraw = [];
+
         let iterations = 200;
         for (let i = 0; i < iterations; i++) {
             let angle = (i / iterations) * 2 * Math.PI;
             let x = Xcenter + radius * Math.cos(angle);
             let y = Ycenter + radius * Math.sin(angle);
-            this.drawPixel(x, y);
+            this.pointsToDraw.push({x, y});
         }
     }
 
-    resizeMap(): void {
-        let canvasSize = Math.min(this.colMission.nativeElement.offsetWidth * 0.9, (this.colMission.nativeElement.offsetHeight - 50) * 0.9);
+    redrawMap(): void {
+        // New size of canvas is chosen according to size of parent div
+        // The -50 for height is to account for the text above and below
+        let canvasSize = Math.floor(Math.min(this.colMission.nativeElement.offsetWidth * 0.9, (this.colMission.nativeElement.offsetHeight - 50) * 0.9));
 
         this.canvas.nativeElement.width = canvasSize;
         this.canvas.nativeElement.height = canvasSize;
 
-        let width = this.canvas.nativeElement.width;
-        let height = this.canvas.nativeElement.height;
         this.mapContext!.fillStyle = "white";
-        this.mapContext!.fillRect(0, 0, width, height);
+        this.mapContext!.fillRect(0, 0, canvasSize, canvasSize);
         this.mapContext!.fillStyle = "black";
-        this.drawCircle(150, 200, 145);
+        
+        for (let point of this.pointsToDraw) {
+            this.drawPixel(point.x, point.y, canvasSize);
+        }
     }
 }
