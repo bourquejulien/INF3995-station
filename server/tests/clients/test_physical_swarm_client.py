@@ -1,10 +1,10 @@
 import types
-from datetime import date
 
 import pytest
 import struct
 
-from src.classes.events.log import generate_log
+from freezegun import freeze_time
+
 from src.classes.events.metric import generate_metric
 from src.classes.position import Position
 from src.clients.physical_swarm_client import PhysicalSwarmClient
@@ -23,13 +23,6 @@ def swarm_client(mocker):
 @pytest.fixture()
 def print_mock(mocker):
     yield mocker.patch('src.clients.physical_swarm_client.print')
-
-
-@pytest.fixture()
-def time_mock(mocker):
-    mock_time = mocker.patch('src.classes.events.log.get_timestamp_ms', return_value=100)
-
-    yield mock_time
 
 
 def test_connect(app, mocker, swarm_client):
@@ -134,10 +127,11 @@ def test_console_incoming_callback(app, mocker, swarm_client, print_mock):
     # print_mock.assert_called_once_with(generate_log('', 'test', 'INFO', '1'))
 
 
+@freeze_time("2022-01-01")
 def test_packet_received_callback(app, mocker, swarm_client, print_mock):
     param = struct.pack('<ccfff', b'0', b'0', 2, 2.5, 3)
     swarm_client._packet_received('abc', param)
-    print_mock.assert_called_once_with(generate_metric(Position(2, 2.5, 3), 'Identify', 'abc'))
+    print_mock.assert_called_once_with(generate_metric(Position(2.0, 2.5, 3.0), 'Idle', 'abc'))
 
 
 def test_disconnect(app, mocker, swarm_client):

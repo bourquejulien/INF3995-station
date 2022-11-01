@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Subscription, Observable, of, interval } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
+import { Observable, of, interval } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '@environment';
+import { Log } from '@app/interface/commands';
 
 @Injectable({
     providedIn: 'root'
 })
 export class DroneInfoService {
-
+    
     private _statuses: Observable<Map<string, string>>;
     private _positions: Observable<Map<string, string>>;
 
@@ -46,6 +47,15 @@ export class DroneInfoService {
 
     private getPositions(): Observable<any> {
         return this.httpClient.get(`${environment.serverURL}/drone-info/position`, {responseType:"json"}).pipe(catchError(this.handleError('getPositions', [])));
+    }
+
+    getLogs(missionId: string, logNum: number): Observable<Log[]> {
+        let queryParams = new HttpParams();
+        queryParams = queryParams.append("id", logNum);
+        queryParams = queryParams.append("mission_id", missionId);
+        return this.httpClient.get<Log[]>(`${environment.serverURL}/drone-info/getLogs`,
+            {params: queryParams},
+            ).pipe(catchError(this.handleError('getLogs', [])));
     }
 
     private handleError<T>(operation = 'operation', result?: T) {

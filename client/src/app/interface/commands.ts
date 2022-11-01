@@ -1,17 +1,10 @@
-export interface SetUp {
-    isSimulation: boolean
-}
-
-export interface Identify{
+export interface Identify {
     uris: string[]
 }
 
-export interface Initialize{
-    uris: string[]
-}
-
-export interface StartMission{
-}
-
-export interface EndMission{
+export interface Log {
+    timestamp_ms: number,
+    mission_id: string,
+    message: string,
+    level: string,
 }
