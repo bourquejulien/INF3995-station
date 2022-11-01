@@ -38,8 +38,10 @@ class Container(containers.DeclarativeContainer):
 
     logging_service = providers.Singleton(
         LoggingService,
+        DatabaseService,
         swarm_client=abstract_swarm_client,
-        mission_service=mission_service
+        mission_service=mission_service,
+        config=config
     )
 
     telemetrics_service = providers.Singleton(

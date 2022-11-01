@@ -6,5 +6,11 @@ database:
   connection_string: ${DB_CONNECTION_STRING:mongodb://local:lacol@localhost:5002/}
   name: ${DB_NAME:server}
 mapping:
-    trigger_distance: 5.0
-    duplicate_distance: 0.5
+  trigger_distance: 5.0
+  duplicate_distance: 0.5
+clients:
+  drones:
+    update_time: 2.0
+    default_z: 0.5
+    trigger_distance: 0.3
+  simulation:
