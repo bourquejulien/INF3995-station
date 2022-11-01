@@ -1,26 +1,35 @@
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.exceptions.custom_exception import CustomException
+from src.services.mission_service import MissionService
 
 
 class CommandService:
-    def __init__(self, swarm_client: AbstractSwarmClient):
+    swarm_client: AbstractSwarmClient
+    mission_service: MissionService
+
+    def __init__(self, swarm_client: AbstractSwarmClient, mission_service: MissionService):
         self.swarm_client = swarm_client
+        self.mission_service = mission_service
 
     def start_mission(self):
         try:
+            self.mission_service.start_mission()
             self.swarm_client.start_mission()
+            return self.mission_service.current_mission.id
         except CustomException as e:
             raise e
 
     def end_mission(self):
         try:
             self.swarm_client.end_mission()
+            self.mission_service.stop_mission()
         except CustomException as e:
             raise e
 
     def force_end_mission(self, request_data):
         try:
             self.swarm_client.force_end_mission()
+            self.mission_service.stop_mission()
         except CustomException as e:
             raise e
 
