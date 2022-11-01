@@ -1,14 +1,18 @@
 from src.classes.events.metric import Metric
 from src.clients.abstract_swarm_client import AbstractSwarmClient
+from src.services.database_service import DatabaseService
 from src.services.mission_service import MissionService
 
 
 class TelemetricsService:
     _mission_service: MissionService
+    _database_service: DatabaseService
     _metrics: list[Metric]
 
-    def __init__(self, swarm_client: AbstractSwarmClient, mission_service: MissionService):
+    def __init__(self, swarm_client: AbstractSwarmClient, mission_service: MissionService,
+                 database_service: DatabaseService):
         self._mission_service = mission_service
+        self._database_service = database_service
         self._metrics = []
         swarm_client.add_callback("metric", self._add)
 
@@ -34,11 +38,11 @@ class TelemetricsService:
 
         return None
 
-    # TODO Ajouter un call pour aller rechercher dans l'historique de la DB
+    def get_history(self, mission_id: str):
+        self._database_service.get_metrics(mission_id)
 
     def flush(self):
-        # TODO Add data to DB and clean
-        # TODO Il faut ajouter les Metric au DatabaseService
+        self._database_service.add_many(self._metrics)
         self._metrics.clear()
 
     @property

@@ -28,10 +28,10 @@ class DatabaseService:
     def add(self, event: Event):
         self.add_many([event])
 
-    def add_many(self, logs: list[Event]):
-        if len(logs) == 0:
+    def add_many(self, data: list[Event]):
+        if len(data) == 0:
             return
-        self._add_many(logs, MAPPING[logs[0].__class__])
+        self._add_many(data, MAPPING[data[0].__class__])
 
     def get_logs(self, mission_id: str):
         cursor = self._collections["log"].find({"mission_id": mission_id}).sort("timestamp_ms", pymongo.DESCENDING)
