@@ -3,18 +3,21 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MissionPageComponent } from '@app/component/mission-page/mission-page.component';
 import { CommandService } from '@app/services/command/command.service';
+import { MissionService } from '@app/services/mission/mission.service';
 
 describe('MissionPageComponent', () => {
     let component: MissionPageComponent;
     let fixture: ComponentFixture<MissionPageComponent>;
     let mockCommandService: CommandService;
+    let mockMissionService: MissionService;
 
     beforeEach(async () => {
         mockCommandService = new CommandService({} as HttpClient) 
         await TestBed.configureTestingModule({
             declarations: [ MissionPageComponent ],
             providers: [
-                {provide: CommandService, useValue: mockCommandService}
+                {provide: CommandService, useValue: mockCommandService},
+                {provide: MissionService, useValue: mockMissionService}
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA]
         })

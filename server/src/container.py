@@ -24,6 +24,7 @@ class Container(containers.DeclarativeContainer):
     command_service = providers.Singleton(
         CommandService,
         swarm_client=abstract_swarm_client,
+        config=config,
     )
 
     database_service = providers.Singleton(

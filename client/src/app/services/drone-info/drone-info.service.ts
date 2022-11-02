@@ -38,7 +38,7 @@ export class DroneInfoService {
                     },
                 });
             });
-        });
+        }); 
     }
 
     private getStatuses(): Observable<any> {

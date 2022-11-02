@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Mission } from '@app/interface/commands';
 import { CommandService } from '@app/services/command/command.service';
+import { MissionService } from '@app/services/mission/mission.service';
 
 @Component({
     selector: 'app-mission-page',
@@ -7,11 +9,12 @@ import { CommandService } from '@app/services/command/command.service';
     styleUrls: ['./mission-page.component.css'],
 })
 export class MissionPageComponent implements OnInit {
-    constructor(public commandService: CommandService) {
+    logsCollapsed: boolean = false;
+    currentMissionId: string = "";
+
+    constructor(public commandService: CommandService, public missionService: MissionService) {
     }
     
-    logsCollapsed: boolean = false;
-
     ngOnInit(): void {
         this.commandService.discover();
         this.commandService.retrieveMode()
@@ -22,14 +25,22 @@ export class MissionPageComponent implements OnInit {
     }
 
     startMission(): void {
-        this.commandService.startMission();
+        const self = this;
+        this.missionService.startMission().subscribe({
+            next(response: Mission): void {
+                self.currentMissionId = response._id
+            },
+            error(): void {
+                console.log("error");
+            },
+        });
     }
 
     endMission(): void {
-        this.commandService.endMission();
+        this.missionService.endMission();
     }
 
     forceEndMission(): void {
-        this.commandService.forceEndMission();
+        this.missionService.forceEndMission();
     }
 }
