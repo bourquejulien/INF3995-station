@@ -68,11 +68,11 @@ export class MissionPageComponent implements OnInit {
         this.selectedUris.splice(uriPosition, 1);
     }
 
-    drawPixel(x: number, y: number, size: number): void {
-        let pixelSize = size / this.resolution;
-        let xCanvased = (x / 100.0) * size; // Gives the location of the point in the canvas' coordinates
+    drawPixel(x: number, y: number, sizeOfCanvas: number): void {
+        let pixelSize = sizeOfCanvas / this.resolution;
+        let xCanvased = (x / 100.0) * sizeOfCanvas; // Gives the location of the point in the canvas' coordinates
         let xPixelized = Math.floor(Math.floor(xCanvased / pixelSize) * pixelSize); // Rounds to the previous multiple of the pixel size
-        let yCanvased = (y / 100.0) * size;
+        let yCanvased = (y / 100.0) * sizeOfCanvas;
         let yPixelized = Math.floor(Math.floor(yCanvased / pixelSize) * pixelSize);
 
         this.mapContext!.fillRect(xPixelized, yPixelized, pixelSize, pixelSize);
@@ -101,7 +101,7 @@ export class MissionPageComponent implements OnInit {
         this.mapContext!.fillStyle = "white";
         this.mapContext!.fillRect(0, 0, canvasSize, canvasSize);
         this.mapContext!.fillStyle = "black";
-        
+
         for (let point of this.pointsToDraw) {
             this.drawPixel(point.x, point.y, canvasSize);
         }
