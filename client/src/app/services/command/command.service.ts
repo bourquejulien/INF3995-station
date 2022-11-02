@@ -7,41 +7,17 @@ import { Identify } from '@app/interface/commands';
     providedIn: 'root',
 })
 export class CommandService {
+    uris: string[];
+    isSimulation: boolean;
+
     constructor(private httpClient: HttpClient) {
         this.uris = [];
         this.isSimulation = false;
     }
 
-    uris: string[];
-    isSimulation: boolean;
-
     async identify(command: Identify): Promise<void> {
         await this.httpClient
             .post(`${environment.serverURL}/action/identify`, command, {
-                responseType: 'text',
-            })
-            .toPromise();
-    }
-
-    async startMission(): Promise<void> {
-        await this.httpClient
-            .post(`${environment.serverURL}/mission/start`, {}, {
-                responseType: 'text',
-            })
-            .toPromise();
-    }
-
-    async endMission(): Promise<void> {
-        await this.httpClient
-            .post(`${environment.serverURL}/mission/end`, {}, {
-                responseType: 'text',
-            })
-            .toPromise();
-    }
-
-    async forceEndMission(): Promise<void> {
-        await this.httpClient
-            .post(`${environment.serverURL}/mission/force_end`, {}, {
                 responseType: 'text',
             })
             .toPromise();

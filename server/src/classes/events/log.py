@@ -9,7 +9,7 @@ def generate_log(mission_id: str, message: str, level: str, origin: str):
 
 @dataclass
 class Log(Event):
-    timestamp_ms: int
+    timestamp_ms: str
     mission_id: str
     message: str
     level: str

@@ -8,3 +8,10 @@ export interface Log {
     message: string,
     level: string,
 }
+
+export interface Mission {
+    _id: string,
+    is_simulation: boolean,
+    start_time_ms: number,
+    end_time_ms: number,
+} 
