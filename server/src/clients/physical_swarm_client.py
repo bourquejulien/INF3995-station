@@ -19,7 +19,7 @@ from src.exceptions.hardware_exception import HardwareException
 
 logging.basicConfig(level=logging.ERROR)
 
-STATUS = ["Identify", "Takeoff", "Landing", "EmergencyStop"]
+STATUS = ["Idle", "Identify", "Takeoff", "Exploration", "Landing", "EmergencyStop"]
 
 
 class PhysicalSwarmClient(AbstractSwarmClient):

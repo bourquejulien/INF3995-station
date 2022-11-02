@@ -8,9 +8,9 @@ from dependency_injector.providers import Configuration
 
 @pytest.fixture()
 def command_service():
-    config_mock = mock.Mock(Configuration)
     client_mock = mock.Mock(AbstractSwarmClient)
-    command_service = CommandService(client_mock, config_mock)
+    mission_service_mock = mock.Mock(AbstractSwarmClient)
+    command_service = CommandService(client_mock, mission_service_mock)
     yield command_service
 
 

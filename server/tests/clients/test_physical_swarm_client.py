@@ -131,7 +131,7 @@ def test_console_incoming_callback(app, mocker, swarm_client, print_mock):
 
 @freeze_time("2022-01-01")
 def test_packet_received_callback(app, mocker, swarm_client, print_mock):
-    param = struct.pack('<ccfff', b'0', b'0', 2, 2.5, 3)
+    param = struct.pack('<ccfff', b'\x00', b'\x00', 2, 2.5, 3)
     generated_metrics = []
     swarm_client._callbacks = {"metric": lambda x: generated_metrics.append(x)}
     swarm_client._packet_received('abc', param)
