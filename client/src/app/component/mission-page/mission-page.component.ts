@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Router } from '@angular/router';
 import { Mission } from '@app/interface/commands';
 import { CommandService } from '@app/services/command/command.service';
 import { MissionService } from '@app/services/mission/mission.service';
@@ -17,21 +16,29 @@ export class MissionPageComponent implements OnInit {
         this.selectedUris = [];
         this.mapContext = null;
         this.resolution = 80;
-        this.pointsToDraw = [];
+        this.wallPositions = [];
+        this.dronePosition = {x: this.randomInInterval(20, 80), y: this.randomInInterval(20, 80)};
+        this.logsCollapsed = false;
+        this.currentMissionId = "";
     }
 
     selectedUris: string[];
     mapContext: CanvasRenderingContext2D | null;
     resolution: number; // NUmber of pixels to include in the map. The higher the number, the finer the image
-    pointsToDraw: {x: number; y: number}[]; // Contains the coordinates to draw to the map. Both x and y go from 0 to 100
-    logsCollapsed: boolean = false;
-    currentMissionId: string = "";
+    wallPositions: {x: number; y: number}[]; // Contains the coordinates of the walls to draw to the map. Both x and y go from 0 to 100
+    dronePosition: {x: number; y: number}; // The current position of the drone
+    logsCollapsed: boolean;
+    currentMissionId: string;
 
     ngOnInit(): void {
         this.commandService.discover();
         this.commandService.retrieveMode();
         this.generateCircle(40, 60, 30);
         window.addEventListener("resize", this.redrawMap.bind(this), false); // Redraws the map when the window is resized
+        window.setInterval(() => {
+            this.dronePosition = {x: this.randomInInterval(20.0, 80.0), y: this.randomInInterval(20.0, 80.0)};
+            this.redrawMap();
+        }, 1000);
     }
     
     ngAfterViewInit(): void {
@@ -75,14 +82,14 @@ export class MissionPageComponent implements OnInit {
     }
 
     generateCircle(Xcenter: number, Ycenter: number, radius: number): void {
-        this.pointsToDraw = [];
+        this.wallPositions = [];
 
         let iterations = 200;
         for (let i = 0; i < iterations; i++) {
             let angle = (i / iterations) * 2 * Math.PI;
             let x = Xcenter + radius * Math.cos(angle);
             let y = Ycenter + radius * Math.sin(angle);
-            this.pointsToDraw.push({x, y});
+            this.wallPositions.push({x, y});
         }
     }
 
@@ -96,10 +103,18 @@ export class MissionPageComponent implements OnInit {
 
         this.mapContext!.fillStyle = "white";
         this.mapContext!.fillRect(0, 0, canvasSize, canvasSize);
-        this.mapContext!.fillStyle = "black";
 
-        for (let point of this.pointsToDraw) {
+        this.mapContext!.fillStyle = "black";
+        for (let point of this.wallPositions) {
             this.drawPixel(point.x, point.y, canvasSize);
         }
+
+        this.mapContext!.fillStyle = "red";
+        this.drawPixel(this.dronePosition.x, this.dronePosition.y, canvasSize);
     }
+
+    private randomInInterval(min: number, max: number): number{
+        return Math.random() * (max - min) + min;
+    }
+      
 }
