@@ -8,12 +8,14 @@ class TelemetricsService:
     _mission_service: MissionService
     _database_service: DatabaseService
     _metrics: list[Metric]
+    _latest: dict[str, Metric]
 
     def __init__(self, swarm_client: AbstractSwarmClient, mission_service: MissionService,
                  database_service: DatabaseService):
         self._mission_service = mission_service
         self._database_service = database_service
         self._metrics = []
+        self._latest = {}
         swarm_client.add_callback("metric", self._add)
         mission_service.add_flush_action(self.flush)
 
@@ -21,6 +23,7 @@ class TelemetricsService:
         current_mission = self._mission_service.current_mission
         if current_mission is not None:
             metric.mission_id = current_mission.id
+        self._latest[metric.origin] = metric
         self._metrics.append(metric)
 
     def get_by_id(self, id: int):
@@ -45,8 +48,8 @@ class TelemetricsService:
         if self._mission_service.current_mission is not None:
             self._database_service.add_many(self._metrics)
         self._metrics.clear()
+        self._latest.clear()
 
     @property
     def latest(self):
-        self._metrics.sort()
-        return self._metrics[-1]
+        return self._latest

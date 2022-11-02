@@ -10,6 +10,7 @@ blueprint = Blueprint('history', __name__)
 
 
 @blueprint.route('/mission/range', methods=['get'])
+@inject
 def get_mission_range(mission_service: MissionService = Provide[Container.mission_service]):
     try:
         mission_id = request.args.get('id', type=str)
@@ -20,6 +21,7 @@ def get_mission_range(mission_service: MissionService = Provide[Container.missio
 
 
 @blueprint.route('/mission/id', methods=['get'])
+@inject
 def get_mission(mission_service: MissionService = Provide[Container.mission_service]):
     try:
         start_timestamp_ms = request.args.get('start', type=int)
@@ -31,6 +33,7 @@ def get_mission(mission_service: MissionService = Provide[Container.mission_serv
 
 
 @blueprint.route('/logs', methods=['get'])
+@inject
 def get_logs(logging_service: LoggingService = Provide[Container.logging_service]):
     try:
         mission_id = request.args.get('id', type=str)
@@ -41,6 +44,7 @@ def get_logs(logging_service: LoggingService = Provide[Container.logging_service
 
 
 @blueprint.route('/metrics', methods=['get'])
+@inject
 def get_metrics(telemetrics_service: TelemetricsService = Provide[Container.telemetrics_service]):
     try:
         mission_id = request.args.get('id', type=str)

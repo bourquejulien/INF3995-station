@@ -10,14 +10,17 @@ blueprint = Blueprint('drone-info', __name__)
 
 
 @blueprint.route('/status', methods=['get'])
-def status():
-    return {"uri1": "stubstatus1", "uri2": "stubstatus2"}, 200
+@inject
+def status(telemetrics_service: TelemetricsService = Provide[Container.telemetrics_service]):
+    return telemetrics_service.latest, 200
 
 
-@blueprint.route('/logs', methods=['get'])
+@blueprint.route('/getLogs', methods=['get'])
+@inject
 def get_logs_since(logging_service: LoggingService = Provide[Container.logging_service]):
     try:
-        since_timestamp_ms = request.args.get('since', type=int)
+        # TODO Change ID to since_timestamp
+        since_timestamp_ms = request.args.get('id', type=int)
         logs_list = logging_service.get_since(since_timestamp_ms)
         return jsonify(logs_list)
     except CustomException as e:
@@ -25,6 +28,7 @@ def get_logs_since(logging_service: LoggingService = Provide[Container.logging_s
 
 
 @blueprint.route('/metrics', methods=['get'])
+@inject
 def get_metrics_since(telemetrics_service: TelemetricsService = Provide[Container.telemetrics_service]):
     try:
         since_timestamp_ms = request.args.get('since', type=int)
