@@ -20,7 +20,7 @@ def get_mission_range(mission_service: MissionService = Provide[Container.missio
 
 
 @blueprint.route('/mission/id', methods=['get'])
-def get_mission_range(mission_service: MissionService = Provide[Container.mission_service]):
+def get_mission(mission_service: MissionService = Provide[Container.mission_service]):
     try:
         start_timestamp_ms = request.args.get('start', type=int)
         end_timestamp_ms = request.args.get('end', type=int)

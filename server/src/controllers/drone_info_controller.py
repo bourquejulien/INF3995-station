@@ -25,7 +25,7 @@ def get_logs_since(logging_service: LoggingService = Provide[Container.logging_s
 
 
 @blueprint.route('/metrics', methods=['get'])
-def get_logs_since(telemetrics_service: TelemetricsService = Provide[Container.telemetrics_service]):
+def get_metrics_since(telemetrics_service: TelemetricsService = Provide[Container.telemetrics_service]):
     try:
         since_timestamp_ms = request.args.get('since', type=int)
         metrics_list = telemetrics_service.get_since(since_timestamp_ms)

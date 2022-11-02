@@ -15,9 +15,9 @@ class TelemetricsService:
         self._database_service = database_service
         self._metrics = []
         swarm_client.add_callback("metric", self._add)
+        mission_service.add_flush_action(self.flush)
 
     def _add(self, metric: Metric):
-        print(metric)
         current_mission = self._mission_service.current_mission
         if current_mission is not None:
             metric.mission_id = current_mission.id
@@ -42,7 +42,8 @@ class TelemetricsService:
         self._database_service.get_metrics(mission_id)
 
     def flush(self):
-        self._database_service.add_many(self._metrics)
+        if self._mission_service.current_mission is not None:
+            self._database_service.add_many(self._metrics)
         self._metrics.clear()
 
     @property

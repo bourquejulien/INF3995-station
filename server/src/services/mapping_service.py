@@ -47,7 +47,6 @@ class MappingService:
 
     def _add(self, uri, position: Position, distance: Distance):
         new_points = _compute_position(position, distance, float(self._config["mapping"]["trigger_distance"]))
-        print(distance)
         if uri in self._maps:
             points = self._maps.get(uri)
         else:

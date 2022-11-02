@@ -22,14 +22,14 @@ class CommandService:
     def end_mission(self):
         try:
             self.swarm_client.end_mission()
-            self.mission_service.stop_mission()
+            self.mission_service.end_mission()
         except CustomException as e:
             raise e
 
-    def force_end_mission(self, request_data):
+    def force_end_mission(self):
         try:
             self.swarm_client.force_end_mission()
-            self.mission_service.stop_mission()
+            self.mission_service.end_mission()
         except CustomException as e:
             raise e
 

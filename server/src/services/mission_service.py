@@ -18,24 +18,32 @@ class MissionService:
         self._config = config
         self._database_service = database_service
 
-
     def start_mission(self):
         if self._mission is not None:
             raise CustomException("MissionAlreadyExist", "Mission already started")
 
+        self.flush()
         self._mission = generate_mission(self._config.get("is_simulation"), 0, get_timestamp_ms())
 
     def end_mission(self):
-        mission = self._mission
-        self._mission = None
+        mission = self.flush()
+
+        if mission is None:
+            return None
 
         mission.end_time_ms = get_timestamp_ms()
         mission.total_distance = 0  # TODO Ajouter a partir de telemetrics service
 
         self._database_service.add(mission)
 
+        return mission
+
+    def flush(self):
         for flush in self._flush_callbacks:
             flush()
+
+        mission = self._mission
+        self._mission = None
 
         return mission
 

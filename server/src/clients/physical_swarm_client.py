@@ -24,10 +24,11 @@ STATUS = ["Identify", "Takeoff", "Landing", "EmergencyStop"]
 
 class PhysicalSwarmClient(AbstractSwarmClient):
     base_uri = 0xE7E7E7E750
-    _swarm: Swarm
+    _swarm: Swarm | None
 
     def __init__(self, config):
         super().__init__()
+        self._swarm = None
         self._factory = CachedCfFactory(rw_cache="./cache")
         crtp.init_drivers(enable_debug_driver=False)
         self.config = config
@@ -100,16 +101,20 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         self._swarm.parallel_safe(self._set_params)
 
     def disconnect(self):
-        self._swarm.close_links()
+        if self._swarm is not None:
+            self._swarm.close_links()
 
     def start_mission(self):
-        self._swarm.parallel_safe(start_mission)
+        ...
+        # self._swarm.parallel_safe(start_mission)
 
     def end_mission(self):
-        self._swarm.parallel_safe(end_mission)
+        ...
+        # self._swarm.parallel_safe(end_mission)
 
     def force_end_mission(self):
-        self._swarm.parallel_safe(force_end_mission)
+        ...
+        # self._swarm.parallel_safe(force_end_mission)
 
     def identify(self, uris):
         self._swarm.parallel_safe(identify, {uri: [uri in uris] for uri in self._swarm._cfs})

@@ -28,7 +28,7 @@ class DatabaseService:
     def add(self, event: Event):
         self.add_many([event])
 
-    def add_many(self, data: list[Event]):
+    def add_many(self, data):
         if len(data) == 0:
             return
         self._add_many(data, MAPPING[data[0].__class__])
@@ -58,7 +58,7 @@ class DatabaseService:
             yield Mission(**DatabaseService._convert_from(mission))
 
     def _add_many(self, elems: list, collection_name: str):
-        dict_elems = [elem.to_dict() for elem in elems]
+        dict_elems = [elem.to_json() for elem in elems]
         self._collections[collection_name].insert_many(dict_elems)
 
     @staticmethod

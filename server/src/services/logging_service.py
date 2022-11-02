@@ -35,5 +35,6 @@ class LoggingService:
         return self._database_service.get_logs(mission_id)
 
     def flush(self):
-        self._database_service.add_many(self._logs)
+        if self._mission_service.current_mission is not None:
+            self._database_service.add_many(self._logs)
         self._logs.clear()

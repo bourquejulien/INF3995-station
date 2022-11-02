@@ -1,5 +1,6 @@
 import json
-from sched import scheduler
+import time
+from threading import Thread
 
 from src.clients.drone_clients.simulation_drone_client import SimulationDroneClient
 from src.clients.abstract_swarm_client import AbstractSwarmClient
@@ -7,20 +8,21 @@ from src.classes.position import Position
 
 
 class SimulationSwarmClient(AbstractSwarmClient):
+    daemon: Thread | None
+    _is_active: bool
+
     def __init__(self, config):
         super().__init__()
         self._drone_clients = []
         self.config = config
+        self.daemon = None
+        self._is_active = False
 
     def start_mission(self):
-        # TODO Ajouter un fonction periodique pour aller checher les position
-        # scheduler.enter(interval, 1, periodic, (scheduler, interval, action, actionargs))
-        # action(*actionargs)
         for drone in self._drone_clients:
             drone.start_mission()
 
     def end_mission(self):
-        # TODO Arrêter la fonction periodique
         for drone in self._drone_clients:
             drone.end_mission()
 
@@ -39,14 +41,21 @@ class SimulationSwarmClient(AbstractSwarmClient):
             client.connect()
             self._drone_clients.append(client)
 
+        self._is_active = True
+        self.daemon = Thread(target=self._pull_task, args=[], daemon=True, name='simulation_data_pull')
+        self.daemon.start()
+
     def disconnect(self):
+        self.daemon.join(500)
+        self.daemon = None
+
         for drone in self._drone_clients:
             drone.disconnect()
 
     def discover(self):
         return [str(self.config['argos']['port']), str(self.config['argos']['port'] + 1)]
 
-    def get_position(self):
+    def _get_position(self):
         # TODO Format using Position dataclass (Audrey change ça)
         drone_dict = {"positions": []}
         for drone in self._drone_clients:
@@ -61,3 +70,9 @@ class SimulationSwarmClient(AbstractSwarmClient):
             drone_dict['positions'].append(pos)
         json_list = json.dumps(drone_dict)
         return json_list
+
+    def _pull_task(self):
+        while self._is_active:
+            self._get_position()
+            time.sleep(0.4)
+            # TODO Add other calls
