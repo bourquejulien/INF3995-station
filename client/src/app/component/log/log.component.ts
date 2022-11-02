@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Log } from '@app/interface/commands';
 import { DroneInfoService } from '@app/services/drone-info/drone-info.service';
 import { interval } from 'rxjs';
@@ -9,7 +9,7 @@ import { interval } from 'rxjs';
     styleUrls: ['./log.component.css']
 })
 export class LogComponent implements OnInit {
-    missionId: string = "";
+    @Input() missionId: string = ""; 
     logs: Log[] = [];
     count: number[] = [];
 
@@ -17,8 +17,6 @@ export class LogComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        // TODO: get latest mission from database
-        this.missionId = "stubMissionId";
         const self = this;
         interval(1000).subscribe(() => {
             this.droneInfoService.getLogs(this.missionId, this.logs.length).subscribe({

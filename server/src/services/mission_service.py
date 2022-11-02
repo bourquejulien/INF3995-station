@@ -24,6 +24,7 @@ class MissionService:
 
         self.flush()
         self._mission = generate_mission(self._config.get("is_simulation"), 0, get_timestamp_ms())
+        return self._mission
 
     def end_mission(self):
         mission = self.flush()

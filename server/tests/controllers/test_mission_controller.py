@@ -1,10 +1,11 @@
 from src.exceptions.custom_exception import CustomException
+from src.classes.events.mission import generate_mission
 from flask import url_for
 
 
 def test_start_mission(client, app, mocker):
     start_mission_mock = mocker.patch('src.services.command_service')
-    start_mission_mock.start_mission.return_value = ""
+    start_mission_mock.start_mission.return_value = generate_mission(False)
 
     with app.container.command_service.override(start_mission_mock):
         response = client.post(url_for("mission.start"))
@@ -20,7 +21,7 @@ def test_start_mission_error(client, app, mocker):
     with app.container.command_service.override(start_mission_mock):
         response = client.post(url_for("mission.start"))
 
-    assert response.text == "test: test"
+    assert response.text == '"error": "test: test"'
     assert response.status_code == 500
 
 

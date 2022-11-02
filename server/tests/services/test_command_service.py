@@ -3,18 +3,20 @@ import pytest
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.services.command_service import CommandService
 from src.exceptions.custom_exception import CustomException
+from dependency_injector.providers import Configuration
 
 
 @pytest.fixture()
 def command_service():
+    config_mock = mock.Mock(Configuration)
     client_mock = mock.Mock(AbstractSwarmClient)
-    command_service = CommandService(client_mock)
+    command_service = CommandService(client_mock, config_mock)
     yield command_service
 
 
 def test_start_mission(app, command_service):
     command_service.swarm_client.start_mission.return_value = ""
-
+    command_service._config = {"is_simulation": True}
     command_service.start_mission()
 
     command_service.swarm_client.start_mission.assert_called_once()

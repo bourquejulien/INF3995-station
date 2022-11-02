@@ -13,11 +13,11 @@ class CommandService:
 
     def start_mission(self):
         try:
-            self.mission_service.start_mission()
+            mission = self.mission_service.start_mission()
             self.swarm_client.start_mission()
-            return self.mission_service.current_mission.id
         except CustomException as e:
             raise e
+        return mission
 
     def end_mission(self):
         try:
