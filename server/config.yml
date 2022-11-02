@@ -13,4 +13,3 @@ clients:
     update_time: 2.0
     default_z: 0.5
     trigger_distance: 0.3
-  simulation:
