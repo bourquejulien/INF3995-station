@@ -46,8 +46,14 @@ class DatabaseService:
     def get_mission(self, id: str):
         return DatabaseService._convert_from(self._collections["mission"].find_one(id))
 
-    def get_missions(self):
-        cursor = self._collections["mission"].find({}).sort("end_time_ms", pymongo.DESCENDING)
+    def get_missions(self, start_timestamp: int | None, end_timestamp: int | None):
+        queries = []
+        if start_timestamp is not None:
+            queries.append({"start_time_ms": {"$gt": start_timestamp}})
+        if end_timestamp is not None:
+            queries.append({"end_time_ms": {"$lt": end_timestamp}})
+        # if len(queries) > 0:
+        cursor = self._collections["mission"].find({"$and":queries}).sort("end_time_ms", pymongo.DESCENDING)
         for mission in cursor:
             yield Mission(**DatabaseService._convert_from(mission))
 
