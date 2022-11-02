@@ -43,7 +43,6 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         scf.cf.param.add_update_callback(group="deck", name="bcFlow2", cb=self.param_deck_flow)
 
     def _set_params(self, scf: SyncCrazyflie):
-        # TODO Pass values as config / update from UI (done?)
         scf.cf.param.set_value("app.updateTime", self.config['clients']['drones']['update_time'])
         scf.cf.param.set_value("app.defaultZ", self.config['clients']['drones']['default_z'])
         scf.cf.param.set_value("app.distanceTrigger", self.config['clients']['drones']['trigger_distance'])

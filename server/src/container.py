@@ -23,6 +23,7 @@ class Container(containers.DeclarativeContainer):
     else:
         abstract_swarm_client = providers.Singleton(
             PhysicalSwarmClient,
+            config=config,
         )
 
     database_service = providers.Singleton(

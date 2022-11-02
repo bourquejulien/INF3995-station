@@ -19,14 +19,12 @@ class SimulationSwarmClient(AbstractSwarmClient):
         for drone in self._drone_clients:
             drone.start_mission()
 
-
     def end_mission(self):
         # TODO Arrêter la fonction periodique
         for drone in self._drone_clients:
             drone.end_mission()
 
     def force_end_mission(self):
-        # TODO vérifier
         for drone in self._drone_clients:
             drone.force_end_mission()
 
@@ -49,7 +47,7 @@ class SimulationSwarmClient(AbstractSwarmClient):
         return [str(self.config['argos']['port']), str(self.config['argos']['port'] + 1)]
 
     def get_position(self):
-        # TODO Format using Position dataclass
+        # TODO Format using Position dataclass (Audrey change ça)
         drone_dict = {"positions": []}
         for drone in self._drone_clients:
             drone_position = drone.get_position()
