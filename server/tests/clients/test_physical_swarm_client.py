@@ -17,7 +17,7 @@ from src.clients.drone_clients.physical_drone_client import identify, start_miss
 @pytest.fixture()
 def swarm_client(mocker):
     mocker.patch('src.clients.physical_swarm_client.crtp')
-    yield PhysicalSwarmClient()
+    yield PhysicalSwarmClient({})
 
 
 @pytest.fixture()
