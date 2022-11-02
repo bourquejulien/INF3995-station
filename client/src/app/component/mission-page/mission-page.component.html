@@ -1,29 +1,37 @@
-<div class="container-fluid h-100 d-flex flex-column">
+<div class="container-fluid vh-100">
     <div class="row header">
         <h1 class="title">Système aérien d'exploration</h1>
     </div>
-    <div class="row flex-grow-1">
+    <div class="row body">
         <div class="col-sm-2 commands">
             <div class="row"><h1 class="col command-name">Commandes</h1></div>
-            <div *ngIf="!commandService.isSimulation" class="row"><button class="col button" (click)="identify()">Identifier</button></div>
+            <div class="row"><button class="col button" (click)="identify()">Identifier</button></div>
             <div class="row"><button class="col button" (click)="startMission()">Lancer la mission</button></div>
             <div class="row"><button class="col button" (click)="endMission()">Terminer la mission</button></div>
             <div class="row"><button class="col button" (click)="forceEndMission()">Forcer la fin de mission</button></div>
-            <div *ngIf="!commandService.isSimulation">
-                <div class="row"><h1 class="col command-name">Interfaces</h1></div>
-                <mat-list class="row">
-                    <mat-list-item *ngFor="let uri of commandService.uris">
-                        <mat-checkbox mat-list-icon [checked]="isUriSelected(uri)" (change)="toggleUri(uri)">{{uri}}</mat-checkbox>
-                    </mat-list-item>
-                </mat-list>
+            <div class="row"><h1 class="col command-name">Interfaces</h1></div>
+            <div class="row" *ngFor="let uri of commandService.uris">
+                <app-drone-panel class="col drone-panel" uri={{uri}}></app-drone-panel>
             </div>
         </div>
-       <div #colMission class="col mission">
+        <div #colMission class="col mission">
             <h1>Information de mission</h1>
             <br>
             <canvas #canvas id="map" style="border:1px solid #000000;">
             </canvas> 
             <p>Carte générée par les drones</p>
+        </div>
+        <div class="col-sm-4 h-100" [hidden]="logsCollapsed">
+            <app-log missionId={{currentMissionId}}></app-log>
+        </div>
+        <div class="col-md-auto collapse-button-col">
+            <div class="row">
+                <button
+                    class="button" 
+                    (click)="logsCollapsed = !logsCollapsed">
+                    Logs
+                </button>
+            </div>
         </div>
     </div>
 </div>

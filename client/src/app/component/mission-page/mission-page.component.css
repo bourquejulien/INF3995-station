@@ -1,7 +1,10 @@
 .header {
     background-color: var(--primary);
-    border-bottom: 1px var(--border-color) solid;
-    padding: 40px;
+    height: 10vh;
+}
+
+.body{
+    height:90vh;
 }
 
 .title {
@@ -10,13 +13,11 @@
 
 .commands{
     background-color: var(--secondary);
-    border-right: 1px var(--border-color) solid;
 }
 
 .command-name{
     background-color: var(--accent);
-    border-bottom: 1px var(--border-color) solid;
-    border-top: 1px var(--border-color) solid;
+    border-bottom: 1px var(--primary) solid;
     padding: 10px;
     font-size: 30px;
     text-align: center;
@@ -32,6 +33,10 @@
     text-align: center;
 }
 
+.collapse-button-col{
+    background-color: var(--secondary);  
+}
+
 .button:hover{
     background-color: var(--secondary);  
 }
@@ -39,3 +44,8 @@
 .mission{
     background-color: var(--background);
 }
+
+.drone-panel{
+    padding: 0px;
+}
+

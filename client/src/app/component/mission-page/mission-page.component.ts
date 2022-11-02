@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { Mission } from '@app/interface/commands';
 import { CommandService } from '@app/services/command/command.service';
+import { MissionService } from '@app/services/mission/mission.service';
 
 @Component({
     selector: 'app-mission-page',
@@ -11,7 +13,7 @@ export class MissionPageComponent implements OnInit {
     @ViewChild('canvas', { static: false }) canvas!: ElementRef;
     @ViewChild('colMission', { static: false }) colMission!: ElementRef;
 
-    constructor(private router: Router, public commandService: CommandService) {
+    constructor(public commandService: CommandService, public missionService: MissionService) {
         this.selectedUris = [];
         this.mapContext = null;
         this.resolution = 80;
@@ -22,6 +24,8 @@ export class MissionPageComponent implements OnInit {
     mapContext: CanvasRenderingContext2D | null;
     resolution: number; // NUmber of pixels to include in the map. The higher the number, the finer the image
     pointsToDraw: {x: number; y: number}[]; // Contains the coordinates to draw to the map. Both x and y go from 0 to 100
+    logsCollapsed: boolean = false;
+    currentMissionId: string = "";
 
     ngOnInit(): void {
         this.commandService.discover();
@@ -37,35 +41,27 @@ export class MissionPageComponent implements OnInit {
     }
 
     identify(): void {
-        if (this.selectedUris.length == 0) {
-            return;
-        }
-        this.commandService.identify({ uris: this.selectedUris });
+        this.commandService.identify({ uris: this.commandService.uris});
     }
 
     startMission(): void {
-        this.commandService.startMission({});
+        const self = this;
+        this.missionService.startMission().subscribe({
+            next(response: Mission): void {
+                self.currentMissionId = response._id
+            },
+            error(): void {
+                console.log("error");
+            },
+        });
     }
 
     endMission(): void {
-        this.commandService.endMission({});
+        this.missionService.endMission();
     }
 
     forceEndMission(): void {
-        this.commandService.forceEndMission({});
-    }
-
-    isUriSelected(uri: string): boolean {
-        return this.selectedUris.findIndex((elem) => uri === elem) != -1;
-    }
-
-    toggleUri(uri: string): void {
-        let uriPosition = this.selectedUris.findIndex((elem) => uri === elem);
-        if (uriPosition == -1) {
-            this.selectedUris.push(uri);
-            return;
-        }
-        this.selectedUris.splice(uriPosition, 1);
+        this.missionService.forceEndMission();
     }
 
     drawPixel(x: number, y: number, sizeOfCanvas: number): void {

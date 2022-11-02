@@ -1,61 +1,25 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environment';
-import { EndMission, Identify, StartMission } from '@app/interface/commands';
+import { Identify } from '@app/interface/commands';
 
 @Injectable({
     providedIn: 'root',
 })
 export class CommandService {
+    uris: string[];
+    isSimulation: boolean;
+
     constructor(private httpClient: HttpClient) {
         this.uris = [];
         this.isSimulation = false;
     }
 
-    uris: string[];
-    isSimulation: boolean;
-
     async identify(command: Identify): Promise<void> {
         await this.httpClient
             .post(`${environment.serverURL}/action/identify`, command, {
-                responseType: 'json',
+                responseType: 'text',
             })
-            .toPromise();
-    }
-
-    async startMission(command: StartMission): Promise<void> {
-        await this.httpClient
-            .post(
-                `${environment.serverURL}/mission/start`,
-                {},
-                {
-                    responseType: 'json',
-                },
-            )
-            .toPromise();
-    }
-
-    async endMission(command: EndMission): Promise<void> {
-        await this.httpClient
-            .post(
-                `${environment.serverURL}/mission/end`,
-                {},
-                {
-                    responseType: 'json',
-                },
-            )
-            .toPromise();
-    }
-
-    async forceEndMission(command: EndMission): Promise<void> {
-        await this.httpClient
-            .post(
-                `${environment.serverURL}/mission/force_end`,
-                {},
-                {
-                    responseType: 'json',
-                },
-            )
             .toPromise();
     }
 

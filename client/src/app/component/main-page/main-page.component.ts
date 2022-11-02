@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { CommandService } from '@app/services/command/command.service';
 
 @Component({
   selector: 'app-main-page',
@@ -8,20 +7,17 @@ import { CommandService } from '@app/services/command/command.service';
   styleUrls: ['./main-page.component.css']
 })
 export class MainPageComponent implements OnInit {
-  readonly title: string = 'Système aérien d’exploration';
+    readonly title: string = 'Système aérien d’exploration';
 
-  constructor(private router:Router, private commandService:CommandService) {
-  }
+    constructor(private router:Router) {}
 
-  startSimulation() : void {
-    this.router.navigateByUrl("/mission"); // go to the mission page
-  }
+    ngOnInit(): void {}
 
-  startDrone() : void {
-    this.router.navigateByUrl("/mission"); // go to the mission page
-  }
+    startSimulation() : void {
+        this.router.navigateByUrl("/mission"); // go to the mission page
+    }
 
-  ngOnInit(): void {
-  }
-
+    startDrone() : void {
+        this.router.navigateByUrl("/mission"); // go to the mission page
+    }
 }

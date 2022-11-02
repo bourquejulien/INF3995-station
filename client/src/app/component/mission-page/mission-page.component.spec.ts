@@ -1,29 +1,36 @@
+import { HttpClient } from '@angular/common/http';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { MissionPageComponent } from './mission-page.component';
-import { RouterTestingModule } from '@angular/router/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { MatList, MatListModule } from '@angular/material/list';
+import { MissionPageComponent } from '@app/component/mission-page/mission-page.component';
+import { CommandService } from '@app/services/command/command.service';
+import { MissionService } from '@app/services/mission/mission.service';
 
 describe('MissionPageComponent', () => {
-  let component: MissionPageComponent;
-  let fixture: ComponentFixture<MissionPageComponent>;
+    let component: MissionPageComponent;
+    let fixture: ComponentFixture<MissionPageComponent>;
+    let mockCommandService: CommandService;
+    let mockMissionService: MissionService;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ MissionPageComponent, MatList ],
-      imports: [RouterTestingModule, HttpClientTestingModule]
-    })
-    .compileComponents();
-  });
+    beforeEach(async () => {
+        mockCommandService = new CommandService({} as HttpClient) 
+        await TestBed.configureTestingModule({
+            declarations: [ MissionPageComponent ],
+            providers: [
+                {provide: CommandService, useValue: mockCommandService},
+                {provide: MissionService, useValue: mockMissionService}
+            ],
+            schemas: [CUSTOM_ELEMENTS_SCHEMA]
+        })
+        .compileComponents();
+    });
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(MissionPageComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+    beforeEach(() => {
+        fixture = TestBed.createComponent(MissionPageComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });
