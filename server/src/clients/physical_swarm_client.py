@@ -105,16 +105,13 @@ class PhysicalSwarmClient(AbstractSwarmClient):
             self._swarm.close_links()
 
     def start_mission(self):
-        ...
-        # self._swarm.parallel_safe(start_mission)
+        self._swarm.parallel_safe(start_mission)
 
     def end_mission(self):
-        ...
-        # self._swarm.parallel_safe(end_mission)
+        self._swarm.parallel_safe(end_mission)
 
     def force_end_mission(self):
-        ...
-        # self._swarm.parallel_safe(force_end_mission)
+        self._swarm.parallel_safe(force_end_mission)
 
     def identify(self, uris):
         self._swarm.parallel_safe(identify, {uri: [uri in uris] for uri in self._swarm._cfs})
