@@ -14,8 +14,9 @@
                 <app-drone-panel class="col drone-panel" uri={{uri}}></app-drone-panel>
             </div>
         </div>
-        
-        <app-map class="col mission"></app-map>
+        <div class="col mission">
+            <app-map></app-map>
+        </div>
         <div class="col-sm-4 h-100 log-container" [hidden]="logsCollapsed">
             <app-log></app-log>
         </div>
