@@ -9,7 +9,7 @@ import { Log } from '@app/interface/commands';
     providedIn: 'root'
 })
 export class DroneInfoService {
-    
+
     private _statuses: Observable<Map<string, string>>;
     private _positions: Observable<Map<string, string>>;
 
@@ -38,7 +38,7 @@ export class DroneInfoService {
                     },
                 });
             });
-        }); 
+        });
     }
 
     private getStatuses(): Observable<any> {
@@ -46,7 +46,10 @@ export class DroneInfoService {
     }
 
     private getPositions(): Observable<any> {
-        return this.httpClient.get(`${environment.serverURL}/drone-info/position`, {responseType:"json"}).pipe(catchError(this.handleError('getPositions', [])));
+        let queryParams = new HttpParams();
+        // TODO Set since value
+        queryParams = queryParams.append("since", 0);
+        return this.httpClient.get(`${environment.serverURL}/drone-info/metrics`, {params: queryParams, responseType: "json"}).pipe(catchError(this.handleError('getPositions', [])));
     }
 
     getLogs(missionId: string, logNum: number): Observable<Log[]> {
@@ -65,13 +68,11 @@ export class DroneInfoService {
         };
     }
 
-    private mapPositionResponse(response: any): Map<string, string> {
+    private mapPositionResponse(metrics: Array<any>): Map<string, string> {
         let map = new Map();
-        let position = ""
-        for(let drone_info of response["positions"]) {
-            position = "x: " + drone_info["posX"] + " y: " + drone_info["posY"]
-                + " z: " + drone_info["posZ"];
-            map.set(drone_info["uri"], position);
+        for(let metric of metrics) {
+            let pos = metric["position"]
+            map.set(metric.origin, `x: ${pos.x} y: ${pos.y} z: ${pos.z}`);
         }
         return map;
     }
@@ -82,6 +83,6 @@ export class DroneInfoService {
 
     get positions(): Observable<Map<string, string>> {
         return this._positions;
-    } 
+    }
 
 }

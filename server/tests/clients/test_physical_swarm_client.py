@@ -1,5 +1,4 @@
 import types
-from datetime import date
 
 import pytest
 import struct
@@ -19,7 +18,7 @@ from src.clients.drone_clients.physical_drone_client import identify, start_miss
 @pytest.fixture()
 def swarm_client(mocker):
     mocker.patch('src.clients.physical_swarm_client.crtp')
-    yield PhysicalSwarmClient()
+    yield PhysicalSwarmClient({})
 
 
 @pytest.fixture()
@@ -121,20 +120,22 @@ def test_disconnected_callback(app, mocker, swarm_client, print_mock):
 
     print_mock.assert_called_once_with('Disconnected from test')
 
-
+@freeze_time("2022-01-01")
 def test_console_incoming_callback(app, mocker, swarm_client, print_mock):
+    generated_logs = []
+    swarm_client._callbacks = {"logging": lambda x: generated_logs.append(x)}
+    log = generate_log('', 'test', "INFO", '1')
     swarm_client._console_incoming('1', 'test')
-    print_mock.assert_called_once()
-    # TODO
-    # print_mock.assert_called_once_with(generate_log('', 'test', 'INFO', '1'))
+    assert log == generated_logs[0]
 
 
 @freeze_time("2022-01-01")
 def test_packet_received_callback(app, mocker, swarm_client, print_mock):
-    param = struct.pack('<ccfff', b'0', b'0', 2, 2.5, 3)
+    param = struct.pack('<ccfff', b'\x00', b'\x00', 2, 2.5, 3)
+    generated_metrics = []
+    swarm_client._callbacks = {"metric": lambda x: generated_metrics.append(x)}
     swarm_client._packet_received('abc', param)
-    print_mock.assert_called_once_with(generate_metric(Position(2.0, 2.5, 3.0), 'Idle', 'abc'))
-
+    assert generate_metric(Position(2.0, 2.5, 3.0), 'Idle', 'abc') == generated_metrics[0]
 
 def test_disconnect(app, mocker, swarm_client):
     swarm_client._swarm = types.SimpleNamespace()

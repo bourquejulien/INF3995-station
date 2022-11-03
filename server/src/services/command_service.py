@@ -1,32 +1,35 @@
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.exceptions.custom_exception import CustomException
-from dependency_injector.providers import Configuration
-from src.classes.events.mission import generate_mission
+from src.services.mission_service import MissionService
 
 
 class CommandService:
-    _config: Configuration
+    swarm_client: AbstractSwarmClient
+    mission_service: MissionService
 
-    def __init__(self, swarm_client: AbstractSwarmClient, config: Configuration):
+    def __init__(self, swarm_client: AbstractSwarmClient, mission_service: MissionService):
         self.swarm_client = swarm_client
-        self._config = config
+        self.mission_service = mission_service
 
     def start_mission(self):
         try:
+            mission = self.mission_service.start_mission()
             self.swarm_client.start_mission()
         except CustomException as e:
             raise e
-        return generate_mission(self._config['is_simulation'])
+        return mission
 
     def end_mission(self):
         try:
             self.swarm_client.end_mission()
+            self.mission_service.end_mission()
         except CustomException as e:
             raise e
 
-    def force_end_mission(self, request_data):
+    def force_end_mission(self):
         try:
             self.swarm_client.force_end_mission()
+            self.mission_service.end_mission()
         except CustomException as e:
             raise e
 
@@ -53,11 +56,3 @@ class CommandService:
             return self.swarm_client.discover()
         except CustomException as e:
             raise e
-
-    def get_position(self):
-        try:
-            return self.swarm_client.get_position()
-        except CustomException as e:
-            raise e
-
-    

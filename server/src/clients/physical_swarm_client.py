@@ -1,4 +1,5 @@
 import logging
+
 import cflib
 import struct
 from cflib import crtp
@@ -10,6 +11,7 @@ from src.classes.position import Position
 from src.classes.distance import Distance
 from src.clients.drone_clients.physical_drone_client import identify, start_mission, end_mission, force_end_mission
 from src.clients.abstract_swarm_client import AbstractSwarmClient
+
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 
 from src.exceptions.custom_exception import CustomException
@@ -22,17 +24,14 @@ STATUS = ["Idle", "Identify", "Takeoff", "Exploration", "Landing", "EmergencySto
 
 class PhysicalSwarmClient(AbstractSwarmClient):
     base_uri = 0xE7E7E7E750
-    _swarm: Swarm
+    _swarm: Swarm | None
 
-    def __init__(self):
+    def __init__(self, config):
+        super().__init__()
+        self._swarm = None
         self._factory = CachedCfFactory(rw_cache="./cache")
         crtp.init_drivers(enable_debug_driver=False)
-
-    def connect(self, uris):
-        self._swarm = Swarm(uris, factory=self._factory)
-        self._swarm.open_links()
-        self._swarm.parallel_safe(self._enable_callbacks)
-        self._swarm.parallel_safe(self._set_params)
+        self.config = config
 
     def _enable_callbacks(self, scf: SyncCrazyflie):
         uri = scf.cf.link_uri
@@ -45,10 +44,9 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         scf.cf.param.add_update_callback(group="deck", name="bcFlow2", cb=self.param_deck_flow)
 
     def _set_params(self, scf: SyncCrazyflie):
-        # TODO Pass values as config / update from UI
-        scf.cf.param.set_value("app.updateTime", 2.0)
-        scf.cf.param.set_value("app.defaultZ", 0.5)
-        scf.cf.param.set_value("app.distanceTrigger", 0.3)
+        scf.cf.param.set_value("app.updateTime", self.config['clients']['drones']['update_time'])
+        scf.cf.param.set_value("app.defaultZ", self.config['clients']['drones']['default_z'])
+        scf.cf.param.set_value("app.distanceTrigger", self.config['clients']['drones']['trigger_distance'])
 
     def param_deck_flow(self, scf, value_str):
         try:
@@ -75,28 +73,36 @@ class PhysicalSwarmClient(AbstractSwarmClient):
 
     def _console_incoming(self, uri, console_text):
         log = generate_log('', console_text, "INFO", uri)
-        print(log)
+        self._callbacks["logging"](log)
 
     def _packet_received(self, uri: str, data):
-        data_type, data = int(struct.unpack("<c", data[0:1])[0]), data[1:]
+        data_type, data = int.from_bytes(data[0:1], "little"), data[1:]
 
         match data_type:
             case 0:
-                status = int(struct.unpack("<c", data[0:1])[0])
+                status = int.from_bytes(data[0:1], "little")
                 position = Position(*struct.unpack("<fff", data[1:]))
                 metric = generate_metric(position, STATUS[status], uri)
 
-                print(metric)
+                self._callbacks["metric"](metric)
 
             case 1:
-                distance = Distance(*struct.unpack("<ffffff", data))
-                print(distance)
+                distance = Distance(*struct.unpack("<ffff", data[:16]))
+                position = Position(*struct.unpack("<fff", data[16:]))
+                self._callbacks["mapping"](uri, position, distance)
 
             case _:
                 raise CustomException("Unpack error: ", f"Unknown data type: {data_type}")
 
+    def connect(self, uris):
+        self._swarm = Swarm(uris, factory=self._factory)
+        self._swarm.open_links()
+        self._swarm.parallel_safe(self._enable_callbacks)
+        self._swarm.parallel_safe(self._set_params)
+
     def disconnect(self):
-        self._swarm.close_links()
+        if self._swarm is not None:
+            self._swarm.close_links()
 
     def start_mission(self):
         self._swarm.parallel_safe(start_mission)
@@ -116,6 +122,3 @@ class PhysicalSwarmClient(AbstractSwarmClient):
             devices_on_address = cflib.crtp.scan_interfaces(self.base_uri + i)
             available_devices.extend(device[0] for device in devices_on_address)
         return available_devices
-
-    def get_position(self):
-        return

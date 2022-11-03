@@ -9,8 +9,11 @@ def generate_log(mission_id: str, message: str, level: str, origin: str):
 
 @dataclass
 class Log(Event):
-    timestamp_ms: str
+    timestamp_ms: int
     mission_id: str
     message: str
     level: str
     origin: str
+
+    def __lt__(self, other):
+        return self.timestamp_ms < other.timestamp_ms
