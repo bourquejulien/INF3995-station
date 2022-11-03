@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Mission } from '@app/interface/commands';
 import { CommandService } from '@app/services/command/command.service';
 import { MissionService } from '@app/services/mission/mission.service';
@@ -9,15 +9,22 @@ import { MissionService } from '@app/services/mission/mission.service';
     styleUrls: ['./mission-page.component.css'],
 })
 export class MissionPageComponent implements OnInit {
-    logsCollapsed: boolean = false;
 
     constructor(public commandService: CommandService, public missionService: MissionService) {
+        this.selectedUris = [];
+        this.logsCollapsed = false;
+        this.currentMissionId = "";
     }
-    
+
+    selectedUris: string[];
+    logsCollapsed: boolean;
+    currentMissionId: string;
+
     ngOnInit(): void {
         this.commandService.discover();
-        this.commandService.retrieveMode()
+        this.commandService.retrieveMode();
     }
+    
 
     identify(): void {
         this.commandService.identify({ uris: this.commandService.uris});
@@ -34,4 +41,6 @@ export class MissionPageComponent implements OnInit {
     forceEndMission(): void {
         this.missionService.forceEndMission();
     }
+
+    
 }

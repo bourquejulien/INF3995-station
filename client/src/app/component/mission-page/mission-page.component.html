@@ -14,13 +14,13 @@
                 <app-drone-panel class="col drone-panel" uri={{uri}}></app-drone-panel>
             </div>
         </div>
-        <div class="col mission">
-            <h1>Information de mission</h1>
+        <div class="col-sm-6 mission">
+            <app-map></app-map>
         </div>
-        <div class="col-sm-4 h-100 log-container" [hidden]="logsCollapsed">
+        <div class="col-sm-3 h-100 log-container" [hidden]="logsCollapsed">
             <app-log></app-log>
         </div>
-        <div class="col-md-auto collapse-button-col">
+        <div class="col-sm-1 collapse-button-col">
             <div class="row">
                 <button
                     class="button" 
