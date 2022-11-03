@@ -31,25 +31,15 @@ export class MissionPageComponent implements OnInit {
     }
 
     startMission(): void {
-        const self = this;
-        this.missionService.startMission().subscribe({
-            next(response: Mission): void {
-                self.currentMissionId = response._id
-            },
-            error(): void {
-                console.log("error");
-            },
-        });
+        this.missionService.startMission();
     }
 
     endMission(): void {
         this.missionService.endMission();
-        this.currentMissionId = "";
     }
 
     forceEndMission(): void {
         this.missionService.forceEndMission();
-        this.currentMissionId = "";
     }
 
     

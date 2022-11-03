@@ -1,5 +1,30 @@
-<div class="log-box">
-    <div *ngFor="let log of logs">
-        <span class="log">{{log.timestamp_ms}}: {{log.message}}</span>
+<div class="d-flex flex-column h-100">
+    <div class="row">
+        <button
+            class="button" 
+            (click)="collapse.toggle()" 
+            [attr.aria-expanded]="!collapsed"
+            aria-controls="collapseExample">
+            {{selectedMissionId}}
+        </button>
+    </div>
+      
+    <div #collapse="ngbCollapse" class="row" 
+        [(ngbCollapse)]="collapsed">
+        <div class="card">
+            <div class="card-body">
+                <div (click)="selectMission('Current Mission')" class="dropdown-button" *ngIf="missionService.missions.length != 0">
+                    <span>Current Mission</span>
+                </div>
+                <div (click)="selectMission(mission.mission._id)" class="dropdown-button" *ngFor="let mission of missionService.missions">
+                    <span>Mission {{mission.mission._id}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col h-100 log-box">
+        <div class="row log"*ngFor="let log of logs()">
+            <span>{{log.timestamp_ms}}: {{log.message}}</span>
+        </div>
     </div>
 </div>

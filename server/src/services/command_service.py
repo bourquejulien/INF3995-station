@@ -1,58 +1,80 @@
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.exceptions.custom_exception import CustomException
+from src.services.logging_service import LoggingService
 from src.services.mission_service import MissionService
 
 
-class CommandService:
-    swarm_client: AbstractSwarmClient
-    mission_service: MissionService
+def _format_command(command, info: str = None):
+    data = f"Command: {command.__name__}"
+    return data + f", {info}" if info is not None else data
 
-    def __init__(self, swarm_client: AbstractSwarmClient, mission_service: MissionService):
-        self.swarm_client = swarm_client
-        self.mission_service = mission_service
+
+class CommandService:
+    _swarm_client: AbstractSwarmClient
+    _mission_service: MissionService
+    _logging_service: LoggingService
+
+    def __init__(self, swarm_client: AbstractSwarmClient, mission_service: MissionService,
+                 logging_service: LoggingService):
+        self._swarm_client = swarm_client
+        self._mission_service = mission_service
+        self._logging_service = logging_service
 
     def start_mission(self):
         try:
-            mission = self.mission_service.start_mission()
-            self.swarm_client.start_mission()
+            mission = self._mission_service.start_mission()
+            self._swarm_client.start_mission()
+            self._logging_service.log(_format_command(self.start_mission, f"Id: {mission.id}"))
         except CustomException as e:
             raise e
         return mission
 
     def end_mission(self):
         try:
-            self.swarm_client.end_mission()
-            self.mission_service.end_mission()
+            self._swarm_client.end_mission()
+            mission = self._mission_service.end_mission()
+            if mission is not None:
+                self._logging_service.log(_format_command(self.end_mission, f"Id: {mission.id}"))
+            else:
+                self._logging_service.log(_format_command(self.end_mission, "no mission running"))
         except CustomException as e:
             raise e
 
     def force_end_mission(self):
         try:
-            self.swarm_client.force_end_mission()
-            self.mission_service.end_mission()
+            self._swarm_client.force_end_mission()
+            mission = self._mission_service.end_mission()
+            if mission is not None:
+                self._logging_service.log(_format_command(self.force_end_mission, f"Id: {mission.id}"))
+            else:
+                self._logging_service.log(_format_command(self.force_end_mission, "no mission running"))
         except CustomException as e:
             raise e
 
     def identify(self, uris):
         try:
-            self.swarm_client.identify(uris)
+            self._swarm_client.identify(uris)
+            self._logging_service.log(_format_command(self.identify, f"Uris: {uris}"))
         except CustomException as e:
             raise e
 
     def connect(self, uris):
         try:
-            self.swarm_client.connect(uris)
+            self._swarm_client.connect(uris)
+            self._logging_service.log(_format_command(self.connect, f"Uris: {uris}"))
         except CustomException as e:
             raise e
 
     def disconnect(self):
         try:
-            self.swarm_client.disconnect()
+            self._swarm_client.disconnect()
+            self._logging_service.log(_format_command(self.disconnect))
         except CustomException as e:
             raise e
 
     def discover(self) -> list:
         try:
-            return self.swarm_client.discover()
+            self._logging_service.log(_format_command(self.discover))
+            return self._swarm_client.discover()
         except CustomException as e:
             raise e

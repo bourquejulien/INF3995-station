@@ -49,6 +49,7 @@ class Container(containers.DeclarativeContainer):
         swarm_client=abstract_swarm_client,
         mission_service=mission_service,
         database_service=database_service,
+        logging_service=logging_service,
     )
 
     mapping_service = providers.Singleton(
@@ -56,10 +57,12 @@ class Container(containers.DeclarativeContainer):
         config=config,
         swarm_client=abstract_swarm_client,
         mission_service=mission_service,
+        logging_service=logging_service,
     )
 
     command_service = providers.Singleton(
         CommandService,
         swarm_client=abstract_swarm_client,
         mission_service=mission_service,
+        logging_service=logging_service,
     )

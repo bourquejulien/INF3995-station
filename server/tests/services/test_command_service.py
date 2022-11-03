@@ -5,25 +5,28 @@ from src.services.command_service import CommandService
 from src.exceptions.custom_exception import CustomException
 from dependency_injector.providers import Configuration
 
+from src.services.logging_service import LoggingService
+
 
 @pytest.fixture()
 def command_service():
     client_mock = mock.Mock(AbstractSwarmClient)
     mission_service_mock = mock.Mock(AbstractSwarmClient)
-    command_service = CommandService(client_mock, mission_service_mock)
+    logging_service_mock = mock.Mock(LoggingService)
+    command_service = CommandService(client_mock, mission_service_mock, logging_service_mock)
     yield command_service
 
 
 def test_start_mission(app, command_service):
-    command_service.swarm_client.start_mission.return_value = ""
+    command_service._swarm_client.start_mission.return_value = ""
     command_service._config = {"is_simulation": True}
     command_service.start_mission()
 
-    command_service.swarm_client.start_mission.assert_called_once()
+    command_service._swarm_client.start_mission.assert_called_once()
 
 
 def test_start_mission_error(app, command_service):
-    command_service.swarm_client.start_mission.side_effect = CustomException('test', 'test')
+    command_service._swarm_client.start_mission.side_effect = CustomException('test', 'test')
     error = ""
 
     try:
@@ -34,13 +37,13 @@ def test_start_mission_error(app, command_service):
 
 
 def test_end_mission(app, command_service):
-    command_service.swarm_client.end_mission.return_value = ""
+    command_service._swarm_client.end_mission.return_value = ""
     command_service.end_mission()
-    command_service.swarm_client.end_mission.assert_called_once()
+    command_service._swarm_client.end_mission.assert_called_once()
 
 
 def test_end_mission_error(app, command_service):
-    command_service.swarm_client.end_mission.side_effect = CustomException('test', 'test')
+    command_service._swarm_client.end_mission.side_effect = CustomException('test', 'test')
     error = ""
 
     try:
@@ -52,15 +55,15 @@ def test_end_mission_error(app, command_service):
 
 def test_identify(app, command_service):
     uris = ['test']
-    command_service.swarm_client.identify.return_value = ""
+    command_service._swarm_client.identify.return_value = ""
 
     command_service.identify(uris)
 
-    command_service.swarm_client.identify.assert_called_once_with(uris)
+    command_service._swarm_client.identify.assert_called_once_with(uris)
 
 
 def test_identify_error(app, command_service):
-    command_service.swarm_client.identify.side_effect = CustomException('test', 'test')
+    command_service._swarm_client.identify.side_effect = CustomException('test', 'test')
     uris = ['test']
     error = ""
 
@@ -73,15 +76,15 @@ def test_identify_error(app, command_service):
 
 def test_connect(app, command_service):
     uris = ['test']
-    command_service.swarm_client.connect.return_value = ""
+    command_service._swarm_client.connect.return_value = ""
 
     command_service.connect(uris)
 
-    command_service.swarm_client.connect.assert_called_once_with(uris)
+    command_service._swarm_client.connect.assert_called_once_with(uris)
 
 
 def test_connect_error(app, command_service):
-    command_service.swarm_client.connect.side_effect = CustomException('test', 'test')
+    command_service._swarm_client.connect.side_effect = CustomException('test', 'test')
     uris = ['test']
     error = ""
 
@@ -93,15 +96,15 @@ def test_connect_error(app, command_service):
 
 
 def test_disconnect(app, command_service):
-    command_service.swarm_client.disconnect.return_value = ""
+    command_service._swarm_client.disconnect.return_value = ""
 
     command_service.disconnect()
 
-    command_service.swarm_client.disconnect.assert_called_once()
+    command_service._swarm_client.disconnect.assert_called_once()
 
 
 def test_disconnect_error(app, command_service):
-    command_service.swarm_client.disconnect.side_effect = CustomException('test', 'test')
+    command_service._swarm_client.disconnect.side_effect = CustomException('test', 'test')
     error = ""
 
     try:
@@ -112,15 +115,15 @@ def test_disconnect_error(app, command_service):
 
 
 def test_discover(app, command_service):
-    command_service.swarm_client.discover.return_value = ""
+    command_service._swarm_client.discover.return_value = ""
 
     command_service.discover()
 
-    command_service.swarm_client.discover.assert_called_once()
+    command_service._swarm_client.discover.assert_called_once()
 
 
 def test_discover_error(app, command_service):
-    command_service.swarm_client.discover.side_effect = CustomException('test', 'test')
+    command_service._swarm_client.discover.side_effect = CustomException('test', 'test')
     error = ""
 
     try:
