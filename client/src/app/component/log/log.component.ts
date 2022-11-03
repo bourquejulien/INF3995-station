@@ -19,14 +19,20 @@ export class LogComponent implements OnInit {
     ngOnInit(): void {
         const self = this;
         interval(1000).subscribe(() => {
-            this.droneInfoService.getLogs(this.missionId, this.logs.length).subscribe({
-                next(response: Log[]): void {
-                    self.logs = self.logs.concat(response)
-                },
-                error(): void {
-                    console.log("error");
-                },
-            });
+            if (this.missionId != "") {
+                let since_timestamp = 0;
+                if (this.logs.length > 0) {
+                    since_timestamp = this.logs[this.logs.length - 1].timestamp_ms;
+                }
+                this.droneInfoService.getLogs(this.missionId, since_timestamp).subscribe({
+                    next(response: Log[]): void {
+                        self.logs = self.logs.concat(response);
+                    },
+                    error(): void {
+                        console.log("error");
+                    },
+                });
+            }
         });
     }
 }

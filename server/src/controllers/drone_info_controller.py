@@ -9,19 +9,13 @@ from src.services.telemetrics_service import TelemetricsService
 blueprint = Blueprint('drone-info', __name__)
 
 
-@blueprint.route('/status', methods=['get'])
-@inject
-def status(telemetrics_service: TelemetricsService = Provide[Container.telemetrics_service]):
-    return telemetrics_service.latest, 200
-
-
-@blueprint.route('/getLogs', methods=['get'])
+@blueprint.route('/logs', methods=['get'])
 @inject
 def get_logs_since(logging_service: LoggingService = Provide[Container.logging_service]):
     try:
-        # TODO Change ID to since_timestamp
-        since_timestamp_ms = request.args.get('id', type=int)
-        logs_list = logging_service.get_since(since_timestamp_ms)
+        mission_id = request.args.get("mission_id", type=str)
+        since_timestamp_ms = request.args.get('since_timestamp', type=int)
+        logs_list = logging_service.get_since(mission_id, since_timestamp_ms)
         return jsonify(logs_list)
     except CustomException as e:
         return f"{e.name}: {e.message}", 500
@@ -31,9 +25,8 @@ def get_logs_since(logging_service: LoggingService = Provide[Container.logging_s
 @inject
 def get_metrics_since(telemetrics_service: TelemetricsService = Provide[Container.telemetrics_service]):
     try:
-        since_timestamp_ms = request.args.get('since', type=int)
-        metrics_list = telemetrics_service.get_since(since_timestamp_ms)
-        return jsonify(metrics_list)
+        latest_metrics = telemetrics_service.latest
+        return jsonify(latest_metrics)
     except CustomException as e:
         return f"{e.name}: {e.message}", 500
 

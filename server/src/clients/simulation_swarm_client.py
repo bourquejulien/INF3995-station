@@ -5,6 +5,8 @@ from threading import Thread
 from src.clients.drone_clients.simulation_drone_client import SimulationDroneClient
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.classes.position import Position
+from src.classes.distance import Distance
+from src.classes.events.metric import generate_metric
 
 
 class SimulationSwarmClient(AbstractSwarmClient):
@@ -55,24 +57,21 @@ class SimulationSwarmClient(AbstractSwarmClient):
     def discover(self):
         return [str(self.config['argos']['port']), str(self.config['argos']['port'] + 1)]
 
-    def _get_position(self):
-        # TODO Format using Position dataclass (Audrey change ça)
-        drone_dict = {"positions": []}
+    def _get_telemetrics(self):
         for drone in self._drone_clients:
-            drone_position = drone.get_position()
-            # pos_dict = {}
-            # pos_dict["uri"] = drone.uri
-            # pos_dict["posX"] = drone_position.posX
-            # pos_dict["posY"] = drone_position.posY
-            # pos_dict["posZ"] = drone_position.posZ
-            # drone_dict['positions'].append(pos_dict)
-            pos = Position(drone_position.posX, drone_position.posY, drone_position.posZ)
-            drone_dict['positions'].append(pos)
-        json_list = json.dumps(drone_dict)
-        return json_list
+            metrics = drone.get_telemetrics()
+            for m in metrics.telemetric:
+                self._callbacks["metric"](generate_metric(Position(m.posX, m.posY, m.posZ), m.status, drone.uri))
+
+    def _get_distances(self):
+        for drone in self._drone_clients:
+            dist = drone.get_distances()
+            for d in dist.distanceObstacle:
+                self._callbacks["mapping"](drone.uri, Position(d.posX, d.posY, d.posZ),
+                                           Distance(d.front, d.back, d.left, d.right))
 
     def _pull_task(self):
         while self._is_active:
-            self._get_position()
             time.sleep(0.4)
-            # TODO Add other calls
+            self._get_telemetrics()
+            self._get_distances()

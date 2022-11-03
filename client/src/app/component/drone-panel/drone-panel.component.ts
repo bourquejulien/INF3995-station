@@ -1,6 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { Metric } from '@app/interface/commands';
 import { CommandService } from '@app/services/command/command.service';
 import { DroneInfoService } from '@app/services/drone-info/drone-info.service';
+import { interval } from 'rxjs';
 
 @Component({
     selector: 'app-drone-panel',
@@ -10,20 +12,14 @@ import { DroneInfoService } from '@app/services/drone-info/drone-info.service';
 export class DronePanelComponent implements OnInit {
     @Input() uri: string = ""; 
     collapsed: boolean = true;
-    status: string = "";
-    position: string = "";
+    metric: Metric | null = null;
 
     constructor(public commandService: CommandService, public droneInfoService: DroneInfoService) { }
 
     ngOnInit(): void {
-        this.droneInfoService.statuses.subscribe((statuses) => {
-            if (statuses.get(this.uri)) {
-                this.status = statuses.get(this.uri) as string;
-            }
-        });
-        this.droneInfoService.positions.subscribe((positions) => {
-            if (positions.get(this.uri)) {
-                this.position = positions.get(this.uri) as string;
+        this.droneInfoService.metrics.subscribe((metrics: Map<string, Metric>) => {
+            if (metrics.get(this.uri)) {
+                this.metric = metrics.get(this.uri) as Metric;
             }
         });
     }
