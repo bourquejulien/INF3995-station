@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+FLOATING_PRECISION = 2
+
 
 @dataclass
 class Position:
@@ -8,4 +10,4 @@ class Position:
     z: float
 
     def __str__(self):
-        return f"x{self.x}, y: {self.y}, z: {self.z}"
+        return f"x: {round(self.x, FLOATING_PRECISION)}, y: {round(self.y, FLOATING_PRECISION)}, z: {round(self.z, FLOATING_PRECISION)}"

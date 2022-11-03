@@ -5,7 +5,7 @@ from src.services.mission_service import MissionService
 
 
 def _format_command(command, info: str = None):
-    data = f"Command: {command.func_name}"
+    data = f"Command: {command.__name__}"
     return data + f", {info}" if info is not None else data
 
 
@@ -74,7 +74,7 @@ class CommandService:
 
     def discover(self) -> list:
         try:
-            return self._swarm_client.discover()
             self._logging_service.log(_format_command(self.discover))
+            return self._swarm_client.discover()
         except CustomException as e:
             raise e

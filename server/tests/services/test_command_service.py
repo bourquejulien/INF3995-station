@@ -5,12 +5,15 @@ from src.services.command_service import CommandService
 from src.exceptions.custom_exception import CustomException
 from dependency_injector.providers import Configuration
 
+from src.services.logging_service import LoggingService
+
 
 @pytest.fixture()
 def command_service():
     client_mock = mock.Mock(AbstractSwarmClient)
     mission_service_mock = mock.Mock(AbstractSwarmClient)
-    command_service = CommandService(client_mock, mission_service_mock)
+    logging_service_mock = mock.Mock(LoggingService)
+    command_service = CommandService(client_mock, mission_service_mock, logging_service_mock)
     yield command_service
 
 
