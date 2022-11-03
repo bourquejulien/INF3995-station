@@ -7,3 +7,6 @@ class Distance:
     back: float
     left: float
     right: float
+
+    def __str__(self):
+        return f"front: {self.front}, back: {self.back}, left: {self.left}, right: {self.right}"

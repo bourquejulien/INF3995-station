@@ -5,6 +5,7 @@ from dependency_injector.providers import Configuration
 from src.classes.distance import Distance
 from src.classes.position import Position
 from src.clients.abstract_swarm_client import AbstractSwarmClient
+from src.services.logging_service import LoggingService
 from src.services.mission_service import MissionService
 
 
@@ -37,15 +38,19 @@ def _remove_duplicate(points: list[Position], new_points: list[Position], duplic
 
 class MappingService:
     _config: Configuration
+    _logging_service: LoggingService
     _maps: dict[str, list[Position]]
 
-    def __init__(self, config: Configuration, swarm_client: AbstractSwarmClient, mission_service: MissionService):
+    def __init__(self, config: Configuration, swarm_client: AbstractSwarmClient, mission_service: MissionService,
+                 logging_service: LoggingService):
         self._maps = {}
+        self._logging_service = logging_service
         self._config = config
         swarm_client.add_callback("mapping", self._add)
         mission_service.add_flush_action(self.flush)
 
     def _add(self, uri, position: Position, distance: Distance):
+        self._logging_service.log(f"Received distance: {distance}, uri: {uri}")
         new_points = _compute_position(position, distance, float(self._config["mapping"]["trigger_distance"]))
         if uri in self._maps:
             points = self._maps.get(uri)
