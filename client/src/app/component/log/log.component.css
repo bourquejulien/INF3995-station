@@ -1,8 +1,10 @@
 .log{
     color: black;
+    white-space: nowrap;
 }
 
 .log-box{
+    overflow-x: auto;
     overflow-y: auto;
     background-color: var(--font-color);
 }
