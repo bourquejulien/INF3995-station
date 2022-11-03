@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
-from src.controllers import server_status_controller, discover_controller,\
-                            mission_controller, action_controller, drone_info_controller
+from src.controllers import server_status_controller, discover_controller, \
+    mission_controller, action_controller, drone_info_controller
 from src.services.command_service import CommandService
 from dependency_injector.wiring import inject, Provide
 from src.container import Container

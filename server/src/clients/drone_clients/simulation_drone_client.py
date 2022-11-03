@@ -33,6 +33,13 @@ class SimulationDroneClient:
             print(e)
             raise CustomException("RPCError: ", e.code()) from e
 
+    def force_end_mission(self):
+        try:
+            self.stub.EndMission(simulation_pb2.MissionRequest(uri=self.uri))
+        except grpc.grpc.RpcError as e:
+            print(e)
+            raise CustomException("RPCError: ", e.code()) from e
+
     def connect(self):
         self.channel = grpc.insecure_channel(self.address)
         self.stub = simulation_pb2_grpc.SimulationStub(self.channel)
@@ -40,9 +47,17 @@ class SimulationDroneClient:
     def disconnect(self):
         self.channel.close()
 
-    def get_position(self):
+    def get_telemetrics(self):
         try:
-            reply = self.stub.GetPosition(simulation_pb2.MissionRequest(uri=self.uri))
+            reply = self.stub.GetTelemetrics(simulation_pb2.MissionRequest(uri=self.uri))
+            return reply
+        except grpc.RpcError as e:
+            print(e)
+            raise CustomException("RPCError: ", e.code()) from e
+
+    def get_distances(self):
+        try:
+            reply = self.stub.GetDistances(simulation_pb2.MissionRequest(uri=self.uri))
             return reply
         except grpc.RpcError as e:
             print(e)

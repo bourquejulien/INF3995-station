@@ -65,10 +65,12 @@ export class MissionPageComponent implements OnInit {
 
     endMission(): void {
         this.missionService.endMission();
+        this.currentMissionId = "";
     }
 
     forceEndMission(): void {
         this.missionService.forceEndMission();
+        this.currentMissionId = "";
     }
 
     // drawPixel(x: number, y: number, sizeOfCanvas: number): void {

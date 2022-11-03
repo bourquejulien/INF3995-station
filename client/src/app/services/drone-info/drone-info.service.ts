@@ -3,59 +3,41 @@ import { Observable, of, interval } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '@environment';
-import { Log } from '@app/interface/commands';
+import { Log, Metric } from '@app/interface/commands';
 
 @Injectable({
     providedIn: 'root'
 })
 export class DroneInfoService {
-    
-    private _statuses: Observable<Map<string, string>>;
-    private _positions: Observable<Map<string, string>>;
+    metrics: Observable<Map<string, Metric>>;
 
     constructor(private httpClient: HttpClient) {
-        this._statuses = new Observable((observer) => {
-            interval(1000).subscribe((x) => {
-                this.getStatuses().subscribe({
-                    next(response: any): void {
-                        observer.next(new Map<string, string>(Object.entries(response)));
+        this.metrics = new Observable((observer) => {
+            interval(1000).subscribe(() => {
+                this.getMetrics().subscribe({
+                    next(response): void {
+                        observer.next(new Map<string, Metric>(Object.entries(response)));
                     },
                     error(): void {
                         console.log("error");
                     },
-                });
-            });
+                })
+            })
         });
-        this._positions = new Observable((observer) => {
-            const self = this
-            interval(1000).subscribe((x) => {
-                this.getPositions().subscribe({
-                    next(response: any): void {
-                        observer.next(self.mapPositionResponse(response));
-                    },
-                    error(): void {
-                        console.log("error");
-                    },
-                });
-            });
-        }); 
     }
 
-    private getStatuses(): Observable<any> {
-        return this.httpClient.get(`${environment.serverURL}/drone-info/status`).pipe(catchError(this.handleError('getStatuses', [])));
+    getMetrics(): Observable<any>{
+        return this.httpClient.get(`${environment.serverURL}/drone-info/metrics`,
+            ).pipe(catchError(this.handleError('getStatuses', [])));
     }
 
-    private getPositions(): Observable<any> {
-        return this.httpClient.get(`${environment.serverURL}/drone-info/position`, {responseType:"json"}).pipe(catchError(this.handleError('getPositions', [])));
-    }
-
-    getLogs(missionId: string, logNum: number): Observable<Log[]> {
+    getLogs(mission_id: string, since_timestamp: number): Observable<Log[]> {
         let queryParams = new HttpParams();
-        queryParams = queryParams.append("id", logNum);
-        queryParams = queryParams.append("mission_id", missionId);
-        return this.httpClient.get<Log[]>(`${environment.serverURL}/drone-info/getLogs`,
+        queryParams = queryParams.append("mission_id", mission_id);
+        queryParams = queryParams.append("since_timestamp", since_timestamp);
+        return this.httpClient.get<Log[]>(`${environment.serverURL}/drone-info/logs`,
             {params: queryParams},
-            ).pipe(catchError(this.handleError('getLogs', [])));
+            ).pipe(catchError(this.handleError('logs', [])));
     }
 
     private handleError<T>(operation = 'operation', result?: T) {
@@ -64,24 +46,4 @@ export class DroneInfoService {
             return of(result as T);
         };
     }
-
-    private mapPositionResponse(response: any): Map<string, string> {
-        let map = new Map();
-        let position = ""
-        for(let drone_info of response["positions"]) {
-            position = "x: " + drone_info["posX"] + " y: " + drone_info["posY"]
-                + " z: " + drone_info["posZ"];
-            map.set(drone_info["uri"], position);
-        }
-        return map;
-    }
-
-    get statuses(): Observable<Map<string, string>> {
-        return this._statuses;
-    }
-
-    get positions(): Observable<Map<string, string>> {
-        return this._positions;
-    } 
-
 }

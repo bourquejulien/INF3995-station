@@ -8,9 +8,9 @@ from dependency_injector.providers import Configuration
 
 @pytest.fixture()
 def command_service():
-    config_mock = mock.Mock(Configuration)
     client_mock = mock.Mock(AbstractSwarmClient)
-    command_service = CommandService(client_mock, config_mock)
+    mission_service_mock = mock.Mock(AbstractSwarmClient)
+    command_service = CommandService(client_mock, mission_service_mock)
     yield command_service
 
 
@@ -35,9 +35,7 @@ def test_start_mission_error(app, command_service):
 
 def test_end_mission(app, command_service):
     command_service.swarm_client.end_mission.return_value = ""
-
     command_service.end_mission()
-
     command_service.swarm_client.end_mission.assert_called_once()
 
 

@@ -20,3 +20,6 @@ class Event:
 
     def __str__(self):
         return self.to_json().__str__()
+
+    def __eq__(self, other):
+        return self.id == other.id

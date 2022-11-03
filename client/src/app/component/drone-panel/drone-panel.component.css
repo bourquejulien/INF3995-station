@@ -24,3 +24,7 @@
 .card{
     background-color: var(--secondary);
 }
+
+.coord{
+    padding-left: 10%; 
+}

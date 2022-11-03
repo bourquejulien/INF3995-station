@@ -15,3 +15,18 @@ export interface Mission {
     start_time_ms: number,
     end_time_ms: number,
 } 
+
+export interface Position {
+    x: number,
+    y: number,
+    z: number,
+}
+
+export interface Metric {
+    _id: string,
+    timestamp_ms: number,
+    position: Position,
+    status: string,
+    drone_uri: string,
+    mission_id: string,
+}
