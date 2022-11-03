@@ -23,10 +23,9 @@ export class MapComponent implements OnInit {
 
     ngOnInit(): void {
         this.generateCircle(40, 60, 30);
-        //window.addEventListener("resize", this.redrawMap.bind(this), false); // Redraws the map when the window is resized
+        window.addEventListener("resize", this.redrawMap.bind(this), false); // Redraws the map when the window is resized
         window.setInterval(() => {
             this.dronePosition = {x: this.randomInInterval(20.0, 80.0), y: this.randomInInterval(20.0, 80.0)};
-            this.redrawMap();
         }, 1000);
     }
 
@@ -58,13 +57,11 @@ export class MapComponent implements OnInit {
     }
 
     redrawMap(): void {
-        let verticalBuffer = 50;
-        let canvasSize = Math.floor(Math.min(this.colMission.nativeElement.offsetWidth * 0.9, (this.colMission.nativeElement.offsetHeight - verticalBuffer) * 0.9));
-        canvasSize = Math.min(canvasSize, 500);
+        let canvasSize = Math.min(this.colMission.nativeElement.offsetWidth, this.colMission.nativeElement.offsetHeight);
 
         this.canvas.nativeElement.width = canvasSize;
         this.canvas.nativeElement.height = canvasSize;
-
+    
         this.mapContext!.fillStyle = "white";
         this.mapContext!.fillRect(0, 0, canvasSize, canvasSize);
 
@@ -80,5 +77,4 @@ export class MapComponent implements OnInit {
     private randomInInterval(min: number, max: number): number{
         return Math.random() * (max - min) + min;
     }
-
 }

@@ -1,6 +1,3 @@
-<div #colMission class="col mission" onresize="redrawMap()">
-    <h1>Carte générée par les drones</h1>
-    <br>
-    <canvas #canvas class="map">
-    </canvas> 
+<div #colMission class="mission" (window:resize)="redrawMap()">
+    <canvas #canvas></canvas> 
 </div>
