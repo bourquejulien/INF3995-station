@@ -17,7 +17,7 @@ export class MapComponent implements OnInit {
     }
 
     mapContext: CanvasRenderingContext2D | null;
-    resolution: number; // NUmber of pixels to include in the map. The higher the number, the finer the image
+    resolution: number; // Number of pixels to include in the map. The higher the number, the finer the image
     wallPositions: {x: number, y: number}[]; // Contains the coordinates of the walls to draw to the map. Both x and y go from 0 to 100
     dronePosition: {x: number, y: number}; // The current position of the drone
 
@@ -58,9 +58,9 @@ export class MapComponent implements OnInit {
     }
 
     redrawMap(): void {
-        // New size of canvas is chosen according to size of parent div
-        // The -50 for height is to account for the text above and below
-        let canvasSize = Math.floor(Math.min(this.colMission.nativeElement.offsetWidth * 0.9, (this.colMission.nativeElement.offsetHeight - 50) * 0.9));
+        let verticalBuffer = 50;
+        let canvasSize = Math.floor(Math.min(this.colMission.nativeElement.offsetWidth * 0.9, (this.colMission.nativeElement.offsetHeight - verticalBuffer) * 0.9));
+        canvasSize = Math.min(canvasSize, 500);
 
         this.canvas.nativeElement.width = canvasSize;
         this.canvas.nativeElement.height = canvasSize;

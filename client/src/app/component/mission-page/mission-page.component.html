@@ -14,13 +14,6 @@
                 <app-drone-panel class="col drone-panel" uri={{uri}}></app-drone-panel>
             </div>
         </div>
-        <!-- <div #colMission class="col mission">
-            <h1>Information de mission</h1>
-            <br>
-            <canvas #canvas id="map" style="border:1px solid #000000;">
-            </canvas> 
-            <p>Carte générée par les drones</p>
-        </div> -->
         <app-map class="col mission"></app-map>
         <div class="col-sm-4 h-100" [hidden]="logsCollapsed">
             <app-log missionId={{currentMissionId}}></app-log>
