@@ -33,7 +33,6 @@ class MissionService:
             return None
 
         mission.end_time_ms = get_timestamp_ms()
-        mission.total_distance = 0  # TODO Ajouter a partir de telemetrics service
 
         self._database_service.add(mission)
 

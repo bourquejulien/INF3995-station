@@ -1,4 +1,7 @@
+import math
+
 from src.classes.events.metric import Metric
+from src.classes.position import Position
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.services.database_service import DatabaseService
 from src.services.mission_service import MissionService
@@ -23,8 +26,18 @@ class TelemetricsService:
         current_mission = self._mission_service.current_mission
         if current_mission is not None:
             metric.mission_id = current_mission.id
+            current_mission.total_distance += self._calculate_distance_delta(metric)
         self._latest[metric.uri] = metric
         self._metrics.append(metric)
+
+    def _calculate_distance_delta(self, metric: Metric):
+        if metric.uri not in self._latest:
+            return 0.0
+
+        last_position = self._latest.get(metric.uri).position
+        return math.sqrt((metric.position.x - last_position.x) ** 2
+                         + (metric.position.y - last_position.y) ** 2
+                         + (metric.position.z - last_position.z) ** 2)
 
     def get_since(self, timestamp_ms: int):
         self._metrics.sort()
