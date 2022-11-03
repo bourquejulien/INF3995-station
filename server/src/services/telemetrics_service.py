@@ -23,14 +23,8 @@ class TelemetricsService:
         current_mission = self._mission_service.current_mission
         if current_mission is not None:
             metric.mission_id = current_mission.id
-        self._latest[metric.origin] = metric
+        self._latest[metric.uri] = metric
         self._metrics.append(metric)
-
-    def get_by_id(self, id: int):
-        for metric in self._metrics:
-            if metric.id == id:
-                return metric
-        return None
 
     def get_since(self, timestamp_ms: int):
         self._metrics.sort()
@@ -39,7 +33,7 @@ class TelemetricsService:
             if timestamp_ms < metric.timestamp_ms:
                 return self._metrics[i:].copy()
 
-        return None
+        return []
 
     def get_history(self, mission_id: str):
         self._database_service.get_metrics(mission_id)
