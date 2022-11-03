@@ -49,3 +49,6 @@
     padding: 0px;
 }
 
+.log-container{
+    background-color: var(--font-color);
+}
