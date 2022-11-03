@@ -31,12 +31,16 @@ class CommandService:
 
     def end_mission(self):
         try:
-            self._swarm_client.end_mission()
-            mission = self._mission_service.end_mission()
+            mission = self._mission_service.current_mission
+
             if mission is not None:
                 self._logging_service.log(_format_command(self.end_mission, f"Id: {mission.id}"))
             else:
                 self._logging_service.log(_format_command(self.end_mission, "no mission running"))
+
+            self._swarm_client.end_mission()
+            self._mission_service.end_mission()
+
         except CustomException as e:
             raise e
 
