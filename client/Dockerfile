@@ -7,8 +7,7 @@ ENV CHROME_BIN='/usr/bin/chromium-browser'
 WORKDIR /usr/local/app
 
 COPY package*.json ./
-COPY yarn.lock .
-RUN yarn install --immutable
+RUN yarn install
 
 COPY . .
 
