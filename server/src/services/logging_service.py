@@ -1,4 +1,4 @@
-from src.classes.events.log import Log
+from src.classes.events.log import Log, generate_log
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.services.mission_service import MissionService
 from src.services.database_service import DatabaseService
@@ -9,7 +9,8 @@ class LoggingService:
     _mission_service: MissionService
     _database_service: DatabaseService
 
-    def __init__(self, swarm_client: AbstractSwarmClient, mission_service: MissionService, database_service: DatabaseService):
+    def __init__(self, swarm_client: AbstractSwarmClient, mission_service: MissionService,
+                 database_service: DatabaseService):
         self._logs = []
         self._mission_service = mission_service
         self._database_service = database_service
@@ -21,6 +22,9 @@ class LoggingService:
         if current_mission is not None:
             log.mission_id = current_mission.id
         self._logs.append(log)
+
+    def log(self, message: str, origin="server", ):
+        self._add(generate_log("", message, "INFO", origin))
 
     def get_since(self, mission_id: str, timestamp_ms: int):
         self._logs.sort()
