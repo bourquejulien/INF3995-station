@@ -19,9 +19,6 @@ from src.exceptions.hardware_exception import HardwareException
 
 logging.basicConfig(level=logging.ERROR)
 
-STATUS = ["Idle", "Identify", "Takeoff", "Exploration", "Landing", "EmergencyStop"]
-
-
 class PhysicalSwarmClient(AbstractSwarmClient):
     base_uri = 0xE7E7E7E750
     _swarm: Swarm | None
@@ -82,7 +79,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
             case 0:
                 status = int.from_bytes(data[0:1], "little")
                 position = Position(*struct.unpack("<fff", data[1:]))
-                metric = generate_metric(position, STATUS[status], uri)
+                metric = generate_metric(position, self.STATUS[status], uri)
 
                 self._callbacks["metric"](metric)
 

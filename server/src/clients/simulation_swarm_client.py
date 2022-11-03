@@ -2,6 +2,7 @@ import json
 import time
 from threading import Thread
 
+from src.classes.events.log import Log, generate_log
 from src.clients.drone_clients.simulation_drone_client import SimulationDroneClient
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.classes.position import Position
@@ -11,6 +12,7 @@ from src.classes.events.metric import generate_metric
 
 class SimulationSwarmClient(AbstractSwarmClient):
     daemon: Thread | None
+    _drone_clients: list[SimulationDroneClient]
     _is_active: bool
 
     def __init__(self, config):
@@ -59,19 +61,34 @@ class SimulationSwarmClient(AbstractSwarmClient):
 
     def _get_telemetrics(self):
         for drone in self._drone_clients:
-            metrics = drone.get_telemetrics()
-            for m in metrics.telemetric:
-                self._callbacks["metric"](generate_metric(Position(m.posX, m.posY, m.posZ), m.status, drone.uri))
+            metrics = drone.get_telemetrics().telemetric
+            if len(metrics) > 0:
+                metric = metrics[0]
+                position = metric.position
+                self._callbacks["metric"](
+                    generate_metric(Position(position.x, position.y, position.z), self.STATUS[metric.status],
+                                    drone.uri))
 
     def _get_distances(self):
         for drone in self._drone_clients:
-            dist = drone.get_distances()
-            for d in dist.distanceObstacle:
-                self._callbacks["mapping"](drone.uri, Position(d.posX, d.posY, d.posZ),
-                                           Distance(d.front, d.back, d.left, d.right))
+            distances = drone.get_distances().distanceObstacle
+            if len(distances) > 0:
+                d = distances[0]
+                position = d.position
+                self._callbacks["mapping"](drone.uri, Position(position.x, position.y, position.z),
+                                       Distance(d.front, d.back, d.left, d.right))
+
+    def _get_logs(self):
+        for drone in self._drone_clients:
+            for log in drone.get_logs().logs:
+                self._callbacks["logging"](generate_log("", log.message, log.level, drone.uri))
 
     def _pull_task(self):
         while self._is_active:
             time.sleep(0.4)
-            self._get_telemetrics()
-            self._get_distances()
+            try:
+                self._get_telemetrics()
+                self._get_distances()
+                self._get_logs()
+            except Exception as e:
+                print(e)

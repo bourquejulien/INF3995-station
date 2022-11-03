@@ -3,7 +3,6 @@ import pytest
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.services.command_service import CommandService
 from src.exceptions.custom_exception import CustomException
-from dependency_injector.providers import Configuration
 
 from src.services.logging_service import LoggingService
 
@@ -13,6 +12,7 @@ def command_service():
     client_mock = mock.Mock(AbstractSwarmClient)
     mission_service_mock = mock.Mock(AbstractSwarmClient)
     logging_service_mock = mock.Mock(LoggingService)
+    mission_service_mock.current_mission = None
     command_service = CommandService(client_mock, mission_service_mock, logging_service_mock)
     yield command_service
 

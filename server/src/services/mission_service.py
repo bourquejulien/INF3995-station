@@ -36,8 +36,6 @@ class MissionService:
 
         self._database_service.add(mission)
 
-        return mission
-
     def flush(self):
         for flush in self._flush_callbacks:
             flush()

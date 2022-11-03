@@ -62,3 +62,11 @@ class SimulationDroneClient:
         except grpc.RpcError as e:
             print(e)
             raise CustomException("RPCError: ", e.code()) from e
+
+    def get_logs(self):
+        try:
+            reply = self.stub.GetLogs(simulation_pb2.MissionRequest(uri=self.uri))
+            return reply
+        except grpc.RpcError as e:
+            print(e)
+            raise CustomException("RPCError: ", e.code()) from e
