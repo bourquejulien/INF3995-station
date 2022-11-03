@@ -22,14 +22,14 @@ class LoggingService:
             log.mission_id = current_mission.id
         self._logs.append(log)
 
-    def get_since(self, timestamp_ms: int):
+    def get_since(self, mission_id: str, timestamp_ms: int):
         self._logs.sort()
 
         for i, log in enumerate(self._logs):
-            if timestamp_ms < log.timestamp_ms:
+            if timestamp_ms < log.timestamp_ms and mission_id == log.mission_id:
                 return self._logs[i:].copy()
 
-        return None
+        return []
 
     def get_history(self, mission_id: str):
         return self._database_service.get_logs(mission_id)

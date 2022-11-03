@@ -10,8 +10,12 @@
     [(ngbCollapse)]="collapsed">
     <div class="card">
         <div class="card-body">
-            <div>Status: {{status}}</div>
-            <div>Position: {{position}}</div>
+            <div>Status: {{metric?.status}}</div>
+            <div>Position:
+                <div class="coord">x: {{metric?.position?.x}}</div>
+                <div class="coord">y: {{metric?.position?.y}}</div>
+                <div class="coord">z: {{metric?.position?.z}}</div>
+            </div>
             <button class="button" (click)="identify()">Identifier</button>
         </div>
     </div>
