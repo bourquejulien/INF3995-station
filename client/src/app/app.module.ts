@@ -10,10 +10,11 @@ import { MissionPageComponent } from './component/mission-page/mission-page.comp
 import { DronePanelComponent } from '@app/component/drone-panel/drone-panel.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { LogComponent } from '@app/component/log/log.component';
+import { MapComponent } from '@app/component/map/map.component';
 
 
 @NgModule({
-    declarations: [AppComponent, DronePanelComponent, MainPageComponent, MissionPageComponent, LogComponent],
+    declarations: [AppComponent, DronePanelComponent, MainPageComponent, MissionPageComponent, LogComponent, MapComponent],
     imports: [
         HttpClientModule,
         BrowserModule,
