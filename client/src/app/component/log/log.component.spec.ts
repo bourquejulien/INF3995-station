@@ -1,20 +1,26 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LogComponent } from './log.component';
-import { DroneInfoService } from '@app/services/drone-info/drone-info.service';
 import { HttpClient } from '@angular/common/http';
+import { MissionService } from '@app/services/mission/mission.service';
+import { DroneInfoService } from '@app/services/drone-info/drone-info.service';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 describe('LogComponent', () => {
     let component: LogComponent;
     let fixture: ComponentFixture<LogComponent>;
-    let mockDroneInfoService: DroneInfoService;
+    let mockMissionService: MissionService;
 
     beforeEach(async () => {
-        mockDroneInfoService = new DroneInfoService({} as HttpClient)
+        mockMissionService = new MissionService({} as HttpClient, {} as DroneInfoService)
         await TestBed.configureTestingModule({
             declarations: [ LogComponent ],
             providers: [
-                {provide: DroneInfoService, useValue: mockDroneInfoService}
+                {provide: MissionService, useValue: mockMissionService}
             ],
+            imports: [
+                NgbModule
+            ]
         })
         .compileComponents();
     });
