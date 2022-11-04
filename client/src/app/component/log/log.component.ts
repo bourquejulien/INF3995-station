@@ -9,7 +9,7 @@ import { MissionService } from '@app/services/mission/mission.service';
 })
 export class LogComponent implements OnInit {
     collapsed: boolean = true;
-    selectedMissionId: string = "Current Mission";
+    selectedMissionId: string = "Mission en cours";
 
     constructor(public missionService: MissionService) {
     }
@@ -18,7 +18,7 @@ export class LogComponent implements OnInit {
     }
 
     public logs(): Log[] {
-        if (this.selectedMissionId == "Current Mission") {
+        if (this.selectedMissionId == "Mission en cours") {
             return this.missionService.currentLogs;
         }
         else {
