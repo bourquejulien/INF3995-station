@@ -1,15 +1,15 @@
 <div class="d-flex flex-column h-100">
     <div class="row">
         <button
-            class="button" 
-            (click)="collapse.toggle()" 
+            class="button"
+            (click)="collapse.toggle()"
             [attr.aria-expanded]="!collapsed"
             aria-controls="collapseExample">
             {{selectedMissionId}}
         </button>
     </div>
-      
-    <div #collapse="ngbCollapse" class="row" 
+
+    <div #collapse="ngbCollapse" class="row"
         [(ngbCollapse)]="collapsed">
         <div class="card">
             <div class="card-body">
@@ -23,7 +23,7 @@
         </div>
     </div>
     <div class="col h-100 log-box">
-        <div class="row log"*ngFor="let log of logs()">
+        <div class="row log" *ngFor="let log of logs()">
             <span>{{log.timestamp_ms | date:"yyyy-MM-dd HH:mm:ss.S"}}: {{log.message}}</span>
         </div>
     </div>

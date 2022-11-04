@@ -1,20 +1,20 @@
 <button
-    class="button" 
-    (click)="collapse.toggle()" 
+    class="button"
+    (click)="collapse.toggle()"
     [attr.aria-expanded]="!collapsed"
     aria-controls="collapseExample">
     {{uri}}
 </button>
-  
-<div #collapse="ngbCollapse" 
+
+<div #collapse="ngbCollapse"
     [(ngbCollapse)]="collapsed">
     <div class="card">
         <div class="card-body">
             <div>Statut: {{metric?.status}}</div>
             <div>Position:
-                <div class="coord">x: {{metric?.position?.x}}</div>
-                <div class="coord">y: {{metric?.position?.y}}</div>
-                <div class="coord">z: {{metric?.position?.z}}</div>
+                <div class="coord">x: {{metric?.position?.x ?? 0 | number: '1.0-2'}}</div>
+                <div class="coord">y: {{metric?.position?.y ?? 0 | number: '1.0-2'}}</div>
+                <div class="coord">z: {{metric?.position?.z ?? 0 | number: '1.0-2'}}</div>
             </div>
             <button class="button" (click)="identify()">Identifier</button>
         </div>
