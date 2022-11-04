@@ -1,6 +1,7 @@
 .mission{
     background-color: var(--background);
-    height: 0px;
-    width: 80%;
-    padding-bottom: 80%;
+    height: 100%;
+    width: 0px;
+    padding-right: 100%;
+    overflow: hidden;
 }
