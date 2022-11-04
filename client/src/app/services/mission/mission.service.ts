@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Log, Mission } from '@app/interface/commands';
 import { environment } from '@environment';
-import { interval, Subscription } from 'rxjs';
+import { interval, Observable, Subscription } from 'rxjs';
 import { DroneInfoService } from '../drone-info/drone-info.service';
 
 @Injectable({
@@ -13,11 +13,34 @@ export class MissionService {
     private _currentMission: Mission | null = null;
     private _currentLogs: Log[] = [];
 
+    missionSubscription: Subscription = new Subscription();
     private logSubscription: Subscription = new Subscription();
 
     private _missions: {"mission": Mission, "logs": Log[]}[] = [];
 
     constructor(private httpClient: HttpClient, private droneInfoService: DroneInfoService) {
+        let self = this;
+
+        this.missionSubscription = interval(1000).subscribe(() => {
+            this.getMission().subscribe({
+                next(response): void {
+                    let is_mission = Object.keys(response).length > 0
+                    if(!self._isMissionOngoing && is_mission){
+                        self.setupMission(response as Mission);
+                    }
+                    if (self._isMissionOngoing && !is_mission){
+                        self.terminateMission()
+                    }
+                },
+                error(): void {
+                    console.log("error");
+                },
+            })
+        });
+    }
+
+    getMission(): Observable<Mission | {}>{
+        return this.httpClient.get<Mission>(`${environment.serverURL}/mission/current_mission`);
     }
 
     private logSubscribe(mission_id: string): void {
@@ -43,7 +66,7 @@ export class MissionService {
         this.logSubscription.unsubscribe();
     }
 
-    private setupMission(mission: Mission): void {  
+    private setupMission(mission: Mission): void {
         this._currentLogs = [];
         this._currentMission = mission;
         this._isMissionOngoing = true;
@@ -53,7 +76,7 @@ export class MissionService {
     private terminateMission(): void {
         if (!this._currentMission) return;
         this.missions.push({
-            "mission": this._currentMission, 
+            "mission": this._currentMission,
             "logs": this._currentLogs
         });
         this.logUnsubscribe();

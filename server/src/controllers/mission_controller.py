@@ -32,10 +32,11 @@ def get_missions(mission_service: MissionService = Provide[Container.mission_ser
 def current_mission(mission_service: MissionService = Provide[Container.mission_service]):
     try:
         mission = mission_service.current_mission
-        jsonify(mission.to_json())
+        if mission is not None:
+            return jsonify(mission.to_json())
+        return jsonify({})
     except CustomException as e:
         return "{}: {}".format(e.name, e.message), 500
-    return 'success', 200
 
 
 @blueprint.route('/start', methods=['post'])
