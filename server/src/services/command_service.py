@@ -5,7 +5,7 @@ from src.services.mission_service import MissionService
 
 
 def _format_command(command, info: str = None):
-    data = f"Command: {command.__name__}"
+    data = f"cmd: {command.__name__}"
     return data + f", {info}" if info is not None else data
 
 
@@ -24,7 +24,7 @@ class CommandService:
         try:
             mission = self._mission_service.start_mission()
             self._swarm_client.start_mission()
-            self._logging_service.log(_format_command(self.start_mission, f"Id: {mission.id}"))
+            self._logging_service.log(_format_command(self.start_mission, f"id: {mission.id}"))
         except CustomException as e:
             raise e
         return mission
@@ -34,7 +34,7 @@ class CommandService:
             mission = self._mission_service.current_mission
 
             if mission is not None:
-                self._logging_service.log(_format_command(self.end_mission, f"Id: {mission.id}"))
+                self._logging_service.log(_format_command(self.end_mission, f"id: {mission.id}"))
             else:
                 self._logging_service.log(_format_command(self.end_mission, "no mission running"))
 
@@ -49,7 +49,7 @@ class CommandService:
             self._swarm_client.force_end_mission()
             mission = self._mission_service.end_mission()
             if mission is not None:
-                self._logging_service.log(_format_command(self.force_end_mission, f"Id: {mission.id}"))
+                self._logging_service.log(_format_command(self.force_end_mission, f"id: {mission.id}"))
             else:
                 self._logging_service.log(_format_command(self.force_end_mission, "no mission running"))
         except CustomException as e:

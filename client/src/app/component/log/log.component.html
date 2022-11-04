@@ -13,8 +13,8 @@
         [(ngbCollapse)]="collapsed">
         <div class="card">
             <div class="card-body">
-                <div (click)="selectMission('Current Mission')" class="dropdown-button" *ngIf="missionService.missions.length != 0">
-                    <span>Current Mission</span>
+                <div (click)="selectMission('Mission en cours')" class="dropdown-button" *ngIf="missionService.missions.length != 0">
+                    <span>Mission en cours</span>
                 </div>
                 <div (click)="selectMission(mission.mission._id)" class="dropdown-button" *ngFor="let mission of missionService.missions">
                     <span>Mission {{mission.mission._id}}</span>
@@ -24,7 +24,7 @@
     </div>
     <div class="col h-100 log-box">
         <div class="row log" *ngFor="let log of logs()">
-            <span>{{log.timestamp_ms}}: {{log.message}}</span>
+            <span>{{log.timestamp_ms | date:"yyyy-MM-dd HH:mm:ss.S"}}: {{log.message}}</span>
         </div>
     </div>
 </div>
