@@ -14,7 +14,7 @@
                 <app-drone-panel class="col drone-panel" uri={{uri}}></app-drone-panel>
             </div>
         </div>
-        <div class="col-sm-6 mission">
+        <div [ngClass]="logsCollapsed ? 'col-sm-9' : 'col-sm-6'" class="mission h-100 mh-100">
             <app-map></app-map>
         </div>
         <div class="col-sm-3 h-100 log-container" [hidden]="logsCollapsed">
