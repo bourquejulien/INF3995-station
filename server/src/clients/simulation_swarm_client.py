@@ -49,7 +49,8 @@ class SimulationSwarmClient(AbstractSwarmClient):
         self.daemon.start()
 
     def disconnect(self):
-        self.daemon.join(500)
+        self._is_active = False
+        self.daemon.join(1)
         self.daemon = None
 
         for drone in self._drone_clients:
