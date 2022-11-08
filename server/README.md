@@ -10,10 +10,6 @@ source venv/bin/activate
 python3 requirements.py
 ```
 
-### Avec docker :
-```bash
-docker build -t serveur .
-```
 ## Exécution
 
 ### Sans docker
