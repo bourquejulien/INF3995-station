@@ -23,9 +23,8 @@ python3 app.py
 ```
 
 ### Avec docker :
-```bash
-docker run -p 5000:5000 serveur
-```
+1. Exécuter la commande ``docker build --target=final -t server .``
+2. Lancer le conteneur à l'aide de la commande ``docker run -p 5000:5000 server``
 
 ## Base de données Mongo
 Il est nécessaire de donner accès au serveur à une base de données de type Mongo.
