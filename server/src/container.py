@@ -5,6 +5,7 @@ from src.services.command_service import CommandService
 from src.clients.simulation_swarm_client import SimulationSwarmClient
 from src.clients.physical_swarm_client import PhysicalSwarmClient
 from src.services.database_service import DatabaseService
+from src.services.firmware_service import FirmwareService
 from src.services.logging_service import LoggingService
 from src.services.mapping_service import MappingService
 from src.services.mission_service import MissionService
@@ -65,4 +66,9 @@ class Container(containers.DeclarativeContainer):
         swarm_client=abstract_swarm_client,
         mission_service=mission_service,
         logging_service=logging_service,
+    )
+
+    firmware_service = providers.Singleton(
+        FirmwareService,
+        command_service=command_service
     )

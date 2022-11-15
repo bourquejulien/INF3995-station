@@ -1,7 +1,6 @@
 import math
 
 from src.classes.events.metric import Metric
-from src.classes.position import Position
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.services.database_service import DatabaseService
 from src.services.logging_service import LoggingService
