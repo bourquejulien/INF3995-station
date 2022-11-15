@@ -2,7 +2,8 @@ from abc import ABC, abstractmethod
 
 
 class AbstractSwarmClient(ABC):
-    STATUS = ["Idle", "Identify", "Takeoff", "Exploration", "Landing", "EmergencyStop", "ChooseAngle"]
+    # Pourquoi STATUS en majuscules?
+    STATUS = ["Idle", "Identify", "Takeoff", "Exploration", "Landing", "EmergencyStop", "ChooseAngle", "Crashed"]
 
     def __init__(self):
         self._callbacks = {}
@@ -33,6 +34,10 @@ class AbstractSwarmClient(ABC):
 
     @abstractmethod
     def discover(self):
+        pass
+
+    @abstractmethod
+    def is_crashed(self):
         pass
 
     def add_callback(self, name: str, func):

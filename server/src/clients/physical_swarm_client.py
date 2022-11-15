@@ -119,3 +119,6 @@ class PhysicalSwarmClient(AbstractSwarmClient):
             devices_on_address = cflib.crtp.scan_interfaces(self.base_uri + i)
             available_devices.extend(device[0] for device in devices_on_address)
         return available_devices
+
+    def is_crashed(self):
+        self._swarm.parallel_safe(is_crashed)

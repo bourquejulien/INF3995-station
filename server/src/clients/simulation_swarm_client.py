@@ -38,6 +38,10 @@ class SimulationSwarmClient(AbstractSwarmClient):
             if drone.uri in uris:
                 drone.identify()
 
+    def is_crashed(self):
+        for drone in self._drone_clients:
+            drone.is_crashed()
+
     def connect(self, uris):
         for uri in uris:
             client = SimulationDroneClient(self.config['argos']['hostname'], uri)

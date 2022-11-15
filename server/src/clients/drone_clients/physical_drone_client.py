@@ -1,7 +1,7 @@
 import struct
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 
-commands = {"identify": 0, "start_mission": 1, "end_mission": 2, "force_end_mission": 3}
+commands = {"identify": 0, "start_mission": 1, "end_mission": 2, "force_end_mission": 3, "is_crashed": 4}
 
 
 def _send_packet(scf: SyncCrazyflie, packet):
@@ -26,6 +26,11 @@ def end_mission(scf: SyncCrazyflie):
 
 def force_end_mission(scf: SyncCrazyflie):
     data = struct.pack("<i", commands["force_end_mission"])
+    _send_packet(scf, data)
+
+
+def is_crashed(scf: SyncCrazyflie):
+    data = struct.pack("<i", commands["is_crashed"])
     _send_packet(scf, data)
 
 
