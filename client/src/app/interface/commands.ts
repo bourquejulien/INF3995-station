@@ -10,7 +10,7 @@ export interface Log {
 }
 
 export interface Mission {
-    _id: string,
+    id: string,
     is_simulation: boolean,
     start_time_ms: number,
     end_time_ms: number,

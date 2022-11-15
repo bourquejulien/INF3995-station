@@ -45,8 +45,8 @@ class MissionService:
 
         return mission
 
-    def get_missions_range(self, start_timestamp: int = None, end_timestamp: int = None):
-        self._database_service.get_missions(start_timestamp, end_timestamp)
+    def get_last_missions(self, mission_number: int):
+        return self._database_service.get_missions(mission_number)
 
     def get_mission_by_id(self, id: str):
         self._database_service.get_mission(id)

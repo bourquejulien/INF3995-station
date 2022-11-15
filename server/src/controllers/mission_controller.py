@@ -18,13 +18,11 @@ def get_missions(mission_service: MissionService = Provide[Container.mission_ser
         if mission_id is not None:
             missions.append(mission_service.get_mission_by_id(mission_id))
         else:
-            start_timestamp = request.args.get('start_timestamp', type=int)
-            end_timestamp = request.args.get('end_timestamp', type=int)
-            missions.append(mission_service.get_missions_range(start_timestamp, end_timestamp))
-        jsonify(missions.to_json())
+            missions_number = request.args.get('missions_number', type=int)
+            missions = mission_service.get_last_missions(missions_number)
     except CustomException as e:
         return "{}: {}".format(e.name, e.message), 500
-    return 'success', 200
+    return jsonify(missions), 200
 
 
 @blueprint.route('/current_mission', methods=['get'])
@@ -33,7 +31,7 @@ def current_mission(mission_service: MissionService = Provide[Container.mission_
     try:
         mission = mission_service.current_mission
         if mission is not None:
-            return jsonify(mission.to_json())
+            return jsonify(mission)
         return jsonify({})
     except CustomException as e:
         return "{}: {}".format(e.name, e.message), 500
@@ -46,7 +44,7 @@ def start(command_service=Provide[Container.command_service]):
         mission = command_service.start_mission()
     except CustomException as e:
         return '"error": "{}: {}"'.format(e.name, e.message), 500
-    return mission.to_json(), 200
+    return jsonify(mission), 200
 
 
 @blueprint.route('/end', methods=['post'])

@@ -1,9 +1,11 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Log, Mission } from '@app/interface/commands';
 import { environment } from '@environment';
 import { interval, Observable, Subscription } from 'rxjs';
 import { DroneInfoService } from '../drone-info/drone-info.service';
+
+const MISSION_HISTORY_SIZE = 10;
 
 @Injectable({
     providedIn: 'root'
@@ -13,23 +15,34 @@ export class MissionService {
     private _currentMission: Mission | null = null;
     private _currentLogs: Log[] = [];
 
-    missionSubscription: Subscription = new Subscription();
-    private logSubscription: Subscription = new Subscription();
+    private _currentMissionSubscription: Subscription = new Subscription();
+    private _logSubscription: Subscription = new Subscription();
 
     private _missions: {"mission": Mission, "logs": Log[]}[] = [];
 
     constructor(private httpClient: HttpClient, private droneInfoService: DroneInfoService) {
         let self = this;
 
-        this.missionSubscription = interval(1000).subscribe(() => {
-            this.getMission().subscribe({
+        this.getLastMissions(MISSION_HISTORY_SIZE).subscribe({
+            next(response: Mission[]): void {
+                for(let mission of response) {
+                    self._missions.push({"mission": mission, "logs": [] as Log[]})
+                }
+            },
+            error(): void {
+                console.log("error");
+            }
+        })
+
+        this._currentMissionSubscription = interval(5000).subscribe(() => {
+            this.getCurrentMission().subscribe({
                 next(response): void {
-                    let is_mission = Object.keys(response).length > 0
+                    let is_mission = Object.keys(response).length > 0;
                     if(!self._isMissionOngoing && is_mission){
                         self.setupMission(response as Mission);
                     }
                     if (self._isMissionOngoing && !is_mission){
-                        self.terminateMission()
+                        self.terminateMission();
                     }
                 },
                 error(): void {
@@ -39,21 +52,28 @@ export class MissionService {
         });
     }
 
-    getMission(): Observable<Mission | {}>{
+    private getLastMissions(missions_number: number): Observable<Mission[]>{
+        let queryParams = new HttpParams();
+        queryParams = queryParams.append("missions_number", missions_number);
+        return this.httpClient.get<Mission[]>(`${environment.serverURL}/mission/`,
+            {params: queryParams},
+        );
+    }
+
+    private getCurrentMission(): Observable<Mission | {}> {
         return this.httpClient.get<Mission>(`${environment.serverURL}/mission/current_mission`);
     }
 
-    private logSubscribe(mission_id: string): void {
+    private logSubscribe(missionId: string): void {
         const self = this;
-        this.logSubscription = interval(1000).subscribe(() => {
-            let since_timestamp = 0;
+        this._logSubscription = interval(1000).subscribe(() => {
+            let sinceTimestamp = 0;
             if (this._currentLogs.length > 0) {
-                since_timestamp = this._currentLogs[this._currentLogs.length - 1].timestamp_ms;
+                sinceTimestamp = this._currentLogs[this._currentLogs.length - 1].timestamp_ms;
             }
-            this.droneInfoService.getLogs(mission_id, since_timestamp).subscribe({
+            this.droneInfoService.getLogs(missionId, sinceTimestamp=sinceTimestamp).subscribe({
                 next(response: Log[]): void {
                     self._currentLogs = self.currentLogs.concat(response);
-                    console.log(self._currentLogs)
                 },
                 error(): void {
                     console.log("error");
@@ -63,14 +83,14 @@ export class MissionService {
     }
 
     private logUnsubscribe(): void {
-        this.logSubscription.unsubscribe();
+        this._logSubscription.unsubscribe();
     }
 
     private setupMission(mission: Mission): void {
         this._currentLogs = [];
         this._currentMission = mission;
         this._isMissionOngoing = true;
-        this.logSubscribe(mission._id);
+        this.logSubscribe(mission.id);
     }
 
     private terminateMission(): void {
@@ -125,10 +145,22 @@ export class MissionService {
         });
     }
 
-    public getMissionLogs(id: string): Log[] {
+    public getMissionLogs(id: string): Log[] | Observable<Log[]>{
         for (let i = 0; i < this._missions.length; i++) {
-            if (this._missions[i]["mission"]["_id"] == id) {
-                return this._missions[i]["logs"];
+            if (this._missions[i]["mission"]["id"] == id) {
+                if (this._missions[i]["logs"].length == 0) {
+                    let observable = this.droneInfoService.getLogs(id);
+                    const self = this;
+                    observable.subscribe({
+                        next(logs: Log[]): void {
+                            self._missions[i]["logs"] = logs;
+                        },
+                    });
+                    return observable;
+                }
+                else {
+                    return this._missions[i]["logs"];
+                }
             }
         }
         return [];
