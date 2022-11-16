@@ -25,6 +25,9 @@ class NoCompilerFirmwareService(AbstractFirmwareService):
     def get_file(self, path: str):
         return b""
 
+    def close(self, exit_info: tuple):
+        pass
+
     def _flash(self, data: bytes):
         uris = self.command_service.discover()
         bootloaders = [Bootloader(uri) for uri in uris]

@@ -15,12 +15,19 @@ class RemoteCompilerClient:
         self.address = connection_string
 
     def __enter__(self):
-        self._channel = grpc.insecure_channel(self.address)
-        self._channel.__enter__()
+        self._channel = grpc.insecure_channel(self.address).__enter__()
         self.stub = compiler_pb2_grpc.CompilerStub(self._channel)
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self._channel.__exit__(exc_type, exc_val, exc_tb)
+        return self._channel.__exit__(exc_type, exc_val, exc_tb)
+
+    def is_ready(self, timeout: int):
+        try:
+            grpc.channel_ready_future(self._channel).result(timeout=timeout)
+            return True
+        except grpc.FutureTimeoutError:
+            return False
 
     def start_session(self):
         try:

@@ -1,7 +1,7 @@
 from src.services.firmware_service.abstract_firmware_service import AbstractFirmwareService
 
 
-class FirmwareService(AbstractFirmwareService):
+class DisabledFirmwareService(AbstractFirmwareService):
 
     def flash_data(self, data: bytes):
         pass
@@ -14,3 +14,6 @@ class FirmwareService(AbstractFirmwareService):
 
     def get_file(self, path: str):
         return b""
+
+    def close(self, exit_info: tuple):
+        pass

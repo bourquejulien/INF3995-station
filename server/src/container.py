@@ -5,11 +5,35 @@ from src.services.command_service import CommandService
 from src.clients.simulation_swarm_client import SimulationSwarmClient
 from src.clients.physical_swarm_client import PhysicalSwarmClient
 from src.services.database_service import DatabaseService
+from src.services.firmware_service.disabled_firmware_service import DisabledFirmwareService
 from src.services.firmware_service.firmware_service import FirmwareService
+from src.services.firmware_service.no_compiler_firmware_service import NoCompilerFirmwareService
+from src.services.firmware_service.remote_compiler_client import RemoteCompilerClient
 from src.services.logging_service import LoggingService
 from src.services.mapping_service import MappingService
 from src.services.mission_service import MissionService
 from src.services.telemetrics_service import TelemetricsService
+
+CONNECTION_TIMEOUT = 2
+
+
+def _init_firmware_service(config, command_service):
+    if config.get("is_simulation"):
+        return providers.Singleton(
+            DisabledFirmwareService,
+        )
+
+    with RemoteCompilerClient(config.get("remote_compiler")["connection_string"]) as rc:
+        if rc.is_ready(CONNECTION_TIMEOUT):
+            return providers.Singleton(
+                FirmwareService,
+                config=config,
+                command_service=command_service
+            )
+        return providers.Singleton(
+            NoCompilerFirmwareService,
+            command_service=command_service
+        )
 
 
 class Container(containers.DeclarativeContainer):
@@ -68,7 +92,4 @@ class Container(containers.DeclarativeContainer):
         logging_service=logging_service,
     )
 
-    firmware_service = providers.Singleton(
-        FirmwareService,
-        command_service=command_service
-    )
+    firmware_service = _init_firmware_service(config, command_service)

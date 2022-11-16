@@ -18,3 +18,7 @@ class AbstractFirmwareService(ABC):
     @abstractmethod
     def get_file(self, path: str):
         pass
+
+    @abstractmethod
+    def close(self, exit_info: tuple):
+        pass
