@@ -3,21 +3,24 @@ from out import compiler_pb2_grpc, compiler_pb2
 from src.exceptions.custom_exception import CustomException
 
 
-class SimulationDroneClient:
+class RemoteCompilerClient:
     address: str
+    id: str | None
+    _channel: grpc.Channel | None
 
     def __init__(self, connection_string: str):
-        self.channel = None
+        self._channel = None
         self.stub = None
         self.id = None
         self.address = connection_string
 
-    def connect(self):
-        self.channel = grpc.insecure_channel(self.address)
-        self.stub = compiler_pb2_grpc.CompilerStub(self.channel)
+    def __enter__(self):
+        self._channel = grpc.insecure_channel(self.address)
+        self._channel.__enter__()
+        self.stub = compiler_pb2_grpc.CompilerStub(self._channel)
 
-    def disconnect(self):
-        self.channel.close()
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._channel.__exit__(exc_type, exc_val, exc_tb)
 
     def start_session(self):
         try:
@@ -38,7 +41,7 @@ class SimulationDroneClient:
         except grpc.RpcError as e:
             raise CustomException("RPCError: ", e.code()) from e
 
-    def get(self, path: str):
+    def get(self, path: str) -> str:
         try:
             data_block = self.stub.Get(compiler_pb2.GetRequest(id=self.id, path=path))
             return data_block.data.decode("utf-8")
@@ -49,7 +52,7 @@ class SimulationDroneClient:
         try:
             stream = self.stub.Build(compiler_pb2.CompilerRequest(id=self.id))
             for data_block in stream:
-                yield data_block
+                yield data_block.data
 
         except grpc.RpcError as e:
             raise CustomException("RPCError: ", e.code()) from e

@@ -13,3 +13,5 @@ clients:
     update_time: 2.0
     default_z: 0.5
     trigger_distance: 0.3
+remote_compiler:
+    connection_string: ${REMOTE_COMPILER_CONNECTION_STRING:localhost:5003}
