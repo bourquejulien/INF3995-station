@@ -20,6 +20,8 @@ class RemoteCompilerClient:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.id is not None:
+            self.end_session()
         return self._channel.__exit__(exc_type, exc_val, exc_tb)
 
     def is_ready(self, timeout: int):
