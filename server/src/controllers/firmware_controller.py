@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from src.exceptions.custom_exception import CustomException
 from dependency_injector.wiring import inject, Provide
 from src.container import Container
-from src.services.firmware_service import FirmwareService
+from src.services.firmware_service.firmware_service import FirmwareService
 
 blueprint = Blueprint('firmware', __name__)
 

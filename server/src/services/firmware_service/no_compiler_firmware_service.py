@@ -1,9 +1,10 @@
 from cflib.bootloader import Bootloader, TargetTypes, FlashArtifact, Target
 
 from src.services.command_service import CommandService
+from src.services.firmware_service.abstract_firmware_service import AbstractFirmwareService
 
 
-class FirmwareService:
+class NoCompilerFirmwareService(AbstractFirmwareService):
     command_service: CommandService
 
     def __init__(self, command_service: CommandService):
@@ -16,15 +17,12 @@ class FirmwareService:
         self.command_service.connect(uris)
 
     def flash_repo(self):
-        # TODO
-        ...
+        pass
 
     def edit(self, path: str, data: bytes):
-        # TODO
-        ...
+        pass
 
     def get_file(self, path: str):
-        # TODO
         return b""
 
     def _flash(self, data: bytes):
