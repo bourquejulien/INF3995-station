@@ -5,7 +5,7 @@
             (click)="collapse.toggle()"
             [attr.aria-expanded]="!collapsed"
             aria-controls="collapseExample">
-            {{selectedMissionId}}
+            Mission {{formatMissionId(selectedMissionId)}}
         </button>
     </div>
 
@@ -13,17 +13,17 @@
         [(ngbCollapse)]="collapsed">
         <div class="card">
             <div class="card-body">
-                <div (click)="selectMission('Mission en cours')" class="dropdown-button" *ngIf="missionService.missions.length != 0">
+                <div (click)="selectMission('en cours')" class="dropdown-button" *ngIf="missionService.missions.length != 0">
                     <span>Mission en cours</span>
                 </div>
-                <div (click)="selectMission(mission.mission._id)" class="dropdown-button" *ngFor="let mission of missionService.missions">
-                    <span>Mission {{mission.mission._id}}</span>
+                <div (click)="selectMission(mission.mission.id)" class="dropdown-button" *ngFor="let mission of missionService.missions">
+                    <span>Mission {{formatMissionId(mission.mission.id)}}</span>
                 </div>
             </div>
         </div>
     </div>
     <div class="col h-100 log-box">
-        <div class="row log" *ngFor="let log of logs()">
+        <div class="row log" *ngFor="let log of logs() | async">
             <span>{{log.timestamp_ms | date:"yyyy-MM-dd HH:mm:ss.S"}}: {{log.message}}</span>
         </div>
     </div>

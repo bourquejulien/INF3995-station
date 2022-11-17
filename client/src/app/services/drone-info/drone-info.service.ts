@@ -31,10 +31,13 @@ export class DroneInfoService {
             ).pipe(catchError(this.handleError('getStatuses', [])));
     }
 
-    getLogs(mission_id: string, since_timestamp: number): Observable<Log[]> {
+    getLogs(missionId: string, sinceTimestamp?: number): Observable<Log[]> {
         let queryParams = new HttpParams();
-        queryParams = queryParams.append("mission_id", mission_id);
-        queryParams = queryParams.append("since_timestamp", since_timestamp);
+        queryParams = queryParams.append("mission_id", missionId);
+        console.log(sinceTimestamp)
+        if (typeof sinceTimestamp !== "undefined") {
+            queryParams = queryParams.append("since_timestamp", sinceTimestamp);
+        }
         return this.httpClient.get<Log[]>(`${environment.serverURL}/drone-info/logs`,
             {params: queryParams},
             ).pipe(catchError(this.handleError('logs', [])));

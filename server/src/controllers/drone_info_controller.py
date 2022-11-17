@@ -11,11 +11,14 @@ blueprint = Blueprint('drone-info', __name__)
 
 @blueprint.route('/logs', methods=['get'])
 @inject
-def get_logs_since(logging_service: LoggingService = Provide[Container.logging_service]):
+def get_logs(logging_service: LoggingService = Provide[Container.logging_service]):
     try:
         mission_id = request.args.get("mission_id", type=str)
         since_timestamp_ms = request.args.get('since_timestamp', type=int)
-        logs_list = logging_service.get_since(mission_id, since_timestamp_ms)
+        if since_timestamp_ms is not None:
+            logs_list = logging_service.get_since(mission_id, since_timestamp_ms)
+        else:
+            logs_list = logging_service.get_history(mission_id)
         return jsonify(logs_list)
     except CustomException as e:
         return f"{e.name}: {e.message}", 500

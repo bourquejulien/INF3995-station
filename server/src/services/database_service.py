@@ -34,9 +34,11 @@ class DatabaseService:
         self._add_many(data, MAPPING[data[0].__class__])
 
     def get_logs(self, mission_id: str):
-        cursor = self._collections["log"].find({"mission_id": mission_id}).sort("timestamp_ms", pymongo.DESCENDING)
+        cursor = self._collections["log"].find({"mission_id": mission_id}).sort("timestamp_ms", pymongo.ASCENDING)
+        logs = []
         for log in cursor:
-            yield Log(**DatabaseService._convert_from(log))
+            logs.append(Log(**DatabaseService._convert_from(log)))
+        return logs
 
     def get_metrics(self, mission_id: str):
         cursor = self._collections["metric"].find({"mission_id": mission_id}).sort("timestamp_ms", pymongo.DESCENDING)
@@ -46,16 +48,12 @@ class DatabaseService:
     def get_mission(self, id: str):
         return DatabaseService._convert_from(self._collections["mission"].find_one(id))
 
-    def get_missions(self, start_timestamp: int | None, end_timestamp: int | None):
-        queries = []
-        if start_timestamp is not None:
-            queries.append({"start_time_ms": {"$gt": start_timestamp}})
-        if end_timestamp is not None:
-            queries.append({"end_time_ms": {"$lt": end_timestamp}})
-        # if len(queries) > 0:
-        cursor = self._collections["mission"].find({"$and":queries}).sort("end_time_ms", pymongo.DESCENDING)
+    def get_missions(self, missions_count: int):
+        cursor = self._collections["mission"].find(limit=missions_count).sort("end_time_ms", pymongo.DESCENDING)
+        missions = []
         for mission in cursor:
-            yield Mission(**DatabaseService._convert_from(mission))
+            missions.append(Mission(**DatabaseService._convert_from(mission)))
+        return missions
 
     def _add_many(self, elems: list, collection_name: str):
         dict_elems = [elem.to_json() for elem in elems]

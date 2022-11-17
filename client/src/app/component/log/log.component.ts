@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Log } from '@app/interface/commands';
 import { MissionService } from '@app/services/mission/mission.service';
+import { Observable, of } from 'rxjs';
 
 @Component({
     selector: 'app-log',
@@ -9,7 +10,7 @@ import { MissionService } from '@app/services/mission/mission.service';
 })
 export class LogComponent implements OnInit {
     collapsed: boolean = true;
-    selectedMissionId: string = "Mission en cours";
+    selectedMissionId: string = "en cours";
 
     constructor(public missionService: MissionService) {
     }
@@ -17,12 +18,18 @@ export class LogComponent implements OnInit {
     ngOnInit(): void {
     }
 
-    public logs(): Log[] {
-        if (this.selectedMissionId == "Mission en cours") {
-            return this.missionService.currentLogs;
+    public logs(): Observable<Log[]> {
+        if (this.selectedMissionId === "en cours") {
+            return of(this.missionService.currentLogs);
         }
         else {
-           return this.missionService.getMissionLogs(this.selectedMissionId);
+            let logs = this.missionService.getMissionLogs(this.selectedMissionId);
+            if (logs instanceof Observable) {
+                return logs;
+            }
+            else {
+                return of(logs);
+            }
         }
     }
 
@@ -30,4 +37,8 @@ export class LogComponent implements OnInit {
         this.selectedMissionId = id;
         this.collapsed = true;
     }
+
+    public formatMissionId(missionId: string): string {
+        return missionId.split("-")[0];
+    } 
 }
