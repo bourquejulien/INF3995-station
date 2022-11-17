@@ -1,15 +1,16 @@
-#!/bin/python3
+#!/usr/bin/env python
+import os
+import shutil
 
 #######################
 # Install dependencies
 #######################
 import pip
-import os
 
 pip.main(["install", "-r", "requirements.txt"])
 
 #######################
-# Generate protos
+# Generate protos - Fix for protox implementation
 #######################
 import grpc_tools.protoc as protoc
 
@@ -22,21 +23,21 @@ if not os.path.exists(out_folder):
 
 
 def build_proto(proto_name: str):
-    protoc.main([f"-I{proto_folder}.", "--python_out=.", "--grpc_python_out=.", f"{proto_folder}/{proto_name}.proto"])
+    protoc.main([f"-I{proto_folder}.", "--python_out=.", "--grpc_python_out=.",
+                 os.path.join(proto_folder, f"{proto_name}.proto")])
 
-    newlines = []
-    with open(f"{proto_folder}/{proto_name}_pb2_grpc.py", 'r') as file:
-        for line in file.readlines():
-            if f"from {proto_folder} import {proto_name}_pb2" in line:
-                newlines.append(f"import out.{proto_name}_pb2 as {proto_folder}_dot_{proto_name}__pb2")
-                continue
-            newlines.append(line)
+    pb_file = f"{proto_name}_pb2.py"
+    pb_grpc_file = f"{proto_name}_pb2_grpc.py"
 
-    with open(f"{proto_folder}/{proto_name}_pb2_grpc.py", 'w') as file:
-        file.writelines(newlines)
+    with open(os.path.join(proto_folder, pb_grpc_file), "r") as rf:
+        with open(os.path.join(out_folder, pb_grpc_file), "w") as wf:
+            while line := rf.readline():
+                if f"from {proto_folder} import {proto_name}_pb2" in line:
+                    line = f"import out.{proto_name}_pb2 as {proto_folder}_dot_{proto_name}__pb2"
+                wf.write(line)
 
-    os.replace(f"{proto_folder}/{proto_name}_pb2_grpc.py", f"{out_folder}/{proto_name}_pb2_grpc.py")
-    os.replace(f"{proto_folder}/{proto_name}_pb2.py", f"{out_folder}/{proto_name}_pb2.py")
+    shutil.move(os.path.join(proto_folder, pb_file), os.path.join(out_folder, pb_file))
+    os.remove(os.path.join(proto_folder, pb_grpc_file))
 
 
 for proto in protos:
