@@ -41,11 +41,7 @@ class SimulationDroneClient:
             raise CustomException("RPCError: ", e.code()) from e
 
     def is_crashed(self):
-        try:
-            self.stub.IsCrashed(simulation_pb2.MissionRequest(uri=self.uri))
-        except grpc.RpcError as e:
-            print(e)
-            raise CustomException("RPCError: ", e.code()) from e
+        pass
 
     def connect(self):
         self.channel = grpc.insecure_channel(self.address)
