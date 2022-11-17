@@ -19,6 +19,7 @@ from src.exceptions.hardware_exception import HardwareException
 
 logging.basicConfig(level=logging.ERROR)
 
+
 class PhysicalSwarmClient(AbstractSwarmClient):
     base_uri = 0xE7E7E7E750
     _swarm: Swarm | None
@@ -114,6 +115,10 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         self._swarm.parallel_safe(identify, {uri: [uri in uris] for uri in self._swarm._cfs})
 
     def discover(self):
+        error_code = "Crazyradio not found"
+        if cflib.crtp.get_interfaces_status().get("radio") == error_code:
+            raise CustomException(error_code, "Dongle is not attached")
+
         available_devices = []
         for i in range(5):
             devices_on_address = cflib.crtp.scan_interfaces(self.base_uri + i)

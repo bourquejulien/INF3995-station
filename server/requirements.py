@@ -1,35 +1,44 @@
-#!/bin/python3
+#!/usr/bin/env python
+import os
+import shutil
 
 #######################
 # Install dependencies
 #######################
 import pip
-import os
 
-out_folder = "out"
 pip.main(["install", "-r", "requirements.txt"])
 
 #######################
-# Generate protos
+# Generate protos - Fix for protox implementation
 #######################
 import grpc_tools.protoc as protoc
+
+out_folder = "out"
+proto_folder = "protos"
+protos = ["simulation", "compiler"]
 
 if not os.path.exists(out_folder):
     os.mkdir(out_folder)
 
-protoc.main(["-Iprotos.", "--python_out=.", "--grpc_python_out=.", "protos/simulation.proto"])
 
-newlines = []
-with open("protos/simulation_pb2_grpc.py", 'r') as file:
-    for line in file.readlines():
-        if "from protos import simulation_pb2" in line:
-            newlines.append("import out.simulation_pb2 as protos_dot_simulation__pb2")
-            continue
-        newlines.append(line)
+def build_proto(proto_name: str):
+    protoc.main([f"-I{proto_folder}.", "--python_out=.", "--grpc_python_out=.",
+                 os.path.join(proto_folder, f"{proto_name}.proto")])
+
+    pb_file = f"{proto_name}_pb2.py"
+    pb_grpc_file = f"{proto_name}_pb2_grpc.py"
+
+    with open(os.path.join(proto_folder, pb_grpc_file), "r") as rf:
+        with open(os.path.join(out_folder, pb_grpc_file), "w") as wf:
+            while line := rf.readline():
+                if f"from {proto_folder} import {proto_name}_pb2" in line:
+                    line = f"import out.{proto_name}_pb2 as {proto_folder}_dot_{proto_name}__pb2"
+                wf.write(line)
+
+    shutil.move(os.path.join(proto_folder, pb_file), os.path.join(out_folder, pb_file))
+    os.remove(os.path.join(proto_folder, pb_grpc_file))
 
 
-with open("protos/simulation_pb2_grpc.py", 'w') as file:
-    file.writelines(newlines)
-
-os.replace("protos/simulation_pb2_grpc.py", f"{out_folder}/simulation_pb2_grpc.py")
-os.replace("protos/simulation_pb2.py", f"{out_folder}/simulation_pb2.py")
+for proto in protos:
+    build_proto(proto)

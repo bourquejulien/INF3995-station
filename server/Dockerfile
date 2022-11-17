@@ -13,7 +13,7 @@ WORKDIR /usr/app
 RUN python -m venv ./venv
 ENV PATH="/usr/app/venv/bin:$PATH"
 
-COPY protos/simulation.proto protos/simulation.proto
+COPY protos/*.proto ./protos/
 COPY ./requirements.* ./
 RUN python3 requirements.py
 
