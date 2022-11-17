@@ -1,0 +1,40 @@
+<!--<div class="d-flex flex-column h-100">-->
+<!--&lt;!&ndash;    <div class="row">&ndash;&gt;-->
+<!--&lt;!&ndash;        <button&ndash;&gt;-->
+<!--&lt;!&ndash;            class="button"&ndash;&gt;-->
+<!--&lt;!&ndash;            (click)="collapse.toggle()"&ndash;&gt;-->
+<!--&lt;!&ndash;            [attr.aria-expanded]="!collapsed"&ndash;&gt;-->
+<!--&lt;!&ndash;            aria-controls="collapseExample">&ndash;&gt;-->
+<!--&lt;!&ndash;            {{selectedMissionId}}&ndash;&gt;-->
+<!--&lt;!&ndash;        </button>&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    <div #collapse="ngbCollapse" class="row"&ndash;&gt;-->
+<!--&lt;!&ndash;         [(ngbCollapse)]="collapsed">&ndash;&gt;-->
+<!--&lt;!&ndash;        <div class="card">&ndash;&gt;-->
+<!--&lt;!&ndash;            <div class="card-body">&ndash;&gt;-->
+<!--&lt;!&ndash;                <div (click)="selectMission('Mission en cours')" class="dropdown-button" *ngIf="missionService.missions.length != 0">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <span>Mission en cours</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--&lt;!&ndash;                <div (click)="selectMission(mission.mission._id)" class="dropdown-button" *ngFor="let mission of missionService.missions">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <span>Mission {{mission.mission._id}}</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                </div>&ndash;&gt;-->
+<!--&lt;!&ndash;            </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+<!--&lt;!&ndash;    <div class="col h-100 log-box">&ndash;&gt;-->
+<!--&lt;!&ndash;        <div class="row log" *ngFor="let log of logs()">&ndash;&gt;-->
+<!--&lt;!&ndash;            <span>{{log.timestamp_ms | date:"yyyy-MM-dd HH:mm:ss.S"}}: {{log.message}}</span>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+
+<!--    <div class="row">-->
+<!--        <button-->
+<!--            class="button"-->
+<!--            (click)="collapse.toggle()"-->
+<!--            [attr.aria-expanded]="!collapsed"-->
+<!--            aria-controls="collapseExample">-->
+<!--            {{selectedMissionId}}-->
+<!--        </button>-->
+<!--    </div>-->
+<!--</div>-->
