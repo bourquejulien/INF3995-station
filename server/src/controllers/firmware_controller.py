@@ -57,8 +57,8 @@ def flash(firmware_service: AbstractFirmwareService = Provide[Container.firmware
         return "Firmware calls are not available, are you running in simulation mode?", 500
 
     try:
-        data = request.data
-        firmware_service.flash_data(data)
+        file = request.files['file']
+        firmware_service.flash_data(file.stream.read())
     except CustomException as e:
         return "{}: {}".format(e.name, e.message), 500
     return 'success', 200
