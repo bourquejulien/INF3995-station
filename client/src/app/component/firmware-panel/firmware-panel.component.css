@@ -34,3 +34,17 @@
 .dropdown-button:hover{
     background-color: var(--secondary);
 }
+
+.editor{
+    width: 100%;
+    text-align: center;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.spinner{
+    color: black;
+    text-align: center;
+    padding-left: 0;
+    padding-right: 0;
+}

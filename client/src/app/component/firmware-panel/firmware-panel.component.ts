@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FirmwareService } from '@app/services/firmware/firmware.service';
+import { PartialObserver } from 'rxjs';
 
 type Mode = "file" | "editor";
 
@@ -11,6 +12,7 @@ type Mode = "file" | "editor";
 export class FirmwarePanelComponent implements OnInit {
     collapsed: boolean;
     isFlashError: boolean;
+    isFlashing: boolean;
     currentMode: Mode;
     modes: Array<[Mode, string]>;
     file: File | null;
@@ -18,6 +20,7 @@ export class FirmwarePanelComponent implements OnInit {
     constructor(protected firmwareService: FirmwareService) {
         this.collapsed = true;
         this.isFlashError = false;
+        this.isFlashing = false;
         this.currentMode = "file";
         this.modes = [["file", "Téléversement"],["editor", "Depuis un fichier"]]
         this.file = null;
@@ -25,6 +28,7 @@ export class FirmwarePanelComponent implements OnInit {
 
     ngOnInit(): void {
         this.isFlashError = false;
+        this.isFlashing = false;
         this.currentMode = "file";
         this.file = null;
     }
@@ -45,22 +49,24 @@ export class FirmwarePanelComponent implements OnInit {
     }
 
     flash(): void {
+        this.isFlashError = false;
         if (this.currentMode == "editor")
         {
-            this.firmwareService.buildFlash().subscribe({
-                next: (data) => console.log("step" + data),
-                complete: () => console.log("completed"),
-                error: err => this.isFlashError = true,
-            });
+            this.firmwareService.buildFlash().subscribe(this.flashHandler());
         }
 
         if (this.file == null){
             return;
         }
 
-        this.firmwareService.flashFile(this.file).subscribe({
-            next: (data) => console.log("step" + data),
-            error: err => this.isFlashError = true,
-        });
+        this.firmwareService.flashFile(this.file).subscribe(this.flashHandler());
+    }
+
+    private flashHandler() {
+        this.isFlashing = true;
+        return {
+            complete: () => this.isFlashing = false,
+            error: () => this.isFlashError = true,
+        }
     }
 }
