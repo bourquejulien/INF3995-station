@@ -11,6 +11,7 @@ body {
   --background: #9CABCA;
   --font-color: #E2E2E2;
   --border-color: #DCD7BA;
+  --error-color: #9c0505;
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
   color: var(--font-color)

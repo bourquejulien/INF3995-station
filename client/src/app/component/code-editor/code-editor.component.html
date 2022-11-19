@@ -7,14 +7,14 @@
         <div>
             <div class="d-flex justify-content-between">
                 <input class="path form-control" type="text" [(ngModel)]="filePath" (keydown)="handleKey($event, getFile.bind(this))"/>
-                <button class="button" (click)="getFile()">Get</button>
+                <button class="button" (click)="getFile()">Ouvrir</button>
             </div>
             <label *ngIf="isPathError" class="error">Impossible d'accéder à ce fichier</label>
             <br>
-            <textarea rows="10" class="code" (keydown)="handleKey($event, editFile.bind(this))" [(ngModel)]="fileContent"></textarea>
+            <textarea rows="10" class="code" [(ngModel)]="fileContent"></textarea>
             <label *ngIf="isEditError" class="error">Impossible de modifier ce fichier</label>
             <br>
-            <button class="button" (click)="editFile()">Edit</button>
+            <button class="button" (click)="editFile()">Modifier</button>
         </div>
     </div>
 </ng-template>

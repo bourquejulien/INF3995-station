@@ -48,6 +48,8 @@ export class FirmwarePanelComponent implements OnInit {
         if (this.currentMode == "editor")
         {
             this.firmwareService.buildFlash().subscribe({
+                next: (data) => console.log("step" + data),
+                complete: () => console.log("completed"),
                 error: err => this.isFlashError = true,
             });
         }
@@ -57,6 +59,7 @@ export class FirmwarePanelComponent implements OnInit {
         }
 
         this.firmwareService.flashFile(this.file).subscribe({
+            next: (data) => console.log("step" + data),
             error: err => this.isFlashError = true,
         });
     }

@@ -10,17 +10,17 @@ import { catchError, map } from 'rxjs/operators';
 export class FirmwareService {
     constructor(private httpClient: HttpClient) {}
 
-    buildFlash(): Observable<void> {
-        return this.httpClient.post<void>(`${environment.serverURL}/firmware/build_flash`, null)
+    buildFlash(): Observable<string> {
+        return this.httpClient.post(`${environment.serverURL}/firmware/build_flash`, null, {responseType: 'text'})
             .pipe(
                 catchError((errorResponse: HttpErrorResponse) => throwError(errorResponse))
             );
     }
 
-    flashFile(file: File): Observable<void> {
+    flashFile(file: File): Observable<string> {
         const formData: FormData = new FormData();
         formData.append('file', file, file.name);
-        return this.httpClient.post<void>(`${environment.serverURL}/firmware/flash`, formData)
+        return this.httpClient.post(`${environment.serverURL}/firmware/flash`, formData, {responseType: 'text'})
             .pipe(
                 catchError((errorResponse: HttpErrorResponse) => throwError(errorResponse))
             );

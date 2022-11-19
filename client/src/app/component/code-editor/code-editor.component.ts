@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FirmwareService } from '@app/services/firmware/firmware.service';
 
+const DEFAULT_PATH = "main.c";
+
 @Component({
   selector: 'app-code-editor',
   templateUrl: './code-editor.component.html',
@@ -21,7 +23,7 @@ export class CodeEditorComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.filePath = "";
+        this.filePath = DEFAULT_PATH;
         this.fileContent = "";
         this.isPathError = false;
         this.isEditError = false;
