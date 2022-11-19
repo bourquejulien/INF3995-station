@@ -1,20 +1,24 @@
 from cflib.bootloader import Bootloader, TargetTypes, FlashArtifact, Target
 
+from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.services.command_service import CommandService
 from src.services.firmware_service.abstract_firmware_service import AbstractFirmwareService
 
 
 class NoCompilerFirmwareService(AbstractFirmwareService):
     command_service: CommandService
+    swarm_client: AbstractSwarmClient
 
-    def __init__(self, command_service: CommandService):
+    def __init__(self, command_service: CommandService, swarm_client: AbstractSwarmClient):
         self.command_service = command_service
+        self.swarm_client = swarm_client
 
     def flash_data(self, data: bytes):
-        self.command_service.disconnect()
-        self._flash(data)
-        uris = self.command_service.discover()
-        self.command_service.connect(uris)
+        with self.command_service.disable():
+            self.swarm_client.disconnect()
+            self._flash(data)
+            uris = self.swarm_client.discover()
+            self.swarm_client.connect(uris)
 
     def flash_repo(self):
         pass
