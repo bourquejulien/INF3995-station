@@ -23,9 +23,9 @@ export class CommandService {
             .toPromise();
     }
 
-    async discover(): Promise<void> {
+    async getUris(): Promise<void> {
         this.uris = await this.httpClient
-            .get<string[]>(`${environment.serverURL}/discovery/discover`)
+            .get<string[]>(`${environment.serverURL}/discovery/uris`)
             .toPromise();
     }
 

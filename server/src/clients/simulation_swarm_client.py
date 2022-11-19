@@ -39,6 +39,7 @@ class SimulationSwarmClient(AbstractSwarmClient):
                 drone.identify()
 
     def connect(self, uris):
+        self._drone_clients.clear()
         for uri in uris:
             client = SimulationDroneClient(self.config['argos']['hostname'], uri)
             client.connect()
@@ -55,6 +56,7 @@ class SimulationSwarmClient(AbstractSwarmClient):
 
         for drone in self._drone_clients:
             drone.disconnect()
+        self._drone_clients.clear()
 
     def discover(self):
         return [str(self.config['argos']['port']), str(self.config['argos']['port'] + 1)]

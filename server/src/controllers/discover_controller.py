@@ -9,9 +9,9 @@ from src.services.command_service import CommandService
 blueprint = Blueprint('discovery', __name__)
 
 
-@blueprint.route('/discover', methods=['get'])
+@blueprint.route('/uris', methods=['get'])
 @inject
-def discover(swarm_client: AbstractSwarmClient = Provide[Container.abstract_swarm_client]):
+def uris(swarm_client: AbstractSwarmClient = Provide[Container.abstract_swarm_client]):
     try:
         return jsonify(swarm_client.uris), 200
     except CustomException as e:

@@ -35,8 +35,8 @@ class AbstractSwarmClient(ABC):
     def discover(self):
         pass
 
-    @abstractmethod
     @property
+    @abstractmethod
     def uris(self):
         pass
 

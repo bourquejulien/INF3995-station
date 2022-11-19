@@ -21,10 +21,10 @@ export class MissionPageComponent implements OnInit {
     currentMissionId: string;
 
     ngOnInit(): void {
-        this.commandService.discover();
+        this.commandService.getUris();
         this.commandService.retrieveMode();
     }
-    
+
 
     identify(): void {
         this.commandService.identify({ uris: this.commandService.uris});
@@ -42,5 +42,5 @@ export class MissionPageComponent implements OnInit {
         this.missionService.forceEndMission();
     }
 
-    
+
 }

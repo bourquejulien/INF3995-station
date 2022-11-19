@@ -120,6 +120,7 @@ def test_disconnected_callback(app, mocker, swarm_client, print_mock):
 
     print_mock.assert_called_once_with('Disconnected from test')
 
+
 @freeze_time("2022-01-01")
 def test_console_incoming_callback(app, mocker, swarm_client, print_mock):
     generated_logs = []
@@ -137,13 +138,15 @@ def test_packet_received_callback(app, mocker, swarm_client, print_mock):
     swarm_client._packet_received('abc', param)
     assert generate_metric(Position(2.0, 2.5, 3.0), 'Idle', 'abc') == generated_metrics[0]
 
+
 def test_disconnect(app, mocker, swarm_client):
     swarm_client._swarm = types.SimpleNamespace()
-    swarm_client._swarm.close_links = mocker.stub()
+    stub = mocker.stub()
+    swarm_client._swarm.close_links = stub
 
     swarm_client.disconnect()
 
-    swarm_client._swarm.close_links.assert_called_once()
+    stub.assert_called_once()
 
 
 def test_start_mission(app, mocker, swarm_client):

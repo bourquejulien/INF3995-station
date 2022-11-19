@@ -101,6 +101,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
     def disconnect(self):
         if self._swarm is not None:
             self._swarm.close_links()
+        self._swarm = None
 
     def start_mission(self):
         self._swarm.parallel_safe(start_mission)
@@ -127,4 +128,6 @@ class PhysicalSwarmClient(AbstractSwarmClient):
 
     @property
     def uris(self):
-        return self._swarm._cfs.keys()
+        if self._swarm is None:
+            return []
+        return [str(key) for key in self._swarm._cfs.keys()]
