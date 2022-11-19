@@ -1,25 +1,35 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FirmwarePanelComponent } from './firmware-panel.component';
+import { FirmwareService } from '../../services/firmware/firmware.service';
+import { HttpClient } from '@angular/common/http';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 describe('FirmwarePanelComponent', () => {
-  let component: FirmwarePanelComponent;
-  let fixture: ComponentFixture<FirmwarePanelComponent>;
+    let component: FirmwarePanelComponent;
+    let fixture: ComponentFixture<FirmwarePanelComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ FirmwarePanelComponent ]
-    })
-    .compileComponents();
-  });
+    let mockFirmwareService = new FirmwareService({} as HttpClient)
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(FirmwarePanelComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            declarations: [FirmwarePanelComponent],
+            providers: [
+                {provide: FirmwareService, useValue: mockFirmwareService}
+            ],
+            imports: [NgbModule,
+            ]
+        }).compileComponents();
+    });
+
+    beforeEach(() => {
+        fixture = TestBed.createComponent(FirmwarePanelComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+    });
+
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 });
