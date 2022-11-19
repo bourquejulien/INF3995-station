@@ -1,6 +1,8 @@
 import { Injectable, Query } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { environment } from '@environment';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 @Injectable({
     providedIn: 'root',
@@ -8,25 +10,38 @@ import { environment } from '@environment';
 export class FirmwareService {
     constructor(private httpClient: HttpClient) {}
 
-    async buildFlash(): Promise<void> {
-        await this.httpClient.post(`${environment.serverURL}/firmware/build_flash`, null);
+    buildFlash(): Observable<void> {
+        return this.httpClient.post<void>(`${environment.serverURL}/firmware/build_flash`, null)
+            .pipe(
+                catchError((errorResponse: HttpErrorResponse) => throwError(errorResponse))
+            );
     }
 
-    async flashFile(file: File): Promise<void> {
+    flashFile(file: File): Observable<void> {
         const formData: FormData = new FormData();
         formData.append('file', file, file.name);
-        await this.httpClient.post(`${environment.serverURL}/firmware/flash`, formData).toPromise();
+        return this.httpClient.post<void>(`${environment.serverURL}/firmware/flash`, formData)
+            .pipe(
+                catchError((errorResponse: HttpErrorResponse) => throwError(errorResponse))
+            );
     }
 
-    async getFile(path: string): Promise<string> {
+    getFile(path: string): Observable<string> {
         let queryParams = new HttpParams();
         queryParams = queryParams.append("path", path);
-        return await this.httpClient.get<string>(`${environment.serverURL}/firmware/get_file`, {params: queryParams}).toPromise();
+        return this.httpClient.get(`${environment.serverURL}/firmware/get_file`, {params: queryParams, responseType: "text"})
+            .pipe(
+                catchError((errorResponse: HttpErrorResponse) => throwError(errorResponse))
+            );
     }
 
-    async editFile(path: string, content: string): Promise<void> {
+    editFile(path: string, content: string): Observable<void> {
         let queryParams = new HttpParams();
         queryParams = queryParams.append("path", path);
-        await this.httpClient.post<void>(`${environment.serverURL}/firmware/edit`, content, {params: queryParams}).toPromise();
+        return this.httpClient.post(`${environment.serverURL}/firmware/edit`, content, {params: queryParams, responseType: "text"})
+            .pipe(
+                catchError((errorResponse: HttpErrorResponse) => throwError(errorResponse)),
+                map(() => {}),
+            );
     }
 }

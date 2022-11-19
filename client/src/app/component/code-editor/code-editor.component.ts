@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FirmwareService } from '@app/services/firmware/firmware.service';
 
 @Component({
@@ -10,32 +10,53 @@ import { FirmwareService } from '@app/services/firmware/firmware.service';
 export class CodeEditorComponent implements OnInit {
     filePath: string;
     fileContent: string;
+    isPathError: boolean;
+    isEditError: boolean;
 
     constructor(private modalService: NgbModal, private firmwareService: FirmwareService) {
         this.filePath = "";
         this.fileContent = "";
+        this.isPathError = false;
+        this.isEditError = false;
     }
 
-    ngOnInit(): void {}
+    ngOnInit(): void {
+        this.filePath = "";
+        this.fileContent = "";
+        this.isPathError = false;
+        this.isEditError = false;
+    }
 
     handleKey(event: KeyboardEvent, action: () => void): void {
-        if (event.key === "enter") {
+        if (event.key === "Enter") {
             action()
         }
     }
 
     getFile(): void {
+        this.isPathError = false;
+
         if (this.filePath === "") {
             return;
         }
-        this.firmwareService.getFile(this.filePath).then((content) => this.fileContent = content);
+
+        this.firmwareService.getFile(this.filePath).subscribe(
+            fileContent => this.fileContent = fileContent,
+            err => this.isPathError = true,
+        );
     }
 
     editFile(): void {
+        this.isEditError = false;
+
         if (this.filePath === "" || this.fileContent == "") {
             return;
         }
-        this.firmwareService.editFile(this.filePath, this.fileContent);
+
+        this.firmwareService.editFile(this.filePath, this.fileContent).subscribe({
+            next: (value: any) => { },
+            error: err => console.log(err),
+        });
     }
 
     open(content: any) {

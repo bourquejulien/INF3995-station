@@ -18,8 +18,12 @@
         </div>
     </div>
 
-    <input *ngIf="currentMode === 'file'" type="file" class="upload" (change)="setFile($event)">
-    <app-code-editor *ngIf="currentMode === 'editor'"></app-code-editor>
+    <br>
+    <div class="row">
+        <input *ngIf="currentMode === 'file'" type="file"  lang="fr" class="upload form-control" (change)="setFile($event)">
+        <app-code-editor style="width: 100%; text-align: center; padding-left: 0; padding-right: 0" *ngIf="currentMode === 'editor'"></app-code-editor>
+    </div>
+    <br>
 
     <div class="row">
         <button class="button" (click)="flash()">

@@ -17,7 +17,7 @@ def get_file(firmware_service: AbstractFirmwareService = Provide[Container.firmw
 
     try:
         path = request.args.get('path')
-        return jsonify(firmware_service.get_file(path)), 200
+        return firmware_service.get_file(path), 200
     except CustomException as e:
         return "{}: {}".format(e.name, e.message), 500
 
@@ -34,7 +34,7 @@ def edit(firmware_service: AbstractFirmwareService = Provide[Container.firmware_
         firmware_service.edit(path, data)
     except CustomException as e:
         return "{}: {}".format(e.name, e.message), 500
-    return 'success', 200
+    return "success", 200
 
 
 @blueprint.route('/build_flash', methods=['post'])
@@ -47,7 +47,7 @@ def build_flash(firmware_service: AbstractFirmwareService = Provide[Container.fi
         firmware_service.flash_repo()
     except CustomException as e:
         return "{}: {}".format(e.name, e.message), 500
-    return 'success', 200
+    return "success", 200
 
 
 @blueprint.route('/flash', methods=['post'])
@@ -61,4 +61,4 @@ def flash(firmware_service: AbstractFirmwareService = Provide[Container.firmware
         firmware_service.flash_data(file.stream.read())
     except CustomException as e:
         return "{}: {}".format(e.name, e.message), 500
-    return 'success', 200
+    return "success", 200

@@ -10,20 +10,23 @@ type Mode = "file" | "editor";
 })
 export class FirmwarePanelComponent implements OnInit {
     collapsed: boolean;
+    isFlashError: boolean;
     currentMode: Mode;
     modes: Array<[Mode, string]>;
     file: File | null;
 
     constructor(protected firmwareService: FirmwareService) {
         this.collapsed = true;
+        this.isFlashError = false;
         this.currentMode = "file";
         this.modes = [["file", "Téléversement"],["editor", "Depuis un fichier"]]
         this.file = null;
     }
 
     ngOnInit(): void {
-        this.file = null;
+        this.isFlashError = false;
         this.currentMode = "file";
+        this.file = null;
     }
 
     getName(mode: Mode): string {
@@ -44,13 +47,17 @@ export class FirmwarePanelComponent implements OnInit {
     flash(): void {
         if (this.currentMode == "editor")
         {
-            this.firmwareService.buildFlash();
+            this.firmwareService.buildFlash().subscribe({
+                error: err => this.isFlashError = true,
+            });
         }
 
         if (this.file == null){
             return;
         }
 
-        this.firmwareService.flashFile(this.file);
+        this.firmwareService.flashFile(this.file).subscribe({
+            error: err => this.isFlashError = true,
+        });
     }
 }

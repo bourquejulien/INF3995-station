@@ -13,7 +13,7 @@ import { LogComponent } from '@app/component/log/log.component';
 import { MapComponent } from '@app/component/map/map.component';
 import { CodeEditorComponent } from './component/code-editor/code-editor.component';
 import { FirmwarePanelComponent } from './component/firmware-panel/firmware-panel.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -35,6 +35,7 @@ import { FormsModule } from '@angular/forms';
         AppRoutingModule,
         NgbModule,
         FormsModule,
+        ReactiveFormsModule,
     ],
     providers: [],
     bootstrap: [AppComponent],
