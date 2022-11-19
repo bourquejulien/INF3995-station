@@ -59,6 +59,10 @@ class SimulationSwarmClient(AbstractSwarmClient):
     def discover(self):
         return [str(self.config['argos']['port']), str(self.config['argos']['port'] + 1)]
 
+    @property
+    def uris(self):
+        return [drone.uri for drone in self._drone_clients]
+
     def _get_telemetrics(self):
         for drone in self._drone_clients:
             metrics = drone.get_telemetrics().telemetric

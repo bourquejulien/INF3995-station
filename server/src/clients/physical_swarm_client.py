@@ -124,3 +124,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
             devices_on_address = cflib.crtp.scan_interfaces(self.base_uri + i)
             available_devices.extend(device[0] for device in devices_on_address)
         return available_devices
+
+    @property
+    def uris(self):
+        return self._swarm._cfs.keys()
