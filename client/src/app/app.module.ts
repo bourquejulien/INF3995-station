@@ -13,10 +13,20 @@ import { LogComponent } from '@app/component/log/log.component';
 import { MapComponent } from '@app/component/map/map.component';
 import { CodeEditorComponent } from './component/code-editor/code-editor.component';
 import { FirmwarePanelComponent } from './component/firmware-panel/firmware-panel.component';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
-    declarations: [AppComponent, DronePanelComponent, MainPageComponent, MissionPageComponent, LogComponent, MapComponent, CodeEditorComponent, FirmwarePanelComponent],
+    declarations: [
+        AppComponent,
+        DronePanelComponent,
+        MainPageComponent,
+        MissionPageComponent,
+        LogComponent,
+        MapComponent,
+        CodeEditorComponent,
+        FirmwarePanelComponent,
+    ],
     imports: [
         HttpClientModule,
         BrowserModule,
@@ -24,6 +34,7 @@ import { FirmwarePanelComponent } from './component/firmware-panel/firmware-pane
         RouterModule,
         AppRoutingModule,
         NgbModule,
+        FormsModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

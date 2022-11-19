@@ -19,9 +19,10 @@
     </div>
 
     <input *ngIf="currentMode === 'file'" type="file" class="upload" (change)="setFile($event)">
+    <app-code-editor *ngIf="currentMode === 'editor'"></app-code-editor>
 
     <div class="row">
-        <button (click)="flash()">
+        <button class="button" (click)="flash()">
             Flash!
         </button>
     </div>

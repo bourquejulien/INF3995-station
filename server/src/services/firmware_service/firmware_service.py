@@ -11,6 +11,7 @@ class FirmwareService(NoCompilerFirmwareService):
     def __init__(self, config: Configuration, command_service: CommandService):
         super().__init__(command_service)
         self.remote_compiler_client = RemoteCompilerClient(config["remote_compiler"]["connection_string"]).__enter__()
+        self.remote_compiler_client.start_session()
 
     def flash_data(self, data: bytes):
         super().flash_data(data)
@@ -25,7 +26,7 @@ class FirmwareService(NoCompilerFirmwareService):
 
     def get_file(self, path: str):
         file = self.remote_compiler_client.get(path)
-        return file.encode("utf-8")
+        return file
 
     def close(self, exit_info: tuple):
         self.remote_compiler_client.__exit__(*exit_info)
