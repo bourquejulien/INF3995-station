@@ -185,4 +185,4 @@ def test_discover(app, mocker, swarm_client):
     return_value = swarm_client.discover()
 
     scan_interfaces_mock.assert_has_calls(calls)
-    assert return_value == ['test', 'test', 'test', 'test', 'test']
+    assert return_value == ["test?rate_limit=100"] * 5
