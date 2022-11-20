@@ -24,10 +24,13 @@ export class MissionPageComponent implements OnInit {
         this.commandService.discover();
         this.commandService.retrieveMode();
     }
-    
 
     identify(): void {
         this.commandService.identify({ uris: this.commandService.uris});
+    }
+
+    toggleSync(): void {
+        this.commandService.toggleSync();
     }
 
     startMission(): void {
@@ -41,6 +44,4 @@ export class MissionPageComponent implements OnInit {
     forceEndMission(): void {
         this.missionService.forceEndMission();
     }
-
-    
 }

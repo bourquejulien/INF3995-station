@@ -29,5 +29,9 @@ def force_end_mission(scf: SyncCrazyflie):
     _send_packet(scf, data)
 
 
+def set_synchronization(scf: SyncCrazyflie, value: bool):
+    scf.cf.param.set_value("app.sync_enabled", value)
+
+
 def get_position():
     return

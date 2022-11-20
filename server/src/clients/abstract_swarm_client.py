@@ -24,6 +24,10 @@ class AbstractSwarmClient(ABC):
         pass
 
     @abstractmethod
+    def toggle_drone_synchronisation(self):
+        pass
+
+    @abstractmethod
     def connect(self, uris):
         pass
 

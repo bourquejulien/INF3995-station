@@ -6,6 +6,7 @@
         <div class="col-sm-2 commands">
             <div class="row"><h1 class="col command-name">Commandes</h1></div>
             <div class="row"><button class="col button" (click)="identify()">Identifier</button></div>
+            <div class="row"><button class="col button" (click)="toggleSync()">Basculer la synchronisation (p2p)</button></div>
             <div class="row"><button class="col button" (click)="startMission()">Lancer la mission</button></div>
             <div class="row"><button class="col button" (click)="endMission()">Terminer la mission</button></div>
             <div class="row"><button class="col button" (click)="forceEndMission()">Forcer la fin de mission</button></div>
@@ -23,7 +24,7 @@
         <div class="col-sm-1 collapse-button-col">
             <div class="row">
                 <button
-                    class="button" 
+                    class="button"
                     (click)="logsCollapsed = !logsCollapsed">
                     Logs
                 </button>

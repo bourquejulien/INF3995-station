@@ -38,6 +38,9 @@ class SimulationSwarmClient(AbstractSwarmClient):
             if drone.uri in uris:
                 drone.identify()
 
+    def toggle_drone_synchronisation(self):
+        pass
+
     def connect(self, uris):
         for uri in uris:
             client = SimulationDroneClient(self.config['argos']['hostname'], uri)
@@ -76,7 +79,7 @@ class SimulationSwarmClient(AbstractSwarmClient):
                 d = distances[0]
                 position = d.position
                 self._callbacks["mapping"](drone.uri, Position(position.x, position.y, position.z),
-                                       Distance(d.front, d.back, d.left, d.right))
+                                           Distance(d.front, d.back, d.left, d.right))
 
     def _get_logs(self):
         for drone in self._drone_clients:
