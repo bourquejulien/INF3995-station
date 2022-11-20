@@ -19,6 +19,8 @@ from src.exceptions.hardware_exception import HardwareException
 
 logging.basicConfig(level=logging.ERROR)
 
+RATE_LIMIT = "?rate_limit=100"
+
 
 class PhysicalSwarmClient(AbstractSwarmClient):
     base_uri = 0xE7E7E7E750
@@ -123,4 +125,4 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         for i in range(5):
             devices_on_address = cflib.crtp.scan_interfaces(self.base_uri + i)
             available_devices.extend(device[0] for device in devices_on_address)
-        return available_devices
+        return [f"{uri}{RATE_LIMIT}" for uri in available_devices]
