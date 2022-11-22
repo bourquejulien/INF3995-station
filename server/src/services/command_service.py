@@ -82,10 +82,3 @@ class CommandService:
             return self._swarm_client.discover()
         except CustomException as e:
             raise e
-
-    def is_crashed(self):
-        try:
-            if self._swarm_client.is_crashed():
-                self._logging_service.log(_format_command(self.is_crashed))
-        except CustomException as e:
-            raise e
