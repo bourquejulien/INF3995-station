@@ -36,9 +36,5 @@ class AbstractSwarmClient(ABC):
     def discover(self):
         pass
 
-    @abstractmethod
-    def is_crashed(self):
-        pass
-
     def add_callback(self, name: str, func):
         self._callbacks[name] = func

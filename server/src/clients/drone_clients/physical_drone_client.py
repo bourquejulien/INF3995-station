@@ -29,10 +29,5 @@ def force_end_mission(scf: SyncCrazyflie):
     _send_packet(scf, data)
 
 
-def is_crashed(scf: SyncCrazyflie):
-    data = struct.pack("<i", commands["is_crashed"])
-    _send_packet(scf, data)
-
-
 def get_position():
     return
