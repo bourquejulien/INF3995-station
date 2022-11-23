@@ -20,8 +20,9 @@
 
     <br>
     <div class="row">
-        <input *ngIf="currentMode === 'file'" type="file"  lang="fr" class="upload form-control" (change)="setFile($event)">
-        <app-code-editor class="editor"  *ngIf="currentMode === 'editor'"></app-code-editor>
+        <input *ngIf="currentMode === 'file'" type="file" lang="fr" class="upload form-control"
+               (change)="setFile($event)">
+        <app-code-editor class="editor" *ngIf="currentMode === 'editor'"></app-code-editor>
     </div>
     <br>
 
@@ -33,7 +34,7 @@
 
     <br>
     <div *ngIf="isFlashing" class="spinner">
-        <div class="spinner-border" role="status"> </div>
+        <div class="spinner-border" role="status"></div>
         <br>
         <label>Programmation en cours</label>
     </div>

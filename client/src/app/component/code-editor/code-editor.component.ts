@@ -29,9 +29,9 @@ export class CodeEditorComponent implements OnInit {
         this.isEditError = false;
     }
 
-    handleKey(event: KeyboardEvent, action: () => void): void {
+    handleKey(event: KeyboardEvent): void {
         if (event.key === "Enter") {
-            action()
+            this.getFile()
         }
     }
 
@@ -44,7 +44,7 @@ export class CodeEditorComponent implements OnInit {
 
         this.firmwareService.getFile(this.filePath).subscribe(
             fileContent => this.fileContent = fileContent,
-            err => this.isPathError = true,
+            () => this.isPathError = true,
         );
     }
 
@@ -56,8 +56,8 @@ export class CodeEditorComponent implements OnInit {
         }
 
         this.firmwareService.editFile(this.filePath, this.fileContent).subscribe({
-            next: (value: any) => { },
-            error: err => console.log(err),
+            next: () => { },
+            error: () => this.isEditError = true,
         });
     }
 
