@@ -60,7 +60,7 @@ class CommandService:
                 if mission is not None:
                     self._logging_service.log(_format_command(self.end_mission, f"id: {mission.id}"))
                 else:
-                    self._logging_service.log(_format_command(self.end_mission, "no mission running"))
+                    self._logging_service.log(_format_command(self.end_mission, "No mission running"))
 
                 self._swarm_client.end_mission()
                 self._mission_service.end_mission()
@@ -77,7 +77,7 @@ class CommandService:
                 if mission is not None:
                     self._logging_service.log(_format_command(self.force_end_mission, f"id: {mission.id}"))
                 else:
-                    self._logging_service.log(_format_command(self.force_end_mission, "no mission running"))
+                    self._logging_service.log(_format_command(self.force_end_mission, "No mission running"))
         except CustomException as e:
             raise e
 
