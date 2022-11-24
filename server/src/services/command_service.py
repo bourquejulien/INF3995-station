@@ -81,6 +81,19 @@ class CommandService:
         except CustomException as e:
             raise e
 
+    def return_to_base(self):
+        try:
+            with self._mutex:
+                self._disabled_guard()
+                self._swarm_client.return_to_base()
+                mission = self._mission_service.return_to_base()
+                if mission is not None:
+                    self._logging_service.log(_format_command(self.return_to_base, f"id: {mission.id}"))
+                else:
+                    self._logging_service.log(_format_command(self.return_to_base, "no mission running"))
+        except CustomException as e:
+            raise e
+
     def identify(self, uris):
         try:
             self._disabled_guard()

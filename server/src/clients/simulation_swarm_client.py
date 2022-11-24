@@ -1,7 +1,6 @@
 import time
 from threading import Thread
 
-from src.classes.events.log import Log, generate_log
 from src.clients.drone_clients.simulation_drone_client import SimulationDroneClient
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.classes.position import Position
@@ -32,6 +31,10 @@ class SimulationSwarmClient(AbstractSwarmClient):
     def force_end_mission(self):
         for drone in self._drone_clients:
             drone.force_end_mission()
+
+    def return_to_base(self):
+        for drone in self._drone_clients:
+            drone.return_to_base()
 
     def identify(self, uris):
         for drone in self._drone_clients:

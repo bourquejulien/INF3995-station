@@ -43,6 +43,17 @@ class MissionService:
 
         self._database_service.add(mission)
 
+    def return_to_base(self):
+        with self._mutex:
+            mission = self.flush()
+
+        if mission is None:
+            return None
+
+        mission.end_time_ms = get_timestamp_ms()
+
+        self._database_service.add(mission)
+
     def flush(self):
         for flush in self._flush_callbacks:
             flush()
