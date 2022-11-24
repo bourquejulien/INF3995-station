@@ -106,6 +106,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
     def disconnect(self):
         if self._swarm is not None:
             self._swarm.close_links()
+        self._swarm = None
 
     def start_mission(self):
         self._swarm.parallel_safe(start_mission)
@@ -136,3 +137,9 @@ class PhysicalSwarmClient(AbstractSwarmClient):
             devices_on_address = cflib.crtp.scan_interfaces(i)
             available_devices.extend(device[0] for device in devices_on_address)
         return [f"{uri}{RATE_LIMIT}" for uri in available_devices]
+
+    @property
+    def uris(self):
+        if self._swarm is None:
+            return []
+        return [str(key) for key in self._swarm._cfs.keys()]

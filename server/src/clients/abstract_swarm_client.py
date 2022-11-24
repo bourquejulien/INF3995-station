@@ -39,5 +39,10 @@ class AbstractSwarmClient(ABC):
     def discover(self):
         pass
 
+    @property
+    @abstractmethod
+    def uris(self):
+        pass
+
     def add_callback(self, name: str, func):
         self._callbacks[name] = func

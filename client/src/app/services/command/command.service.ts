@@ -25,14 +25,14 @@ export class CommandService {
 
     async toggleSync(): Promise<void> {
         await this.httpClient.post(`${environment.serverURL}/action/toggle_sync`, null,{
-                responseType: 'text',
-            })
+            responseType: 'text',
+        })
             .toPromise();
     }
 
-    async discover(): Promise<void> {
+    async getUris(): Promise<void> {
         this.uris = await this.httpClient
-            .get<string[]>(`${environment.serverURL}/discovery/discover`)
+            .get<string[]>(`${environment.serverURL}/discovery/uris`)
             .toPromise();
     }
 

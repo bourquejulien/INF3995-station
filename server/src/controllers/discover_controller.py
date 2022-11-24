@@ -1,4 +1,6 @@
 from flask import Blueprint, jsonify, request
+
+from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.exceptions.custom_exception import CustomException
 from dependency_injector.wiring import inject, Provide
 from src.container import Container
@@ -7,11 +9,11 @@ from src.services.command_service import CommandService
 blueprint = Blueprint('discovery', __name__)
 
 
-@blueprint.route('/discover', methods=['get'])
+@blueprint.route('/uris', methods=['get'])
 @inject
-def discover(command_service: CommandService = Provide[Container.command_service]):
+def uris(swarm_client: AbstractSwarmClient = Provide[Container.abstract_swarm_client]):
     try:
-        return jsonify(command_service.discover()), 200
+        return jsonify(swarm_client.uris), 200
     except CustomException as e:
         return "{}: {}".format(e.name, e.message), 500
 
