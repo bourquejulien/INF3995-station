@@ -128,8 +128,11 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         if cflib.crtp.get_interfaces_status().get("radio") == error_code:
             raise CustomException(error_code, "Dongle is not attached")
 
+        start = self.base_uri + int(self.config["clients"]["uri_start"])
+        end = self.base_uri + int(self.config["clients"]["uri_end"])
+
         available_devices = []
-        for i in range(5):
-            devices_on_address = cflib.crtp.scan_interfaces(self.base_uri + i)
+        for i in range(start, end + 1):
+            devices_on_address = cflib.crtp.scan_interfaces(i)
             available_devices.extend(device[0] for device in devices_on_address)
         return [f"{uri}{RATE_LIMIT}" for uri in available_devices]

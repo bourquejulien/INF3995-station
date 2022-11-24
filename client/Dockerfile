@@ -16,8 +16,10 @@ RUN yarn run build --output-path=./dist/out
 FROM nginx:stable-alpine as final
 EXPOSE 5001
 
+WORKDIR /usr/share/nginx/html
+
 COPY ./nginx.conf /etc/nginx/
-COPY --from=build /usr/local/app/dist/out/ /usr/share/nginx/html
+COPY --from=build /usr/local/app/dist/out/ ./
 
 FROM build as test
 
