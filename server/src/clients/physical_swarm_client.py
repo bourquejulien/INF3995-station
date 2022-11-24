@@ -9,7 +9,8 @@ from src.classes.events.log import generate_log
 from src.classes.events.metric import generate_metric
 from src.classes.position import Position
 from src.classes.distance import Distance
-from src.clients.drone_clients.physical_drone_client import identify, start_mission, end_mission, force_end_mission
+from src.clients.drone_clients.physical_drone_client import identify, start_mission, end_mission, force_end_mission, \
+    set_synchronization
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
@@ -19,13 +20,17 @@ from src.exceptions.hardware_exception import HardwareException
 
 logging.basicConfig(level=logging.ERROR)
 
+RATE_LIMIT = "?rate_limit=100"
+
 
 class PhysicalSwarmClient(AbstractSwarmClient):
     base_uri = 0xE7E7E7E750
+    _is_sync_enabled: bool
     _swarm: Swarm | None
 
     def __init__(self, config):
         super().__init__()
+        self._is_sync_enabled = False
         self._swarm = None
         self._factory = CachedCfFactory(rw_cache="./cache")
         crtp.init_drivers(enable_debug_driver=False)
@@ -114,6 +119,10 @@ class PhysicalSwarmClient(AbstractSwarmClient):
     def identify(self, uris):
         self._swarm.parallel_safe(identify, {uri: [uri in uris] for uri in self._swarm._cfs})
 
+    def toggle_drone_synchronisation(self):
+        self._is_sync_enabled = not self._is_sync_enabled
+        self._swarm.parallel_safe(set_synchronization, {uri: [self._is_sync_enabled] for uri in self._swarm._cfs})
+
     def discover(self):
         error_code = "Crazyradio not found"
         if cflib.crtp.get_interfaces_status().get("radio") == error_code:
@@ -126,4 +135,4 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         for i in range(start, end + 1):
             devices_on_address = cflib.crtp.scan_interfaces(i)
             available_devices.extend(device[0] for device in devices_on_address)
-        return available_devices
+        return [f"{uri}{RATE_LIMIT}" for uri in available_devices]

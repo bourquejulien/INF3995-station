@@ -31,6 +31,10 @@ export class MissionPageComponent implements OnInit {
         this.commandService.identify({ uris: this.commandService.uris});
     }
 
+    toggleSync(): void {
+        this.commandService.toggleSync();
+    }
+
     startMission(): void {
         this.missionService.startMission();
     }
