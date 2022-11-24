@@ -1,0 +1,24 @@
+.button{
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--font-color);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+    width: 100%;
+}
+
+.path{
+    width: 100%;
+    background: #fff;
+}
+
+.code{
+    width: 100%;
+    height: 100%;
+    background: #fff;
+}
+
+.error{
+    color: var(--error-color);
+}

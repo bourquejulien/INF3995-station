@@ -1,0 +1,41 @@
+<div class="d-flex flex-column h-100">
+    <div class="row">
+        <button
+            class="button"
+            (click)="collapse.toggle()"
+            [attr.aria-expanded]="!collapsed"
+            aria-controls="collapseExample">
+            {{getName(currentMode)}}
+        </button>
+    </div>
+
+    <div #collapse="ngbCollapse" class="row"
+         [(ngbCollapse)]="collapsed">
+        <div class="card">
+            <div class="card-body" *ngFor="let mode of modes" (click)="selectMode(mode[0])">
+                <span> {{getName(mode[0])}} </span>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <div class="row">
+        <input *ngIf="currentMode === 'file'" type="file" lang="fr" class="upload form-control"
+               (change)="setFile($event)">
+        <app-code-editor class="editor" *ngIf="currentMode === 'editor'"></app-code-editor>
+    </div>
+    <br>
+
+    <div class="row">
+        <button class="button" (click)="flash()">
+            Programmer!
+        </button>
+    </div>
+
+    <br>
+    <div *ngIf="isFlashing" class="spinner">
+        <div class="spinner-border" role="status"></div>
+        <br>
+        <label>Programmation en cours</label>
+    </div>
+</div>

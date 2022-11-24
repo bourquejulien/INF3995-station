@@ -89,6 +89,13 @@ class CommandService:
         except CustomException as e:
             raise e
 
+    def toggle_synchronization(self):
+        try:
+            self._swarm_client.toggle_drone_synchronisation()
+            self._logging_service.log(_format_command(self.toggle_synchronization))
+        except CustomException as e:
+            raise e
+
     def connect(self, uris):
         try:
             self._disabled_guard()

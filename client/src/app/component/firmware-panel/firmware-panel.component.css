@@ -1,0 +1,50 @@
+.button{
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--font-color);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+    width: 100%;
+}
+
+.button:hover{
+    background-color: var(--secondary);
+}
+
+.card{
+    padding: 0px;
+    border: 0px;
+}
+
+.card-body{
+    background-color: var(--accent);
+}
+
+.dropdown-button{
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--font-color);
+    text-align: center;
+    width: 100%;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.dropdown-button:hover{
+    background-color: var(--secondary);
+}
+
+.editor{
+    width: 100%;
+    text-align: center;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.spinner{
+    color: black;
+    text-align: center;
+    padding-left: 0;
+    padding-right: 0;
+}
