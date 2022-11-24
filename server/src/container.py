@@ -14,8 +14,6 @@ from src.services.mapping_service import MappingService
 from src.services.mission_service import MissionService
 from src.services.telemetrics_service import TelemetricsService
 
-CONNECTION_TIMEOUT = 2
-
 
 def _init_firmware_service(config, command_service):
     if config.get("is_simulation"):
@@ -24,7 +22,7 @@ def _init_firmware_service(config, command_service):
         )
 
     with RemoteCompilerClient(config.get("remote_compiler")["connection_string"]) as rc:
-        if rc.is_ready(CONNECTION_TIMEOUT):
+        if rc.is_ready(int(config.get("grpc")["connection_timeout"])):
             return providers.Singleton(
                 FirmwareService,
                 config=config,
