@@ -177,12 +177,16 @@ def test_identify(app, mocker, swarm_client):
 
 def test_discover(app, mocker, swarm_client):
     scan_interfaces_mock = mocker.patch('cflib.crtp.scan_interfaces', return_value=[['test']])
+    swarm_client.config = {"clients": {
+        "uri_start": 0,
+        "uri_end": 2
+    }}
+
     base = swarm_client.base_uri
     calls = [mocker.call(base), mocker.call(base + 1),
-             mocker.call(base + 2), mocker.call(base + 3),
-             mocker.call(base + 4)]
+             mocker.call(base + 2)]
 
     return_value = swarm_client.discover()
 
     scan_interfaces_mock.assert_has_calls(calls)
-    assert return_value == ['test', 'test', 'test', 'test', 'test']
+    assert return_value == ["test?rate_limit=100"] * 3

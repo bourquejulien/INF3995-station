@@ -38,6 +38,9 @@ class SimulationSwarmClient(AbstractSwarmClient):
             if drone.uri in uris:
                 drone.identify()
 
+    def toggle_drone_synchronisation(self):
+        pass
+
     def connect(self, uris):
         for uri in uris:
             client = SimulationDroneClient(self.config['argos']['hostname'], uri)
@@ -57,7 +60,19 @@ class SimulationSwarmClient(AbstractSwarmClient):
             drone.disconnect()
 
     def discover(self):
-        return [str(self.config['argos']['port']), str(self.config['argos']['port'] + 1)]
+        start = int(self.config['argos']['port_start'])
+        end = int(self.config['argos']['port_end'])
+        timeout = int(self.config.get("grpc")["connection_timeout"])
+
+        discovered_uris = []
+        for uri in range(start, end + 1):
+            client = SimulationDroneClient(self.config['argos']['hostname'], str(uri))
+            client.connect()
+            if client.is_ready(timeout):
+                discovered_uris.append(str(uri))
+            client.disconnect()
+
+        return discovered_uris
 
     def _get_telemetrics(self):
         for drone in self._drone_clients:
@@ -76,7 +91,7 @@ class SimulationSwarmClient(AbstractSwarmClient):
                 d = distances[0]
                 position = d.position
                 self._callbacks["mapping"](drone.uri, Position(position.x, position.y, position.z),
-                                       Distance(d.front, d.back, d.left, d.right))
+                                           Distance(d.front, d.back, d.left, d.right))
 
     def _get_logs(self):
         for drone in self._drone_clients:

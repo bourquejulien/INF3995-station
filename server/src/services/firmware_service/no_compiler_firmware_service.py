@@ -1,20 +1,39 @@
+import os
+import sys
+from contextlib import contextmanager
+
 from cflib.bootloader import Bootloader, TargetTypes, FlashArtifact, Target
 
+from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.services.command_service import CommandService
 from src.services.firmware_service.abstract_firmware_service import AbstractFirmwareService
 
 
+@contextmanager
+def silence():
+    with open(os.devnull, "w") as null:
+        save = sys.stdout
+        sys.stdout = null
+        try:
+            yield
+        finally:
+            sys.stdout = save
+
+
 class NoCompilerFirmwareService(AbstractFirmwareService):
     command_service: CommandService
+    swarm_client: AbstractSwarmClient
 
-    def __init__(self, command_service: CommandService):
+    def __init__(self, command_service: CommandService, swarm_client: AbstractSwarmClient):
         self.command_service = command_service
+        self.swarm_client = swarm_client
 
     def flash_data(self, data: bytes):
-        self.command_service.disconnect()
-        self._flash(data)
-        uris = self.command_service.discover()
-        self.command_service.connect(uris)
+        with self.command_service.disable():
+            self.swarm_client.disconnect()
+            self._flash(data)
+            uris = self.swarm_client.discover()
+            self.swarm_client.connect(uris)
 
     def flash_repo(self):
         pass
@@ -35,7 +54,9 @@ class NoCompilerFirmwareService(AbstractFirmwareService):
         for bootloader in bootloaders:
             bootloader.start_bootloader(warm_boot=True)
             target = Target("", "stm32", TargetTypes.STM32)
-            bootloader._internal_flash(FlashArtifact(data, target))
+
+            with silence():
+                bootloader._internal_flash(FlashArtifact(data, target))
 
         for bootloader in bootloaders:
             bootloader.reset_to_firmware()

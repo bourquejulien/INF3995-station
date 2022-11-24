@@ -1,4 +1,5 @@
 import math
+from threading import Lock
 
 from src.classes.events.metric import Metric
 from src.clients.abstract_swarm_client import AbstractSwarmClient
@@ -13,6 +14,7 @@ class TelemetricsService:
     _logging_service: LoggingService
     _metrics: list[Metric]
     _latest: dict[str, Metric]
+    _mutex: Lock
 
     def __init__(self, swarm_client: AbstractSwarmClient, mission_service: MissionService,
                  database_service: DatabaseService, logging_service: LoggingService):
@@ -21,33 +23,28 @@ class TelemetricsService:
         self._logging_service = logging_service
         self._metrics = []
         self._latest = {}
+        self._mutex = Lock()
         swarm_client.add_callback("metric", self._add)
         mission_service.add_flush_action(self.flush)
 
     def _add(self, metric: Metric):
         self._logging_service.log(f"Received position: {metric.position}, uri: {metric.uri}")
-        current_mission = self._mission_service.current_mission
-        if current_mission is not None:
-            metric.mission_id = current_mission.id
-            current_mission.total_distance += self._calculate_distance_delta(metric)
-        self._latest[metric.uri] = metric
-        self._metrics.append(metric)
 
-    def _calculate_distance_delta(self, metric: Metric):
-        if metric.uri not in self._latest:
-            return 0.0
-
-        last_position = self._latest.get(metric.uri).position
-        return math.sqrt((metric.position.x - last_position.x) ** 2
-                         + (metric.position.y - last_position.y) ** 2
-                         + (metric.position.z - last_position.z) ** 2)
+        with self._mutex:
+            current_mission = self._mission_service.current_mission
+            if current_mission is not None:
+                metric.mission_id = current_mission.id
+                current_mission.total_distance += self._calculate_distance_delta(metric)
+            self._latest[metric.uri] = metric
+            self._metrics.append(metric)
 
     def get_since(self, timestamp_ms: int):
-        self._metrics.sort()
+        with self._mutex:
+            self._metrics.sort()
 
-        for i, metric in enumerate(self._metrics):
-            if timestamp_ms < metric.timestamp_ms:
-                return self._metrics[i:].copy()
+            for i, metric in enumerate(self._metrics):
+                if timestamp_ms < metric.timestamp_ms:
+                    return self._metrics[i:].copy()
 
         return []
 
@@ -63,3 +60,12 @@ class TelemetricsService:
     @property
     def latest(self):
         return self._latest
+
+    def _calculate_distance_delta(self, metric: Metric):
+        if metric.uri not in self._latest:
+            return 0.0
+
+        last_position = self._latest.get(metric.uri).position
+        return math.sqrt((metric.position.x - last_position.x) ** 2
+                         + (metric.position.y - last_position.y) ** 2
+                         + (metric.position.z - last_position.z) ** 2)
