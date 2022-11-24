@@ -36,11 +36,11 @@
 }
 
 .collapse-button-col{
-    background-color: var(--secondary);  
+    background-color: var(--secondary);
 }
 
 .button:hover{
-    background-color: var(--secondary);  
+    background-color: var(--secondary);
 }
 
 .mission{
@@ -52,6 +52,6 @@
     padding: 0px;
 }
 
-.log-container{
+.log-container, .firmware-container{
     background-color: var(--font-color);
 }

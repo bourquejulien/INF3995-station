@@ -14,18 +14,28 @@
                 <app-drone-panel class="col drone-panel" uri={{uri}}></app-drone-panel>
             </div>
         </div>
-        <div [ngClass]="logsCollapsed ? 'col-sm-9' : 'col-sm-6'" class="mission h-100 mh-100">
+        <div [ngClass]="currentPane === 'none' ? 'col-sm-9' : 'col-sm-6'" class="mission h-100 mh-100">
             <app-map></app-map>
         </div>
-        <div class="col-sm-3 h-100 log-container" [hidden]="logsCollapsed">
+        <div class="col-sm-3 h-100 log-container" [hidden]="currentPane !== 'logs'">
             <app-log></app-log>
+        </div>
+        <div class="col-sm-3 h-100 firmware-container" [hidden]="currentPane !== 'firmware'">
+            <app-firmware-panel></app-firmware-panel>
         </div>
         <div class="col-sm-1 collapse-button-col">
             <div class="row">
                 <button
-                    class="button" 
-                    (click)="logsCollapsed = !logsCollapsed">
+                    class="button"
+                    (click)="togglePane('logs')">
                     Logs
+                </button>
+            </div>
+            <div class="row">
+                <button
+                    class="button"
+                    (click)="togglePane('firmware')">
+                    Firmware
                 </button>
             </div>
         </div>

@@ -11,10 +11,22 @@ import { DronePanelComponent } from '@app/component/drone-panel/drone-panel.comp
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { LogComponent } from '@app/component/log/log.component';
 import { MapComponent } from '@app/component/map/map.component';
+import { CodeEditorComponent } from './component/code-editor/code-editor.component';
+import { FirmwarePanelComponent } from './component/firmware-panel/firmware-panel.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
-    declarations: [AppComponent, DronePanelComponent, MainPageComponent, MissionPageComponent, LogComponent, MapComponent],
+    declarations: [
+        AppComponent,
+        DronePanelComponent,
+        MainPageComponent,
+        MissionPageComponent,
+        LogComponent,
+        MapComponent,
+        CodeEditorComponent,
+        FirmwarePanelComponent,
+    ],
     imports: [
         HttpClientModule,
         BrowserModule,
@@ -22,6 +34,8 @@ import { MapComponent } from '@app/component/map/map.component';
         RouterModule,
         AppRoutingModule,
         NgbModule,
+        FormsModule,
+        ReactiveFormsModule,
     ],
     providers: [],
     bootstrap: [AppComponent],
