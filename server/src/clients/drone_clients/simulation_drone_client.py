@@ -36,7 +36,7 @@ class SimulationDroneClient:
     def force_end_mission(self):
         try:
             self.stub.EndMission(simulation_pb2.MissionRequest(uri=self.uri))
-        except grpc.grpc.RpcError as e: # Pourquoi grpc.grpc?
+        except grpc.RpcError as e:
             print(e)
             raise CustomException("RPCError: ", e.code()) from e
 
