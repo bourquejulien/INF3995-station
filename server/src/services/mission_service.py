@@ -1,3 +1,6 @@
+from contextlib import contextmanager
+from threading import Lock
+
 from dependency_injector.providers import Configuration
 
 from src.classes.events.event import get_timestamp_ms
@@ -7,27 +10,31 @@ from src.services.database_service import DatabaseService
 
 
 class MissionService:
+    _mutex: Lock
     _config: Configuration
     _database_service: DatabaseService
     _mission: Mission | None
     _flush_callbacks: list
 
     def __init__(self, config: Configuration, database_service: DatabaseService):
+        self._mutex = Lock()
         self._mission = None
         self._flush_callbacks = []
         self._config = config
         self._database_service = database_service
 
     def start_mission(self):
-        if self._mission is not None:
-            raise CustomException("MissionAlreadyExist", "Mission already started")
+        with self._mutex:
+            if self._mission is not None:
+                raise CustomException("MissionAlreadyExist", "Mission already started")
 
-        self.flush()
-        self._mission = generate_mission(self._config.get("is_simulation"), 0, get_timestamp_ms())
-        return self._mission
+            self.flush()
+            self._mission = generate_mission(self._config.get("is_simulation"), 0, get_timestamp_ms())
+            return self._mission
 
     def end_mission(self):
-        mission = self.flush()
+        with self._mutex:
+            mission = self.flush()
 
         if mission is None:
             return None

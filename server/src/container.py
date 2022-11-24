@@ -17,7 +17,7 @@ from src.services.telemetrics_service import TelemetricsService
 CONNECTION_TIMEOUT = 2
 
 
-def _init_firmware_service(config, command_service):
+def _init_firmware_service(config, command_service, swarm_client):
     if config.get("is_simulation"):
         return providers.Singleton(
             DisabledFirmwareService,
@@ -28,11 +28,13 @@ def _init_firmware_service(config, command_service):
             return providers.Singleton(
                 FirmwareService,
                 config=config,
-                command_service=command_service
+                command_service=command_service,
+                swarm_client=swarm_client,
             )
         return providers.Singleton(
             NoCompilerFirmwareService,
-            command_service=command_service
+            command_service=command_service,
+            swarm_client=swarm_client,
         )
 
 
@@ -92,4 +94,4 @@ class Container(containers.DeclarativeContainer):
         logging_service=logging_service,
     )
 
-    firmware_service = _init_firmware_service(config, command_service)
+    firmware_service = _init_firmware_service(config, command_service, abstract_swarm_client)
