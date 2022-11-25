@@ -36,7 +36,7 @@ class AbstractSwarmClient(ABC):
         pass
 
     @abstractmethod
-    def discover(self):
+    def discover(self, with_limit: bool):
         pass
 
     @property

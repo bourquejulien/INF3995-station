@@ -66,7 +66,10 @@ export class FirmwarePanelComponent implements OnInit {
         this.isFlashing = true;
         return {
             complete: () => this.isFlashing = false,
-            error: () => this.isFlashError = true,
+            error: (err: string) => {
+                this.isFlashError = true;
+                this.isFlashing = false;
+            },
         }
     }
 }

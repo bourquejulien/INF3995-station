@@ -61,7 +61,7 @@ class SimulationSwarmClient(AbstractSwarmClient):
             drone.disconnect()
         self._drone_clients.clear()
 
-    def discover(self):
+    def discover(self, with_limit: bool = False):
         start = int(self.config['argos']['port_start'])
         end = int(self.config['argos']['port_end'])
         timeout = int(self.config.get("grpc")["connection_timeout"])
