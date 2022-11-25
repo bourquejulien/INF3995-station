@@ -16,10 +16,9 @@ export class CommandService {
     }
 
     async connect(): Promise<void> {
-        await this.httpClient
-            .post(`${environment.serverURL}/discovery/connect`, undefined, {
-                responseType: 'text',
-            })
+        // TODO Sync uris with other clients
+        this.uris = await this.httpClient
+            .post<string[]>(`${environment.serverURL}/discovery/connect`, undefined)
             .toPromise();
     }
 
@@ -29,6 +28,7 @@ export class CommandService {
                 responseType: 'text',
             })
             .toPromise();
+        this.uris.length = 0;
     }
 
     async identify(command: Identify): Promise<void> {
