@@ -15,6 +15,22 @@ export class CommandService {
         this.isSimulation = false;
     }
 
+    async connect(): Promise<void> {
+        await this.httpClient
+            .post(`${environment.serverURL}/discovery/connect`, undefined, {
+                responseType: 'text',
+            })
+            .toPromise();
+    }
+
+    async disconnect(): Promise<void> {
+        await this.httpClient
+            .post(`${environment.serverURL}/discovery/disconnect`, undefined, {
+                responseType: 'text',
+            })
+            .toPromise();
+    }
+
     async identify(command: Identify): Promise<void> {
         await this.httpClient
             .post(`${environment.serverURL}/action/identify`, command, {

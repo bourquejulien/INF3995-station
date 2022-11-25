@@ -13,17 +13,28 @@ type Pane = "none" | "logs" | "firmware";
 export class MissionPageComponent implements OnInit {
     selectedUris: string[];
     currentMissionId: string;
+    isLinkCollapsed: boolean;
     currentPane: Pane;
 
     constructor(public commandService: CommandService, public missionService: MissionService) {
         this.selectedUris = [];
         this.currentMissionId = "";
-        this.currentPane = "none"
+        this.currentPane = "none";
+        this.isLinkCollapsed = true;
     }
 
     ngOnInit(): void {
         this.commandService.getUris();
         this.commandService.retrieveMode();
+        this.isLinkCollapsed = true;
+    }
+
+    connect(): void {
+        this.commandService.connect();
+    }
+
+    disconnect(): void {
+        this.commandService.disconnect();
     }
 
     identify(): void {

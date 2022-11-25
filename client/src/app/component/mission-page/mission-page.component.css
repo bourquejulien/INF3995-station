@@ -27,12 +27,20 @@
 }
 
 .button{
-    background-color: var(--primary);
-    border-color: var(--primary);
     color: var(--font-color);
     padding-top: 10px;
     padding-bottom: 10px;
     text-align: center;
+}
+
+.primary{
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.accent{
+    background-color: var(--accent);
+    border-color: var(--accent);
 }
 
 .collapse-button-col{
