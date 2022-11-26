@@ -1,6 +1,8 @@
+import logging
 import os
 import sys
 from contextlib import contextmanager
+from logging import Logger
 
 from cflib.bootloader import Bootloader, TargetTypes, FlashArtifact, Target
 
@@ -21,10 +23,12 @@ def silence():
 
 
 class NoCompilerFirmwareService(AbstractFirmwareService):
+    _logger: Logger
     command_service: CommandService
     swarm_client: AbstractSwarmClient
 
     def __init__(self, command_service: CommandService, swarm_client: AbstractSwarmClient):
+        self._logger = logging.getLogger(self.__class__.__name__)
         self.command_service = command_service
         self.swarm_client = swarm_client
 

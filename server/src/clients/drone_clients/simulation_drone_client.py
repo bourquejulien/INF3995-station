@@ -30,28 +30,24 @@ class SimulationDroneClient:
         try:
             pass
         except grpc.RpcError as e:
-            print(e)
             raise CustomException("RPCError: ", e.code()) from e
 
     def start_mission(self):
         try:
             self._stub.StartMission(simulation_pb2.MissionRequest(uri=self.uri))
         except grpc.RpcError as e:
-            print(e)
             raise CustomException("RPCError: ", e.code()) from e
 
     def end_mission(self):
         try:
             self._stub.EndMission(simulation_pb2.MissionRequest(uri=self.uri))
         except grpc.RpcError as e:
-            print(e)
             raise CustomException("RPCError: ", e.code()) from e
 
     def force_end_mission(self):
         try:
             self._stub.EndMission(simulation_pb2.MissionRequest(uri=self.uri))
         except grpc.RpcError as e:
-            print(e)
             raise CustomException("RPCError: ", e.code()) from e
 
     def get_telemetrics(self):
@@ -59,7 +55,6 @@ class SimulationDroneClient:
             reply = self._stub.GetTelemetrics(simulation_pb2.MissionRequest(uri=self.uri))
             return reply
         except grpc.RpcError as e:
-            print(e)
             raise CustomException("RPCError: ", e.code()) from e
 
     def get_distances(self):
@@ -67,7 +62,6 @@ class SimulationDroneClient:
             reply = self._stub.GetDistances(simulation_pb2.MissionRequest(uri=self.uri))
             return reply
         except grpc.RpcError as e:
-            print(e)
             raise CustomException("RPCError: ", e.code()) from e
 
     def get_logs(self):
@@ -75,5 +69,4 @@ class SimulationDroneClient:
             reply = self._stub.GetLogs(simulation_pb2.MissionRequest(uri=self.uri))
             return reply
         except grpc.RpcError as e:
-            print(e)
             raise CustomException("RPCError: ", e.code()) from e

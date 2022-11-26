@@ -1,3 +1,4 @@
+import logging
 import sys
 
 from flask import Flask
@@ -29,6 +30,6 @@ def create_app():
 @inject
 def exit_app(command_service: CommandService = Provide[Container.command_service],
              firmware_service: AbstractFirmwareService = Provide[Container.firmware_service]):
-    print("Exiting app...")
+    logging.info("Exiting app...")
     firmware_service.close(sys.exc_info())
     command_service.disconnect()

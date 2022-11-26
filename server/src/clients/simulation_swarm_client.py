@@ -1,3 +1,4 @@
+import logging
 import time
 from threading import Thread
 
@@ -15,7 +16,7 @@ class SimulationSwarmClient(AbstractSwarmClient):
     _is_active: bool
 
     def __init__(self, config):
-        super().__init__()
+        super().__init__(logging.getLogger(self.__class__.__name__))
         self._drone_clients = []
         self.config = config
         self.daemon = None
@@ -112,4 +113,4 @@ class SimulationSwarmClient(AbstractSwarmClient):
                 self._get_distances()
                 self._get_logs()
             except Exception as e:
-                print(e)
+                self._logger.error(e)
