@@ -8,7 +8,7 @@ from dependency_injector.wiring import inject, Provide
 from src.container import Container
 from src.services.command_service import CommandService
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 blueprint = Blueprint('discovery', __name__)
 
 

@@ -4,7 +4,7 @@ from flask import Blueprint, jsonify
 from dependency_injector.wiring import inject, Provide
 from src.container import Container
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 blueprint = Blueprint('', __name__)
 
 

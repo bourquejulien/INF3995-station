@@ -8,7 +8,7 @@ from src.services.firmware_service.abstract_firmware_service import AbstractFirm
 from src.services.firmware_service.firmware_service import FirmwareService
 from src.services.firmware_service.no_compiler_firmware_service import NoCompilerFirmwareService
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 blueprint = Blueprint('firmware', __name__)
 
 

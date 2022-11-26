@@ -6,7 +6,7 @@ from src.container import Container
 from src.exceptions.custom_exception import CustomException
 from src.services.command_service import CommandService
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 blueprint = Blueprint('action', __name__)
 
 

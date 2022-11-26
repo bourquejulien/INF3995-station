@@ -8,7 +8,7 @@ from src.services.logging_service import LoggingService
 from src.services.mapping_service import MappingService
 from src.services.telemetrics_service import TelemetricsService
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 blueprint = Blueprint('drone-info', __name__)
 
 

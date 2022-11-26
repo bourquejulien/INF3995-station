@@ -8,7 +8,7 @@ from src.services.mission_service import MissionService
 from src.services.logging_service import LoggingService
 from src.services.telemetrics_service import TelemetricsService
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 blueprint = Blueprint('mission', __name__)
 
 

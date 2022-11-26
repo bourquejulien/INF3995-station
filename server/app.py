@@ -14,7 +14,7 @@ from src.services.mapping_service import MappingService
 from src.services.mission_service import MissionService
 from src.services.telemetrics_service import TelemetricsService
 
-logger = logging.getLogger(__file__)
+logger = logging.getLogger(__name__)
 
 
 @inject
@@ -36,6 +36,7 @@ def exit_handler():
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
+    logging.getLogger("cflib").setLevel(logging.ERROR)
 
     app, container = create_app()
     container.wire(modules=[".application", __name__], packages=[".controllers"], from_package="src")
