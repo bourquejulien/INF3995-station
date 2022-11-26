@@ -113,4 +113,4 @@ class SimulationSwarmClient(AbstractSwarmClient):
                 self._get_distances()
                 self._get_logs()
             except Exception as e:
-                self._logger.error(e)
+                self._logger.exception("Error during simulation pulling")

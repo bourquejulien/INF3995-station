@@ -1,3 +1,5 @@
+import logging
+
 from flask import Blueprint, jsonify, request
 
 from src.clients.abstract_swarm_client import AbstractSwarmClient
@@ -6,6 +8,7 @@ from dependency_injector.wiring import inject, Provide
 from src.container import Container
 from src.services.command_service import CommandService
 
+logger = logging.getLogger(__file__)
 blueprint = Blueprint('discovery', __name__)
 
 
@@ -15,6 +18,7 @@ def uris(swarm_client: AbstractSwarmClient = Provide[Container.abstract_swarm_cl
     try:
         return jsonify(swarm_client.uris), 200
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
 
 
@@ -25,6 +29,7 @@ def connect(command_service: CommandService = Provide[Container.command_service]
         uris = request.args.get('uris')
         command_service.connect(uris)
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
     return 'success', 200
 
@@ -35,6 +40,7 @@ def disconnect(command_service: CommandService = Provide[Container.command_servi
     try:
         command_service.disconnect()
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
     return 'success', 200
 
@@ -45,4 +51,5 @@ def is_enabled(command_service: CommandService = Provide[Container.command_servi
     try:
         return jsonify(command_service.is_enabled)
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500

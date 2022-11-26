@@ -1,3 +1,5 @@
+import logging
+
 from flask import Blueprint, jsonify, request
 from src.exceptions.custom_exception import CustomException
 from dependency_injector.wiring import inject, Provide
@@ -6,6 +8,7 @@ from src.services.firmware_service.abstract_firmware_service import AbstractFirm
 from src.services.firmware_service.firmware_service import FirmwareService
 from src.services.firmware_service.no_compiler_firmware_service import NoCompilerFirmwareService
 
+logger = logging.getLogger(__file__)
 blueprint = Blueprint('firmware', __name__)
 
 
@@ -19,6 +22,7 @@ def get_file(firmware_service: AbstractFirmwareService = Provide[Container.firmw
         path = request.args.get('path')
         return firmware_service.get_file(path), 200
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
 
 
@@ -33,6 +37,7 @@ def edit(firmware_service: AbstractFirmwareService = Provide[Container.firmware_
         data = request.data
         firmware_service.edit(path, data)
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
     return "success", 200
 
@@ -46,6 +51,7 @@ def build_flash(firmware_service: AbstractFirmwareService = Provide[Container.fi
     try:
         firmware_service.flash_repo()
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
     return "success", 200
 
@@ -60,5 +66,6 @@ def flash(firmware_service: AbstractFirmwareService = Provide[Container.firmware
         file = request.files['file']
         firmware_service.flash_data(file.stream.read())
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
     return "success", 200
