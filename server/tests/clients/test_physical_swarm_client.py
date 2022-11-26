@@ -5,6 +5,7 @@ import struct
 
 from freezegun import freeze_time
 
+import src.clients.physical_swarm_client
 from src.classes.events.log import generate_log
 from src.classes.events.metric import generate_metric
 from src.classes.position import Position
@@ -22,8 +23,10 @@ def swarm_client(mocker):
 
 
 @pytest.fixture()
-def print_mock(mocker):
-    yield mocker.patch('src.clients.physical_swarm_client.print')
+def logger_mock(mocker):
+    mock = mocker.Mock()
+    src.clients.physical_swarm_client.logger = mock
+    yield mock
 
 
 def test_connect(app, mocker, swarm_client):
@@ -61,12 +64,12 @@ def test_enable_callbacks(app, mocker, swarm_client):
     scf_mock.cf.param.add_update_callback.assert_called_once()
 
 
-def test_param_deck_flow_with_true_int(app, mocker, swarm_client, print_mock):
+def test_param_deck_flow_with_true_int(app, mocker, swarm_client, logger_mock):
     scf_mock = mocker.stub()
 
-    swarm_client.param_deck_flow(scf_mock, '1')
+    swarm_client._param_deck_flow(scf_mock, '1')
 
-    print_mock.assert_called_once_with('Deck is attached')
+    logger_mock.info.assert_called_once_with('Deck is attached')
 
 
 def test_param_deck_flow_with_false_int(app, mocker, swarm_client):
@@ -74,7 +77,7 @@ def test_param_deck_flow_with_false_int(app, mocker, swarm_client):
     scf_mock = mocker.stub()
 
     try:
-        swarm_client.param_deck_flow(scf_mock, '0')
+        swarm_client._param_deck_flow(scf_mock, '0')
     except Exception as e:
         error = e
 
@@ -88,7 +91,7 @@ def test_param_deck_flow_with_invalid_string(app, mocker, swarm_client):
     scf_mock = mocker.stub()
 
     try:
-        swarm_client.param_deck_flow(scf_mock, 'test')
+        swarm_client._param_deck_flow(scf_mock, 'test')
     except Exception as e:
         error = e
 
@@ -97,32 +100,28 @@ def test_param_deck_flow_with_invalid_string(app, mocker, swarm_client):
     assert error.message == 'expected an integer as string'
 
 
-def test_connected_callback(app, mocker, swarm_client, print_mock):
+def test_connected_callback(app, mocker, swarm_client, logger_mock):
     swarm_client._connected('test')
+    logger_mock.info.assert_called_once_with('Connected to %s', 'test')
 
-    print_mock.assert_called_once_with('Connected to test')
 
-
-def test_connection_failed_callback(app, mocker, swarm_client, print_mock):
+def test_connection_failed_callback(app, mocker, swarm_client, logger_mock):
     swarm_client._connection_failed('test', 'message')
+    logger_mock.error.assert_called_once_with('Connection to %s failed: %s', 'test', 'message')
 
-    print_mock.assert_called_once_with('Connection to test failed: message')
 
-
-def test_connection_lost_callback(app, mocker, swarm_client, print_mock):
+def test_connection_lost_callback(app, mocker, swarm_client, logger_mock):
     swarm_client._connection_lost('test', 'message')
+    logger_mock.warning.assert_called_once_with('Connection to %s lost: %s', 'test', 'message')
 
-    print_mock.assert_called_once_with('Connection to test lost: message')
 
-
-def test_disconnected_callback(app, mocker, swarm_client, print_mock):
+def test_disconnected_callback(app, mocker, swarm_client, logger_mock):
     swarm_client._disconnected('test')
-
-    print_mock.assert_called_once_with('Disconnected from test')
+    logger_mock.info.assert_called_once_with('Disconnected from %s', 'test')
 
 
 @freeze_time("2022-01-01")
-def test_console_incoming_callback(app, mocker, swarm_client, print_mock):
+def test_console_incoming_callback(app, mocker, swarm_client):
     generated_logs = []
     swarm_client._callbacks = {"logging": lambda x: generated_logs.append(x)}
     log = generate_log('', 'test', "INFO", '1')
@@ -131,7 +130,7 @@ def test_console_incoming_callback(app, mocker, swarm_client, print_mock):
 
 
 @freeze_time("2022-01-01")
-def test_packet_received_callback(app, mocker, swarm_client, print_mock):
+def test_packet_received_callback(app, mocker, swarm_client):
     param = struct.pack('<ccfff', b'\x00', b'\x00', 2, 2.5, 3)
     generated_metrics = []
     swarm_client._callbacks = {"metric": lambda x: generated_metrics.append(x)}

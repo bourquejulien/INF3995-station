@@ -9,6 +9,8 @@ from src.classes.position import Position
 from src.classes.distance import Distance
 from src.classes.events.metric import generate_metric
 
+logger = logging.getLogger(__name__)
+
 
 class SimulationSwarmClient(AbstractSwarmClient):
     daemon: Thread | None
@@ -16,7 +18,7 @@ class SimulationSwarmClient(AbstractSwarmClient):
     _is_active: bool
 
     def __init__(self, config):
-        super().__init__(logging.getLogger(self.__class__.__name__))
+        super().__init__()
         self._drone_clients = []
         self.config = config
         self.daemon = None
@@ -113,4 +115,4 @@ class SimulationSwarmClient(AbstractSwarmClient):
                 self._get_distances()
                 self._get_logs()
             except Exception as e:
-                self._logger.exception("Error during simulation pulling")
+                logger.exception("Error during simulation pulling")

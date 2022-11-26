@@ -18,6 +18,8 @@ from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from src.exceptions.custom_exception import CustomException
 from src.exceptions.hardware_exception import HardwareException
 
+logger = logging.getLogger(__name__)
+
 RATE_LIMIT = "?rate_limit=100"
 
 
@@ -27,7 +29,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
     _swarm: Swarm | None
 
     def __init__(self, config):
-        super().__init__(logging.getLogger(self.__class__.__name__))
+        super().__init__()
         self._is_sync_enabled = False
         self._swarm = None
         self._factory = CachedCfFactory(rw_cache="./cache")
@@ -37,12 +39,10 @@ class PhysicalSwarmClient(AbstractSwarmClient):
     def _enable_callbacks(self, scf: SyncCrazyflie):
         uri = scf.cf.link_uri
 
-        scf.cf.connected.add_callback(lambda link_uri: self._logger.info("Connected to %s", link_uri))
-        scf.cf.disconnected.add_callback(lambda link_uri: self._logger.info("Disconnected from %s", link_uri))
-        scf.cf.connection_failed.add_callback(
-            lambda link_uri, msg: self._logger.error("Connection to %s failed: %s", link_uri, msg))
-        scf.cf.connection_lost.add_callback(
-            lambda link_uri, msg: self._logger.warning("Connection to %s lost: %s", link_uri, msg))
+        scf.cf.connected.add_callback(self._connected)
+        scf.cf.disconnected.add_callback(self._disconnected)
+        scf.cf.connection_failed.add_callback(self._connection_failed)
+        scf.cf.connection_lost.add_callback(self._connection_lost)
 
         scf.cf.console.receivedChar.add_callback(lambda data: self._console_incoming(uri, data))
         scf.cf.appchannel.packet_received.add_callback(lambda text: self._packet_received(uri, text))
@@ -60,9 +60,21 @@ class PhysicalSwarmClient(AbstractSwarmClient):
             raise CustomException("Callback error: ", "expected an integer as string") from e
 
         if int_value != 0:
-            self._logger.info("Deck is attached")
+            logger.info("Deck is attached")
         else:
             raise HardwareException("Deck is not attached: ", "Check deck connection")
+
+    def _connected(self, link_uri):
+        logger.info("Connected to %s", link_uri)
+
+    def _disconnected(self, link_uri):
+        logger.info("Disconnected from %s", link_uri)
+
+    def _connection_failed(self, link_uri, msg):
+        logger.error("Connection to %s failed: %s", link_uri, msg)
+
+    def _connection_lost(self, link_uri, msg):
+        logger.warning("Connection to %s lost: %s", link_uri, msg)
 
     def _console_incoming(self, uri, console_text):
         log = generate_log('', console_text, "INFO", uri)

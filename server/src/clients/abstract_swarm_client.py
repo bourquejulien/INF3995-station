@@ -1,13 +1,10 @@
 from abc import ABC, abstractmethod
-from logging import Logger
 
 
 class AbstractSwarmClient(ABC):
-    _logger: Logger
     STATUS = ["Idle", "Identify", "Takeoff", "Exploration", "Landing", "EmergencyStop", "ChooseAngle"]
 
-    def __init__(self, logger: Logger):
-        self._logger = logger
+    def __init__(self):
         self._callbacks = {}
 
     @abstractmethod
