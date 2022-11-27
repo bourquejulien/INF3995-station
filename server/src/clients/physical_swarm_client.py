@@ -85,7 +85,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
             case 0:
                 status = int.from_bytes(data[0:1], "little")
                 position = Position(*struct.unpack("<fff", data[1:]))
-                metric = generate_metric(position, self.STATUS[status], uri)
+                metric = generate_metric(position, self.status[status], uri)
 
                 self._callbacks["metric"](metric)
 

@@ -87,7 +87,7 @@ class SimulationSwarmClient(AbstractSwarmClient):
                 metric = metrics[0]
                 position = metric.position
                 self._callbacks["metric"](
-                    generate_metric(Position(position.x, position.y, position.z), self.STATUS[metric.status],
+                    generate_metric(Position(position.x, position.y, position.z), self.status[metric.status],
                                     drone.uri))
 
     def _get_distances(self):
