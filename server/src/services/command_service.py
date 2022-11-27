@@ -31,7 +31,7 @@ class CommandService:
     def disable(self):
         with self._mutex:
             if self._mission_service.current_mission is not None:
-                raise CustomException("MissionEnabled", "Cannot disable missions during a mission")
+                raise CustomException("MissionEnabled", "Cannot disable missions while a mission is active")
             self._is_enabled = False
         try:
             yield

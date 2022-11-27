@@ -1,3 +1,5 @@
+import logging
+
 from dependency_injector.wiring import Provide, inject
 
 from src.application import create_app, exit_app
@@ -12,6 +14,8 @@ from src.services.mapping_service import MappingService
 from src.services.mission_service import MissionService
 from src.services.telemetrics_service import TelemetricsService
 
+logger = logging.getLogger(__name__)
+
 
 @inject
 def main(app, command_service: CommandService = Provide[Container.command_service],
@@ -21,7 +25,6 @@ def main(app, command_service: CommandService = Provide[Container.command_servic
          telemetrics_service: TelemetricsService = Provide[Container.telemetrics_service],
          firmware_service: AbstractFirmwareService = Provide[Container.firmware_service],
          database_service: DatabaseService = Provide[Container.database_service]):
-
     database_service.connect()
     command_service.connect(command_service.discover())
     app.run(host="0.0.0.0")
@@ -32,6 +35,9 @@ def exit_handler():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    logging.getLogger("cflib").setLevel(logging.ERROR)
+
     app, container = create_app()
     container.wire(modules=[".application", __name__], packages=[".controllers"], from_package="src")
 

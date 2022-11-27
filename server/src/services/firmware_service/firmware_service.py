@@ -1,3 +1,5 @@
+from logging import Logger
+
 from dependency_injector.providers import Configuration
 
 from src.clients.abstract_swarm_client import AbstractSwarmClient

@@ -1,3 +1,5 @@
+import logging
+
 from flask import Blueprint, request, jsonify
 from dependency_injector.wiring import inject, Provide
 from src.container import Container
@@ -6,6 +8,7 @@ from src.services.logging_service import LoggingService
 from src.services.mapping_service import MappingService
 from src.services.telemetrics_service import TelemetricsService
 
+logger = logging.getLogger(__name__)
 blueprint = Blueprint('drone-info', __name__)
 
 
@@ -21,6 +24,7 @@ def get_logs(logging_service: LoggingService = Provide[Container.logging_service
             logs_list = logging_service.get_history(mission_id)
         return jsonify(logs_list)
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return f"{e.name}: {e.message}", 500
 
 
@@ -31,6 +35,7 @@ def get_metrics_since(telemetrics_service: TelemetricsService = Provide[Containe
         latest_metrics = telemetrics_service.latest
         return jsonify(latest_metrics)
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return f"{e.name}: {e.message}", 500
 
 
@@ -42,4 +47,5 @@ def get_map_by_id(mapping_service: MappingService = Provide[Container.mapping_se
         position_list = mapping_service.get_map(uri)
         return jsonify(position_list)
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return f"{e.name}: {e.message}", 500

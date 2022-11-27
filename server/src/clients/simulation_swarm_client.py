@@ -1,3 +1,4 @@
+import logging
 import time
 from threading import Thread
 
@@ -7,6 +8,8 @@ from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.classes.position import Position
 from src.classes.distance import Distance
 from src.classes.events.metric import generate_metric
+
+logger = logging.getLogger(__name__)
 
 
 class SimulationSwarmClient(AbstractSwarmClient):
@@ -112,4 +115,4 @@ class SimulationSwarmClient(AbstractSwarmClient):
                 self._get_distances()
                 self._get_logs()
             except Exception as e:
-                print(e)
+                logger.exception("Error during simulation pulling")

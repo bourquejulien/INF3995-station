@@ -18,7 +18,7 @@ from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from src.exceptions.custom_exception import CustomException
 from src.exceptions.hardware_exception import HardwareException
 
-logging.basicConfig(level=logging.ERROR)
+logger = logging.getLogger(__name__)
 
 RATE_LIMIT = "?rate_limit=100"
 
@@ -38,41 +38,43 @@ class PhysicalSwarmClient(AbstractSwarmClient):
 
     def _enable_callbacks(self, scf: SyncCrazyflie):
         uri = scf.cf.link_uri
+
         scf.cf.connected.add_callback(self._connected)
         scf.cf.disconnected.add_callback(self._disconnected)
         scf.cf.connection_failed.add_callback(self._connection_failed)
         scf.cf.connection_lost.add_callback(self._connection_lost)
+
         scf.cf.console.receivedChar.add_callback(lambda data: self._console_incoming(uri, data))
         scf.cf.appchannel.packet_received.add_callback(lambda text: self._packet_received(uri, text))
-        scf.cf.param.add_update_callback(group="deck", name="bcFlow2", cb=self.param_deck_flow)
+        scf.cf.param.add_update_callback(group="deck", name="bcFlow2", cb=self._param_deck_flow)
 
     def _set_params(self, scf: SyncCrazyflie):
         scf.cf.param.set_value("app.updateTime", self.config['clients']['drones']['update_time'])
         scf.cf.param.set_value("app.defaultZ", self.config['clients']['drones']['default_z'])
         scf.cf.param.set_value("app.distanceTrigger", self.config['clients']['drones']['trigger_distance'])
 
-    def param_deck_flow(self, scf, value_str):
+    def _param_deck_flow(self, scf, value_str):
         try:
             int_value = int(value_str)
         except Exception as e:
             raise CustomException("Callback error: ", "expected an integer as string") from e
 
         if int_value != 0:
-            print("Deck is attached")
+            logger.info("Deck is attached")
         else:
             raise HardwareException("Deck is not attached: ", "Check deck connection")
 
     def _connected(self, link_uri):
-        print(f"Connected to {link_uri}")
-
-    def _connection_failed(self, link_uri, msg):
-        print(f"Connection to {link_uri} failed: {msg}")
-
-    def _connection_lost(self, link_uri, msg):
-        print(f"Connection to {link_uri} lost: {msg}")
+        logger.info("Connected to %s", link_uri)
 
     def _disconnected(self, link_uri):
-        print(f"Disconnected from {link_uri}")
+        logger.info("Disconnected from %s", link_uri)
+
+    def _connection_failed(self, link_uri, msg):
+        logger.error("Connection to %s failed: %s", link_uri, msg)
+
+    def _connection_lost(self, link_uri, msg):
+        logger.warning("Connection to %s lost: %s", link_uri, msg)
 
     def _console_incoming(self, uri, console_text):
         log = generate_log('', console_text, "INFO", uri)
