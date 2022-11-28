@@ -20,6 +20,7 @@ image: docker:22.06-rc
 
 stages:
     - build
+    - lint
     - test
     - push
 
@@ -36,6 +37,26 @@ build:server:
     script:
         - cd server
         - docker build -t "backend-server-build-$CI_COMMIT_SHORT_SHA" .
+
+lint:client:
+    stage: lint
+    needs: ["build:client"]
+    allow_failure: true
+    <<: *only-client
+    script:
+        - cd client
+        - docker build --target=lint -t="backend-client-lint-$CI_COMMIT_SHORT_SHA" .
+        - docker run "backend-client-lint-$CI_COMMIT_SHORT_SHA"
+
+lint:server:
+    stage: lint
+    needs: ["build:server"]
+    allow_failure: true
+    <<: *only-server
+    script:
+        - cd server
+        - docker build --target=lint -t="backend-server-lint-$CI_COMMIT_SHORT_SHA" .
+        - docker run "backend-server-lint-$CI_COMMIT_SHORT_SHA"
 
 test:client:
     stage: test
