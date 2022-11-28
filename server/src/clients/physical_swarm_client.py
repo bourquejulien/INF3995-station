@@ -126,7 +126,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         self._is_sync_enabled = not self._is_sync_enabled
         self._swarm.parallel_safe(set_synchronization, {uri: [self._is_sync_enabled] for uri in self._swarm._cfs})
 
-    def discover(self):
+    def discover(self, with_limit: bool = True):
         error_code = "Crazyradio not found"
         if cflib.crtp.get_interfaces_status().get("radio") == error_code:
             raise CustomException(error_code, "Dongle is not attached")
@@ -138,7 +138,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         for i in range(start, end + 1):
             devices_on_address = cflib.crtp.scan_interfaces(i)
             available_devices.extend(device[0] for device in devices_on_address)
-        return [f"{uri}{RATE_LIMIT}" for uri in available_devices]
+        return [f"{uri}{RATE_LIMIT}" if with_limit else uri for uri in available_devices]
 
     @property
     def uris(self):

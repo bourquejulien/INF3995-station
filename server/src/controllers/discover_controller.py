@@ -24,14 +24,14 @@ def uris(swarm_client: AbstractSwarmClient = Provide[Container.abstract_swarm_cl
 
 @blueprint.route('/connect', methods=['post'])
 @inject
-def connect(command_service: CommandService = Provide[Container.command_service]):
+def connect(command_service: CommandService = Provide[Container.command_service],
+            swarm_client: AbstractSwarmClient = Provide[Container.abstract_swarm_client]):
     try:
-        uris = request.args.get('uris')
-        command_service.connect(uris)
+        command_service.connect(command_service.discover())
+        return jsonify(swarm_client.uris), 200
     except CustomException as e:
         logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
-    return 'success', 200
 
 
 @blueprint.route('/disconnect', methods=['post'])
