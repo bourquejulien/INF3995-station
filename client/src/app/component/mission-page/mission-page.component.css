@@ -53,7 +53,6 @@
 
 .mission{
     background-color: var(--background);
-    padding: 0px;
 }
 
 .drone-panel{
@@ -62,4 +61,12 @@
 
 .log-container, .firmware-container{
     background-color: var(--font-color);
+}
+
+.h-10{
+    height: 10%;
+}
+
+.h-90{
+    height: 90%;
 }

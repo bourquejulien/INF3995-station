@@ -27,14 +27,13 @@
                 <app-drone-panel class="col drone-panel" uri={{uri}}></app-drone-panel>
             </div>
         </div>
-        <div [ngClass]="currentPane === 'none' ? 'col-sm-9' : 'col-sm-6'" class="mission h-100 mh-100">
-            <div class="row h-15">
+        <div class="mission col d-flex flex-column">
+            <div class="row">
                 <h1 class="col command-name">Carte</h1>
             </div>
-            <div class="row h-75">
+            <div class="row flex-grow-1">
                 <app-map></app-map>
             </div>
-
         </div>
         <div class="col-sm-3 h-100 log-container" [hidden]="currentPane !== 'logs'">
             <app-log></app-log>
