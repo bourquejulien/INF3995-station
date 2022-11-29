@@ -27,10 +27,9 @@ def get_logs(logging_service: LoggingService = Provide[Container.logging_service
         logger.warning(e, exc_info=True)
         return f"{e.name}: {e.message}", 500
 
-
-@blueprint.route('/metrics', methods=['get'])
+@blueprint.route('/latestMetric', methods=['get'])
 @inject
-def get_metrics_since(telemetrics_service: TelemetricsService = Provide[Container.telemetrics_service]):
+def get_latest_metric(telemetrics_service: TelemetricsService = Provide[Container.telemetrics_service]):
     try:
         latest_metrics = telemetrics_service.latest
         return jsonify(latest_metrics)
@@ -38,14 +37,21 @@ def get_metrics_since(telemetrics_service: TelemetricsService = Provide[Containe
         logger.warning(e, exc_info=True)
         return f"{e.name}: {e.message}", 500
 
-
 @blueprint.route('/maps', methods=['get'])
 @inject
-def get_map_by_id(mapping_service: MappingService = Provide[Container.mapping_service]):
+def get_map(mapping_service: MappingService = Provide[Container.mapping_service]):
     try:
-        uri = request.args.get('uri', type=str)
-        position_list = mapping_service.get_map(uri)
-        return jsonify(position_list)
+        map_list = mapping_service.get_map()
+        return jsonify(map_list)
     except CustomException as e:
         logger.warning(e, exc_info=True)
+        return f"{e.name}: {e.message}", 500
+
+@blueprint.route('/latestMap', methods=['get'])
+@inject
+def get_latest_map(mapping_service: MappingService = Provide[Container.mapping_service]):
+    try:
+        map_list = mapping_service.get_latest()
+        return jsonify(map_list)
+    except CustomException as e:
         return f"{e.name}: {e.message}", 500

@@ -12,6 +12,7 @@ body {
   --font-color: #E2E2E2;
   --border-color: #DCD7BA;
   --error-color: #9c0505;
+  --map-background: #216291;
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
   color: var(--font-color)
