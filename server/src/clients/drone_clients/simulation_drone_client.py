@@ -1,7 +1,6 @@
 import grpc
 from out import simulation_pb2_grpc, simulation_pb2
 from src.exceptions.custom_exception import CustomException
-from threading import Event
 
 
 class SimulationDroneClient:
