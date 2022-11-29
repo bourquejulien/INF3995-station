@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Mission } from '@app/interface/commands';
 import { CommandService } from '@app/services/command/command.service';
 import { MissionService } from '@app/services/mission/mission.service';
 

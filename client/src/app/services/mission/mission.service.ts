@@ -30,7 +30,7 @@ export class MissionService {
                 }
             },
             error(): void {
-                console.log("error");
+                console.log("ERROR: could not get last mission from server");
             }
         })
 
@@ -46,7 +46,7 @@ export class MissionService {
                     }
                 },
                 error(): void {
-                    console.log("error");
+                    console.log("ERROR: could not get current mission from server");
                 },
             })
         });
@@ -76,7 +76,7 @@ export class MissionService {
                     self._currentLogs = self.currentLogs.concat(response);
                 },
                 error(): void {
-                    console.log("error");
+                    console.log("ERROR: could not get LOG from server");
                 },
             });
         });
@@ -112,7 +112,7 @@ export class MissionService {
                 self.setupMission(response)
             },
             error(): void {
-                console.log("Mission start error");
+                console.log("ERROR: could not start mission");
             },
         });
     }
@@ -126,7 +126,7 @@ export class MissionService {
                 self.terminateMission();
             },
             error(): void {
-                console.log("Mission end error");
+                console.log("ERROR: could not end mission");
             }
         });
     }
@@ -140,7 +140,7 @@ export class MissionService {
                 self.terminateMission();
             },
             error(): void {
-                console.log("Mission force end error");
+                console.log("ERROR: could not get force end mission");
             }
         });
     }

@@ -17,7 +17,7 @@ export class DronePanelComponent implements OnInit {
     constructor(public commandService: CommandService, public droneInfoService: DroneInfoService) { }
 
     ngOnInit(): void {
-        this.droneInfoService.metrics.subscribe((metrics: Map<string, Metric>) => {
+        this.droneInfoService.latestMetric.subscribe((metrics: Map<string, Metric>) => {
             if (metrics.get(this.uri)) {
                 this.metric = metrics.get(this.uri) as Metric;
             }
