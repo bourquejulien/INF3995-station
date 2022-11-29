@@ -1,17 +1,20 @@
-<div class="row h-15">
-    <h3 class="col selection">Drones à afficher: </h3>
-    <div *ngFor="let selected of commandService.uris; let i=index" class="col-md-2">
-        <label class="checkbox-container">
-          <input type="checkbox" [value]="selected.valueOf" id="{{selected}}" (click)="updateSelected()">
-          <span class="checkmark"></span>
-          {{selected}}
-        </label>
+<div class="col h-100 d-flex flex-column">
+    <div class="row">
+        <h3 class="col selection">Drones à afficher</h3>
+        <div *ngFor="let selected of commandService.uris; let i=index" class="drone-selector col-md-2">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" [value]="selected.valueOf" id="{{selected}}" (click)="updateSelected()">
+                <label class="form-check-label" for="flexCheckDefault">
+                    {{selected}}
+                </label>
+            </div>
+        </div>
     </div>
-</div>
-<div class="row h-75">
-    <div #colMission class="col mission">
-        <canvas id = "basecanvas" #basecanvas></canvas> 
-        <canvas id = "positionscanvas" #positionscanvas></canvas>
-        <canvas id = "currentcanvas" #currentcanvas></canvas>
+    <div class="row flex-grow-1">
+        <div #colMission class="col mission">
+            <canvas id="basecanvas" #basecanvas></canvas> 
+            <canvas id="positionscanvas" #positionscanvas></canvas>
+            <canvas id="currentcanvas" #currentcanvas></canvas>
+        </div>
     </div>
 </div>
