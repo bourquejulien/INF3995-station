@@ -31,7 +31,7 @@ class CommandService:
     def disable(self):
         with self._mutex:
             if self._mission_service.current_mission is not None:
-                raise CustomException("MissionEnabled", "Cannot disable missions during a mission")
+                raise CustomException("MissionEnabled", "Cannot disable missions while a mission is active")
             self._is_enabled = False
         try:
             yield
@@ -60,7 +60,7 @@ class CommandService:
                 if mission is not None:
                     self._logging_service.log(_format_command(self.end_mission, f"id: {mission.id}"))
                 else:
-                    self._logging_service.log(_format_command(self.end_mission, "no mission running"))
+                    self._logging_service.log(_format_command(self.end_mission, "No mission running"))
 
                 self._swarm_client.end_mission()
                 self._mission_service.end_mission()
@@ -77,7 +77,7 @@ class CommandService:
                 if mission is not None:
                     self._logging_service.log(_format_command(self.force_end_mission, f"id: {mission.id}"))
                 else:
-                    self._logging_service.log(_format_command(self.force_end_mission, "no mission running"))
+                    self._logging_service.log(_format_command(self.force_end_mission, "No mission running"))
         except CustomException as e:
             raise e
 
@@ -99,6 +99,13 @@ class CommandService:
             self._disabled_guard()
             self._swarm_client.identify(uris)
             self._logging_service.log(_format_command(self.identify, f"Uris: {uris}"))
+        except CustomException as e:
+            raise e
+
+    def toggle_synchronization(self):
+        try:
+            self._swarm_client.toggle_drone_synchronisation()
+            self._logging_service.log(_format_command(self.toggle_synchronization))
         except CustomException as e:
             raise e
 

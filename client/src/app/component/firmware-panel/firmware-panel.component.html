@@ -20,7 +20,7 @@
 
     <br>
     <div class="row">
-        <input *ngIf="currentMode === 'file'" type="file" lang="fr" class="upload form-control"
+        <input *ngIf="currentMode === 'file'" accept=".bin" type="file" lang="fr" class="upload form-control"
                (change)="setFile($event)">
         <app-code-editor class="editor" *ngIf="currentMode === 'editor'"></app-code-editor>
     </div>
@@ -38,4 +38,8 @@
         <br>
         <label>Programmation en cours</label>
     </div>
+
+    <br>
+    <label *ngIf="isFlashError" class="error">Erreur lors de la programmation</label>
+
 </div>

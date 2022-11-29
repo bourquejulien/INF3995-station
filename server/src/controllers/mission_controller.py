@@ -1,3 +1,5 @@
+import logging
+
 from flask import Blueprint, request, jsonify
 from dependency_injector.wiring import inject, Provide
 from src.container import Container
@@ -6,6 +8,7 @@ from src.services.mission_service import MissionService
 from src.services.logging_service import LoggingService
 from src.services.telemetrics_service import TelemetricsService
 
+logger = logging.getLogger(__name__)
 blueprint = Blueprint('mission', __name__)
 
 
@@ -21,6 +24,7 @@ def get_missions(mission_service: MissionService = Provide[Container.mission_ser
             missions_number = request.args.get('missions_number', type=int)
             missions = mission_service.get_last_missions(missions_number)
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
     return jsonify(missions), 200
 
@@ -34,6 +38,7 @@ def current_mission(mission_service: MissionService = Provide[Container.mission_
             return jsonify(mission)
         return jsonify({})
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
 
 
@@ -43,6 +48,7 @@ def start(command_service=Provide[Container.command_service]):
     try:
         mission = command_service.start_mission()
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return '"error": "{}: {}"'.format(e.name, e.message), 500
     return jsonify(mission), 200
 
@@ -53,6 +59,7 @@ def end(command_service=Provide[Container.command_service]):
     try:
         command_service.end_mission()
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
     return 'success', 200
 
@@ -63,6 +70,7 @@ def force_end(command_service=Provide[Container.command_service]):
     try:
         command_service.force_end_mission()
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
     return 'success', 200
 
@@ -85,6 +93,7 @@ def get_logs(logging_service: LoggingService = Provide[Container.logging_service
         logs_list = logging_service.get_history(mission_id)
         return jsonify(logs_list)
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return f"{e.name}: {e.message}", 500
 
 
@@ -96,4 +105,5 @@ def get_metrics(telemetrics_service: TelemetricsService = Provide[Container.tele
         metrics_list = telemetrics_service.get_history(mission_id)
         return jsonify(metrics_list)
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return f"{e.name}: {e.message}", 500

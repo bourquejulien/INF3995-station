@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 
 class AbstractSwarmClient(ABC):
-    STATUS = ["Idle", "Identify", "Takeoff", "Exploration", "Landing", "EmergencyStop", "ChooseAngle", "Return"]
+    status = ["Idle", "Identify", "Takeoff", "Exploration", "Landing", "EmergencyStop", "ChooseAngle", "Crashed", "Return"]
 
     def __init__(self):
         self._callbacks = {}
@@ -24,6 +24,10 @@ class AbstractSwarmClient(ABC):
         pass
 
     @abstractmethod
+    def toggle_drone_synchronisation(self):
+        pass
+
+    @abstractmethod
     def connect(self, uris):
         pass
 
@@ -32,7 +36,12 @@ class AbstractSwarmClient(ABC):
         pass
 
     @abstractmethod
-    def discover(self):
+    def discover(self, with_limit: bool):
+        pass
+
+    @property
+    @abstractmethod
+    def uris(self):
         pass
 
     def add_callback(self, name: str, func):

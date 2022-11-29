@@ -4,6 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MissionPageComponent } from '@app/component/mission-page/mission-page.component';
 import { CommandService } from '@app/services/command/command.service';
 import { MissionService } from '@app/services/mission/mission.service';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 describe('MissionPageComponent', () => {
     let component: MissionPageComponent;
@@ -12,12 +13,15 @@ describe('MissionPageComponent', () => {
     let mockMissionService: MissionService;
 
     beforeEach(async () => {
-        mockCommandService = new CommandService({} as HttpClient) 
+        mockCommandService = new CommandService({} as HttpClient)
         await TestBed.configureTestingModule({
             declarations: [ MissionPageComponent ],
             providers: [
                 {provide: CommandService, useValue: mockCommandService},
                 {provide: MissionService, useValue: mockMissionService}
+            ],
+            imports: [
+            NgbModule
             ],
             schemas: [CUSTOM_ELEMENTS_SCHEMA]
         })

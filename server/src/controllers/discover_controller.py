@@ -1,30 +1,37 @@
+import logging
+
 from flask import Blueprint, jsonify, request
+
+from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.exceptions.custom_exception import CustomException
 from dependency_injector.wiring import inject, Provide
 from src.container import Container
 from src.services.command_service import CommandService
 
+logger = logging.getLogger(__name__)
 blueprint = Blueprint('discovery', __name__)
 
 
-@blueprint.route('/discover', methods=['get'])
+@blueprint.route('/uris', methods=['get'])
 @inject
-def discover(command_service: CommandService = Provide[Container.command_service]):
+def uris(swarm_client: AbstractSwarmClient = Provide[Container.abstract_swarm_client]):
     try:
-        return jsonify(command_service.discover()), 200
+        return jsonify(swarm_client.uris), 200
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
 
 
 @blueprint.route('/connect', methods=['post'])
 @inject
-def connect(command_service: CommandService = Provide[Container.command_service]):
+def connect(command_service: CommandService = Provide[Container.command_service],
+            swarm_client: AbstractSwarmClient = Provide[Container.abstract_swarm_client]):
     try:
-        uris = request.args.get('uris')
-        command_service.connect(uris)
+        command_service.connect(command_service.discover())
+        return jsonify(swarm_client.uris), 200
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
-    return 'success', 200
 
 
 @blueprint.route('/disconnect', methods=['post'])
@@ -33,6 +40,7 @@ def disconnect(command_service: CommandService = Provide[Container.command_servi
     try:
         command_service.disconnect()
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
     return 'success', 200
 
@@ -43,4 +51,5 @@ def is_enabled(command_service: CommandService = Provide[Container.command_servi
     try:
         return jsonify(command_service.is_enabled)
     except CustomException as e:
+        logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500

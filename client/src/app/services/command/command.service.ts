@@ -15,6 +15,22 @@ export class CommandService {
         this.isSimulation = false;
     }
 
+    async connect(): Promise<void> {
+        // TODO Sync uris with other clients
+        this.uris = await this.httpClient
+            .post<string[]>(`${environment.serverURL}/discovery/connect`, undefined)
+            .toPromise();
+    }
+
+    async disconnect(): Promise<void> {
+        await this.httpClient
+            .post(`${environment.serverURL}/discovery/disconnect`, undefined, {
+                responseType: 'text',
+            })
+            .toPromise();
+        this.uris.length = 0;
+    }
+
     async identify(command: Identify): Promise<void> {
         await this.httpClient
             .post(`${environment.serverURL}/action/identify`, command, {
@@ -23,9 +39,16 @@ export class CommandService {
             .toPromise();
     }
 
-    async discover(): Promise<void> {
+    async toggleSync(): Promise<void> {
+        await this.httpClient.post(`${environment.serverURL}/action/toggle_sync`, null,{
+            responseType: 'text',
+        })
+            .toPromise();
+    }
+
+    async getUris(): Promise<void> {
         this.uris = await this.httpClient
-            .get<string[]>(`${environment.serverURL}/discovery/discover`)
+            .get<string[]>(`${environment.serverURL}/discovery/uris`)
             .toPromise();
     }
 

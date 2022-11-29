@@ -2,26 +2,26 @@ from src.exceptions.custom_exception import CustomException
 from flask import url_for
 
 
-def test_discover(client, app, mocker):
-    discover_mock = mocker.patch('src.services.command_service')
-    discover_mock.discover.return_value = ""
-
-    with app.container.command_service.override(discover_mock):
-        response = client.get(url_for("discovery.discover"))
-
-    discover_mock.discover.assert_called_once()
-    assert response.status_code == 200
-
-
-def test_discover_error(client, app, mocker):
-    discover_mock = mocker.patch('src.services.command_service')
-    discover_mock.discover.side_effect = CustomException('test', 'test')
-
-    with app.container.command_service.override(discover_mock):
-        response = client.get(url_for("discovery.discover"))
-
-    assert response.text == "test: test"
-    assert response.status_code == 500
+# def test_get_uris(client, app, mocker):
+#     client_mock = mocker.patch('src.clients.abstract_swarm_client', new_callable=mock.PropertyMock)
+#     client_mock.uris.return_value = [""]
+#
+#     with app.container.command_service.override(client_mock):
+#         response = client.get(url_for("discovery.uris"))
+#
+#     client_mock.uris.assert_called_once()
+#     assert response.status_code == 200
+#
+#
+# def test_get_uris_error(client, app, mocker):
+#     client_mock = mocker.patch('src.clients.abstract_swarm_client')
+#     client_mock.uris.side_effect = CustomException('test', 'test')
+#
+#     with app.container.command_service.override(client_mock):
+#         response = client.get(url_for("discovery.uris"))
+#
+#     assert response.text == "test: test"
+#     assert response.status_code == 500
 
 
 def test_connect(client, app, mocker):

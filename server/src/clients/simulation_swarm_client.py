@@ -1,3 +1,4 @@
+import logging
 import time
 from threading import Thread
 
@@ -6,6 +7,8 @@ from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.classes.position import Position
 from src.classes.distance import Distance
 from src.classes.events.metric import generate_metric
+
+logger = logging.getLogger(__name__)
 
 
 class SimulationSwarmClient(AbstractSwarmClient):
@@ -47,7 +50,11 @@ class SimulationSwarmClient(AbstractSwarmClient):
             if drone.uri in uris:
                 drone.identify()
 
+    def toggle_drone_synchronisation(self):
+        pass
+
     def connect(self, uris):
+        self._drone_clients.clear()
         for uri in uris:
             client = SimulationDroneClient(self.config['argos']['hostname'], uri)
             client.connect()
@@ -64,8 +71,9 @@ class SimulationSwarmClient(AbstractSwarmClient):
 
         for drone in self._drone_clients:
             drone.disconnect()
+        self._drone_clients.clear()
 
-    def discover(self):
+    def discover(self, with_limit: bool = False):
         start = int(self.config['argos']['port_start'])
         end = int(self.config['argos']['port_end'])
         timeout = int(self.config.get("grpc")["connection_timeout"])
@@ -80,6 +88,10 @@ class SimulationSwarmClient(AbstractSwarmClient):
 
         return discovered_uris
 
+    @property
+    def uris(self):
+        return [drone.uri for drone in self._drone_clients]
+
     def _get_telemetrics(self):
         for drone in self._drone_clients:
             metrics = drone.get_telemetrics().telemetric
@@ -87,7 +99,7 @@ class SimulationSwarmClient(AbstractSwarmClient):
                 metric = metrics[0]
                 position = metric.position
                 self._callbacks["metric"](
-                    generate_metric(Position(position.x, position.y, position.z), self.STATUS[metric.status],
+                    generate_metric(Position(position.x, position.y, position.z), self.status[metric.status],
                                     drone.uri))
 
     def _get_distances(self):
@@ -112,4 +124,4 @@ class SimulationSwarmClient(AbstractSwarmClient):
                 self._get_distances()
                 self._get_logs()
             except Exception as e:
-                print(e)
+                logger.exception("Error during simulation pulling")
