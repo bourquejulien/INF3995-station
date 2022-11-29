@@ -56,6 +56,10 @@ export class MissionPageComponent implements OnInit {
         this.missionService.forceEndMission();
     }
 
+    returnToBase(): void {
+        this.missionService.returnToBase();
+    }
+
     togglePane(pane: Pane): void {
         if (this.currentPane == pane) {
             this.currentPane = "none";

@@ -75,6 +75,16 @@ def force_end(command_service=Provide[Container.command_service]):
     return 'success', 200
 
 
+@blueprint.route('/return', methods=['post'])
+@inject
+def return_to_base(command_service=Provide[Container.command_service]):
+    try:
+        command_service.return_to_base()
+    except CustomException as e:
+        return "{}: {}".format(e.name, e.message), 500
+    return 'success', 200
+
+
 @blueprint.route('/logs', methods=['get'])
 @inject
 def get_logs(logging_service: LoggingService = Provide[Container.logging_service]):

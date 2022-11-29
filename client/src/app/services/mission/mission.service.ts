@@ -145,6 +145,20 @@ export class MissionService {
         });
     }
 
+    public returnToBase(): void {
+        if (!this.isMissionOngoing) return;
+        const self = this;
+        this.httpClient.post(`${environment.serverURL}/mission/return`, {}, {responseType: 'text'})
+        .subscribe({
+            next() {
+                self.terminateMission();
+            },
+            error(): void {
+                console.log("Return to base error");
+            }
+        });
+    }
+
     public getMissionLogs(id: string): Log[] | Observable<Log[]>{
         for (let i = 0; i < this._missions.length; i++) {
             if (this._missions[i]["mission"]["id"] == id) {
