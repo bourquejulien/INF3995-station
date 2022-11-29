@@ -34,7 +34,6 @@ export class DroneInfoService {
     getLogs(missionId: string, sinceTimestamp?: number): Observable<Log[]> {
         let queryParams = new HttpParams();
         queryParams = queryParams.append("mission_id", missionId);
-        console.log(sinceTimestamp)
         if (typeof sinceTimestamp !== "undefined") {
             queryParams = queryParams.append("since_timestamp", sinceTimestamp);
         }

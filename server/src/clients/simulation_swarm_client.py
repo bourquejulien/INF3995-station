@@ -33,8 +33,14 @@ class SimulationSwarmClient(AbstractSwarmClient):
             drone.force_end_mission()
 
     def return_to_base(self):
+        threads = []
         for drone in self._drone_clients:
-            drone.return_to_base()
+            thread = Thread(target=drone.return_to_base)
+            thread.start()
+            threads.append(thread)
+
+        for thread in threads:
+            thread.join()
 
     def identify(self, uris):
         for drone in self._drone_clients:
