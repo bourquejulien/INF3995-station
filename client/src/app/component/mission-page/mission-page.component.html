@@ -22,6 +22,7 @@
             <div class="row"><button class="col button primary" (click)="startMission()">Lancer la mission</button></div>
             <div class="row"><button class="col button primary" (click)="endMission()">Terminer la mission</button></div>
             <div class="row"><button class="col button primary" (click)="forceEndMission()">Forcer la fin de mission</button></div>
+            <div class="row"><button class="col button primary" (click)="returnToBase()">Retourner à la base</button></div>
             <div class="row"><h1 class="col command-name">Interfaces</h1></div>
             <div class="row" *ngFor="let uri of commandService.uris">
                 <app-drone-panel class="col drone-panel" uri={{uri}}></app-drone-panel>
