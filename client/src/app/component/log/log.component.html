@@ -16,8 +16,8 @@
                 <div (click)="selectMission('en cours')" class="dropdown-button" *ngIf="missionService.missions.length != 0">
                     <span>Mission en cours</span>
                 </div>
-                <div (click)="selectMission(mission.mission.id)" class="dropdown-button" *ngFor="let mission of missionService.missions">
-                    <span>Mission {{formatMissionId(mission.mission.id)}}</span>
+                <div (click)="selectMission(mission.id)" class="dropdown-button" *ngFor="let mission of missionService.missions">
+                    <span>Mission {{formatMissionId(mission.id)}}</span>
                 </div>
             </div>
         </div>

@@ -23,16 +23,7 @@ export class MissionService {
     constructor(private httpClient: HttpClient, private droneInfoService: DroneInfoService) {
         let self = this;
 
-        this.getLastMissions(MISSION_HISTORY_SIZE).subscribe({
-            next(response: Mission[]): void {
-                for(let mission of response) {
-                    self._missions.push({"mission": mission, "logs": [] as Log[]})
-                }
-            },
-            error(): void {
-                console.log("ERROR: could not get last mission from server");
-            }
-        })
+        this.retrieveMissions(MISSION_HISTORY_SIZE);
 
         this._currentMissionSubscription = interval(5000).subscribe(() => {
             this.getCurrentMission().subscribe({
@@ -95,15 +86,12 @@ export class MissionService {
 
     private terminateMission(): void {
         if (!this._currentMission) return;
-        this.missions.push({
-            "mission": this._currentMission,
-            "logs": this._currentLogs
-        });
+        this.retrieveMissions(MISSION_HISTORY_SIZE);
         this.logUnsubscribe();
         this._isMissionOngoing = false;
     }
 
-    public startMission(): void {
+    startMission(): void {
         if (this.isMissionOngoing) return;
         const self = this;
         this.httpClient.post<Mission>(`${environment.serverURL}/mission/start`, {}, {responseType: 'json'})
@@ -117,7 +105,7 @@ export class MissionService {
         });
     }
 
-    public endMission(): void {
+    endMission(): void {
         if (!this.isMissionOngoing) return;
         const self = this;
         this.httpClient.post(`${environment.serverURL}/mission/end`, {}, {responseType: 'text'})
@@ -131,7 +119,7 @@ export class MissionService {
         });
     }
 
-    public forceEndMission(): void {
+    forceEndMission(): void {
         if (!this.isMissionOngoing) return;
         const self = this;
         this.httpClient.post(`${environment.serverURL}/mission/force_end`, {}, {responseType: 'text'})
@@ -159,7 +147,7 @@ export class MissionService {
         });
     }
 
-    public getMissionLogs(id: string): Log[] | Observable<Log[]>{
+    getMissionLogs(id: string): Log[] | Observable<Log[]>{
         for (let i = 0; i < this._missions.length; i++) {
             if (this._missions[i]["mission"]["id"] == id) {
                 if (this._missions[i]["logs"].length == 0) {
@@ -180,19 +168,35 @@ export class MissionService {
         return [];
     }
 
-    public get isMissionOngoing() {
+    retrieveMissions(missions_number: number): void {
+        let self = this;
+
+        this.getLastMissions(missions_number).subscribe({
+            next(response: Mission[]): void {
+                self._missions.length = 0;
+                for(let mission of response) {
+                    self._missions.push({"mission": mission, "logs": [] as Log[]})
+                }
+            },
+            error(): void {
+                console.log("ERROR: could not get last mission from server");
+            }
+        });
+    }
+
+    get isMissionOngoing() {
         return this._isMissionOngoing;
     }
 
-    public get currentMission() {
+    get currentMission() {
         return this._currentMission;
     }
 
-    public get missions() {
-        return this._missions;
+    get missions(): Mission[] {
+        return this._missions.map(e => e.mission);
     }
 
-    public get currentLogs() {
+    get currentLogs() {
         return this._currentLogs;
     }
 }

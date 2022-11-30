@@ -20,8 +20,6 @@ logger = logging.getLogger(__name__)
 @inject
 def main(app, command_service: CommandService = Provide[Container.command_service],
          mapping_service: MappingService = Provide[Container.mapping_service],
-         logging_service: LoggingService = Provide[Container.logging_service],
-         mission_service: MissionService = Provide[Container.mission_service],
          telemetrics_service: TelemetricsService = Provide[Container.telemetrics_service],
          firmware_service: AbstractFirmwareService = Provide[Container.firmware_service],
          database_service: DatabaseService = Provide[Container.database_service]):

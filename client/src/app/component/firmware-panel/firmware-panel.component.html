@@ -9,12 +9,9 @@
         </button>
     </div>
 
-    <div #collapse="ngbCollapse" class="row"
-         [(ngbCollapse)]="collapsed">
-        <div class="card">
-            <div class="card-body" *ngFor="let mode of modes" (click)="selectMode(mode[0])">
-                <span> {{getName(mode[0])}} </span>
-            </div>
+    <div #collapse="ngbCollapse" class="row" [(ngbCollapse)]="collapsed">
+        <div class="dropdown-button" *ngFor="let mode of modes" (click)="selectMode(mode[0])">
+            <span> {{getName(mode[0])}} </span>
         </div>
     </div>
 

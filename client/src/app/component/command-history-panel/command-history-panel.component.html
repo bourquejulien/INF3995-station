@@ -1,0 +1,51 @@
+<ng-template class="modal-lg" #modal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title text-black" id="modal-basic-title">Mission : {{selectedMission?.id}}</h4>
+        <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body" *ngIf="selectedMission">
+        <div *ngFor="let attribute of attributes">
+            <label class="text-black">{{attribute[1]}}:
+                {{isDate(attribute[0]) ? (getAttributeAsNumber(selectedMission, attribute[0]) | date:"yyyy-MM-dd HH:mm") : (selectedMission[currentAttribute])}}
+            </label>
+            <br>
+        </div>
+    </div>
+</ng-template>
+
+<div class="d-flex flex-column h-100">
+    <div class="row">
+        <button
+            class="button"
+            (click)="collapse.toggle()"
+            [attr.aria-expanded]="!collapsed"
+            aria-controls="collapseExample">
+            {{getAttributeName(currentAttribute)}}
+        </button>
+    </div>
+
+    <div #collapse="ngbCollapse" class="row" [(ngbCollapse)]="collapsed">
+        <div (click)="selectAttribute(attribute[0])" class="dropdown-button" *ngFor="let attribute of attributes">
+            <span>{{attribute[1]}}</span>
+        </div>
+    </div>
+
+    <div class="row flex-grow-1">
+        <div *ngIf="isHistory" class="col h-100 log-box">
+            <div class="row mt-1" *ngFor="let mission of missions">
+                <span class="text-black card" (click)="open(modal, mission)">
+                    Id: {{mission.id}} -
+                    {{getAttributeName(currentAttribute)}}:
+                    {{isDate(currentAttribute) ? (getAttributeAsNumber(mission, currentAttribute) | date:"yyyy-MM-dd HH:mm") : (mission[currentAttribute])}}
+                </span>
+            </div>
+        </div>
+
+        <div *ngIf="!isHistory" class="d-flex align-items-center" >
+            <label class="col text-center text-black">
+                Aucune mission historique trouvée
+            </label>
+        </div>
+    </div>
+
+</div>

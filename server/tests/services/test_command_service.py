@@ -10,6 +10,7 @@ from src.services.logging_service import LoggingService
 @pytest.fixture()
 def command_service():
     client_mock = mock.Mock(AbstractSwarmClient)
+    client_mock.uris = []
     mission_service_mock = mock.Mock(AbstractSwarmClient)
     logging_service_mock = mock.Mock(LoggingService)
     mission_service_mock.current_mission = None
