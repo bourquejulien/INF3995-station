@@ -14,7 +14,7 @@
 }
 
 .commands{
-    background-color: var(--secondary);
+    background-color: var(--primary);
 }
 
 .command-name{
@@ -62,11 +62,7 @@
 }
 
 .collapse-button-col{
-    background-color: var(--secondary);
-}
-
-.mission{
-    background-color: var(--background);
+    background-color: var(--primary);
 }
 
 .drone-panel{

@@ -1,7 +1,6 @@
 .mission{
-    background-color: var(--map-background);  
+    background-color: var(--background);  
     display: grid;
-    height: 100%;
     justify-content: center;
 }
 
