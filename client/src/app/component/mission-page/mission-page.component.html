@@ -59,14 +59,14 @@
         <div class="col-sm-1 collapse-button-col">
             <div class="row">
                 <button
-                    class="button"
+                    [ngClass]="currentPane == 'logs' ? 'disabled' : 'button'"
                     (click)="togglePane('logs')">
                     Logs
                 </button>
             </div>
             <div class="row">
                 <button
-                    class="button"
+                    [ngClass]="currentPane == 'firmware' ? 'disabled' : 'button'"
                     (click)="togglePane('firmware')">
                     Firmware
                 </button>

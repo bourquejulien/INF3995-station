@@ -10,17 +10,20 @@
 }
 
 .button{
-    background-color: var(--primary);
-    border-color: var(--primary);
+    background-color: var(--secondary);
+    border-color: var(--secondary);
     color: var(--font-color);
     padding-top: 10px;
     padding-bottom: 10px;
+    border-top: 0px;
+    border-right: 0px;
+    border-left: 0px;
     text-align: center;
     width: 100%;
 }
 
 .button:hover{
-    background-color: var(--secondary);  
+    background-color: var(--accent);  
 }
 
 .card{
@@ -29,12 +32,12 @@
 }
 
 .card-body{
-    background-color: var(--accent);
+    background-color: var(--primary);
 }
 
 .dropdown-button{
-    background-color: var(--primary);
-    border-color: var(--primary);
+    background-color: var(--secondary);
+    border-bottom: 1px var(--primary) solid;
     color: var(--font-color);
     text-align: center;
     width: 100%;
@@ -43,5 +46,6 @@
 }
 
 .dropdown-button:hover{
-    background-color: var(--secondary);  
+    background-color: var(--accent);  
+    cursor: pointer;
 }

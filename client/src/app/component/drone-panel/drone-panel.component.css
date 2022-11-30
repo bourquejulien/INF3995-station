@@ -11,6 +11,9 @@
     width: 100%;
     background-color: var(--secondary);
     border-color: var(--secondary);
+    border-top: 0px;
+    border-right: 0px;
+    border-left: 0px;
     color: var(--font-color);
     text-align: center;
 }
