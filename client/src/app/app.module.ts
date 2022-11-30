@@ -3,7 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from '@app/component/app/app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from "@angular/common/http";
-import { MainPageComponent } from '@app/component/main-page/main-page.component';
 import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
 import { MissionPageComponent } from './component/mission-page/mission-page.component';
@@ -14,18 +13,19 @@ import { MapComponent } from '@app/component/map/map.component';
 import { CodeEditorComponent } from './component/code-editor/code-editor.component';
 import { FirmwarePanelComponent } from './component/firmware-panel/firmware-panel.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommandHistoryPanelComponent } from './component/command-history-panel/command-history-panel.component';
 
 
 @NgModule({
     declarations: [
         AppComponent,
         DronePanelComponent,
-        MainPageComponent,
         MissionPageComponent,
         LogComponent,
         MapComponent,
         CodeEditorComponent,
         FirmwarePanelComponent,
+        CommandHistoryPanelComponent,
     ],
     imports: [
         HttpClientModule,

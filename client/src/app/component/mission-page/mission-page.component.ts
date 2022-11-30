@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommandService } from '@app/services/command/command.service';
 import { MissionService } from '@app/services/mission/mission.service';
 
-type Pane = "none" | "logs" | "firmware";
+type Pane = "none" | "logs" | "firmware" | "history";
 
 @Component({
     selector: 'app-mission-page',
@@ -14,12 +14,14 @@ export class MissionPageComponent implements OnInit {
     currentMissionId: string;
     isLinkCollapsed: boolean;
     currentPane: Pane;
+    paneNames: Array<[Pane, string]>;
 
     constructor(public commandService: CommandService, public missionService: MissionService) {
         this.selectedUris = [];
         this.currentMissionId = "";
         this.currentPane = "none";
         this.isLinkCollapsed = true;
+        this.paneNames = [["logs", "Logs"], ["firmware", "Firmware"], ["history", "Historique"]];
     }
 
     ngOnInit(): void {

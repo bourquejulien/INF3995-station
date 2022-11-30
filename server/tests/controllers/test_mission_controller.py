@@ -5,7 +5,7 @@ from flask import url_for
 
 def test_start_mission(client, app, mocker):
     start_mission_mock = mocker.patch('src.services.command_service')
-    start_mission_mock.start_mission.return_value = generate_mission(False, 0)
+    start_mission_mock.start_mission.return_value = generate_mission(False, 0, 2)
 
     with app.container.command_service.override(start_mission_mock):
         response = client.post(url_for("mission.start"))

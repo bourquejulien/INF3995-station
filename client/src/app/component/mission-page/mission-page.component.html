@@ -36,25 +36,23 @@
                 <app-map></app-map>
             </div>
         </div>
+
         <div class="col-sm-3 h-100 log-container" [hidden]="currentPane !== 'logs'">
             <app-log></app-log>
         </div>
         <div class="col-sm-3 h-100 firmware-container" [hidden]="currentPane !== 'firmware'">
             <app-firmware-panel></app-firmware-panel>
         </div>
+        <div class="col-sm-3 h-100 firmware-container" [hidden]="currentPane !== 'history'">
+            <app-command-history-panel></app-command-history-panel>
+        </div>
+
         <div class="col-sm-1 collapse-button-col">
-            <div class="row">
+            <div class="row" *ngFor="let paneName of paneNames">
                 <button
                     class="button primary"
-                    (click)="togglePane('logs')">
-                    Logs
-                </button>
-            </div>
-            <div class="row">
-                <button
-                    class="button primary"
-                    (click)="togglePane('firmware')">
-                    Firmware
+                    (click)="togglePane(paneName[0])">
+                    {{paneName[1]}}
                 </button>
             </div>
         </div>
