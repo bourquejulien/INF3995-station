@@ -27,8 +27,17 @@
     margin: 0px;
 }
 
+.drone-select-bar{
+    background-color: var(--secondary);
+}
+
 .drone-selector{
-    border-right: solid var(--primary) 1px;
+    background-color: var(--primary);
+    border-right: solid var(--secondary) 1px;
     display: flex;
     align-items: center;
+}
+
+.form-check-input:hover{
+    cursor: pointer;
 }
