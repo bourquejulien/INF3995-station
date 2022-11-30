@@ -1,5 +1,6 @@
 <div class="col h-100 d-flex flex-column">
     <div class="row drone-select-bar">
+        <div class="col-sm-1 selection">Drones:</div>
         <div *ngFor="let selected of commandService.uris; let i=index" class="drone-selector col-sm-2">
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" [value]="selected.valueOf" id="{{selected}}" (click)="updateSelected()">

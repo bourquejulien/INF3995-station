@@ -3,7 +3,7 @@
         <span class="col-sm-9 title">Système aérien d'exploration</span>
     </div>
     <div class="row body h-80">
-        <div class="col-sm-2 commands">
+        <div class="col-sm-2 h-100 d-flex flex-column commands">
             <div class="row"><h1 class="col command-name">Commandes</h1></div>
 
             <div class="row command-type justify-content-center">Liaison Radio</div>
@@ -29,10 +29,16 @@
             <div class="row"><button class="col button" (click)="toggleSync()">Basculer la synchronisation (p2p)</button></div>
 
             <div class="row"><h1 class="col command-name">Interfaces connectés</h1></div>
-            <div class="row" *ngFor="let uri of commandService.uris">
-                <app-drone-panel class="col drone-panel" uri={{uri}}></app-drone-panel>
+
+            <div class="row flex-grow-1 drone-panels">
+                <div class="col h-100">
+                    <div class="row" *ngFor="let uri of commandService.uris">
+                        <app-drone-panel class="col h-100 drone-panel" uri={{uri}}></app-drone-panel>
+                    </div>
+                </div>
             </div>
         </div>
+
         <div class="col h-100 d-flex flex-column">
             <div class="row">
                 <h1 class="col command-name">Carte</h1>

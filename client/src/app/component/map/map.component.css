@@ -2,6 +2,7 @@
     background-color: var(--background);  
     display: grid;
     justify-content: center;
+    height: 100%;
 }
 
 .mission canvas {
@@ -22,6 +23,8 @@
 }
 
 .selection{
+    padding-top: 2px;
+    padding-bottom: 2px;
     background-color: var(--secondary);
     margin: 0px;
 }
@@ -35,6 +38,7 @@
     border-right: solid var(--secondary) 1px;
     display: flex;
     align-items: center;
+    margin: 0px;
 }
 
 .form-check-input:hover{
