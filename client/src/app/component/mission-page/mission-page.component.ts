@@ -28,6 +28,9 @@ export class MissionPageComponent implements OnInit {
         this.isLinkCollapsed = true;
     }
 
+    isMissionOngoing(): boolean {
+        return this.missionService.isMissionOngoing;
+    }
     connect(): void {
         this.commandService.connect();
     }

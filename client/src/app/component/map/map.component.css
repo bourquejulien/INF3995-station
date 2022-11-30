@@ -1,5 +1,4 @@
 .mission{
-    background-color: var(--background);
     background-color: var(--map-background);  
     display: grid;
     height: 100%;
@@ -29,7 +28,7 @@
 }
 
 .drone-selector{
-    border-left: solid var(--primary) 1px;
+    border-right: solid var(--primary) 1px;
     display: flex;
     align-items: center;
 }

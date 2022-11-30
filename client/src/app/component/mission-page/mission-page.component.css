@@ -20,34 +20,48 @@
 .command-name{
     background-color: var(--accent);
     border-bottom: 1px var(--primary) solid;
+    border-right: 1px var(--primary) solid;
     padding: 10px;
+    font-weight: bold;
     font-size: calc(50% + 0.5vw + 0.5vh);;
+    text-align: center;
+    margin-bottom: 0px;
+}
+
+.command-type{
+    background-color: var(--primary);
+    border-bottom: 1px var(--primary) solid;
+    border-right: 1px var(--primary) solid;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    font-weight: bold;
     text-align: center;
     margin-bottom: 0px;
 }
 
 .button{
     color: var(--font-color);
-    padding-top: 10px;
-    padding-bottom: 10px;
+    background-color: var(--secondary);
+    border-color: var(--secondary);
     text-align: center;
 }
 
-.primary{
-    background-color: var(--primary);
-    border-color: var(--primary);
+.button:hover{
+    background-color: var(--accent);
 }
 
-.accent{
+.disabled{
+    color: var(--font-color);
     background-color: var(--accent);
     border-color: var(--accent);
+    text-align: center;
+}
+
+.disabled:hover{
+    cursor: auto;
 }
 
 .collapse-button-col{
-    background-color: var(--secondary);
-}
-
-.button:hover{
     background-color: var(--secondary);
 }
 
