@@ -1,3 +1,7 @@
+.map-container{
+    min-height: 0;
+}
+
 .mission{
     background-color: var(--background);  
     display: grid;

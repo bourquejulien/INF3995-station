@@ -69,6 +69,10 @@
     background-color: var(--primary);
 }
 
+.map-container{
+    min-height: 0;
+}
+
 .drone-panels{
     overflow-y: auto;
 }
