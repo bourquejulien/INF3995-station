@@ -1,41 +1,48 @@
 # INF3995 - Station au sol - Interface Web
-Contient le code de la section "serveur" de la station au sol.
-## Prérequis
 
-### Sans docker :
-On roule le serveur dans un environnement virtuel python nommé venv (garder le même nom pour que le gitignore fonctionne bien)
+Ce répertoire inclut le client Web de la station au sol.
+
+## Comment démarrer l'interface **avec** Docker
+
+### Prérequis
+- Docker
+
+### Procédure
+1. Exécuter la commande ``docker build --target=final -t server-client .``
+2. Lancer le conteneur à l'aide de la commande ``docker run -p 5001:5001 server-client``
+3. Naviguer à l'adresse `http://localhost:5001/`
+
+## Comment démarrer l'interface **sans** Docker
+### Prérequis
+1. Node.js et npm. La version 16.17.1 est conseillée.
+2. yarn avec la commande ``npm install --global yarn``
+### Procédure
+1. Lancer la commande ``yarn install``
+2. Pour compiler il suffit ensuite de lancer ``ng build``
+3. La commande ``ng serve`` permet de lancer la simulation
+4. Enfin, il faut naviguer à l'adresse ``http://localhost:4200/``
+
+## Tests
+
+Afin d'exécuter les tests :
+
 ```bash
-python3 -m venv venv
-source venv/bin/activate
-python3 requirements.py
+docker build --target=test -t server-client-test .
+docker run -p 5001:5001 server-client-test
 ```
 
-## Exécution
+## Formatage et lint
 
-### Sans docker
-Toujours dans l'environnement virtuel, on fait
+Le formatage est exécuté à l'aide d'[**eslint**](https://eslint.org/) qui suit les standards suivants :
+- [angular-eslint/recommended](https://github.com/angular-eslint/angular-eslint)
+- [prettier/recommended](https://github.com/prettier/eslint-plugin-prettier)
+
+Le formatage peut être lancé à l'aide de :
 ```bash
-python3 app.py
+yarn run lint
 ```
 
-### Avec docker :
-1. Exécuter la commande ``docker build --target=final -t server .``
-2. Lancer le conteneur à l'aide de la commande ``docker run -p 5000:5000 server``
-
-## Base de données Mongo
-Il est nécessaire de donner accès au serveur à une base de données de type Mongo.
-Pour ce faire il est possible d'indiquer à l'aide de la variable d'environnement ``DB_CONNECTION_STRING`` une chaine de connexion standardisée (connection string).
-
-Par défaut la chaine utilisée est la suivante : ``mongodb://local:lacol@localhost:5002/``.
-Cette chaine permet de se connecter à une base de données locale, celle lancée par le fichier ``docker-compose.db.yml`` :
+Les fichiers peuvent être formatés à l'aide de la commande suivante :
 ```bash
-docker compose -f docker-compose.db.yml up -d
-```
-
-**À noter** : Cette commande lance également *mongoexpress* sur le port 8081. Ce second conteneur permet de mettre à jour manuellement la BD.
-
-## Test
-Lancer la commande 
-```bash
-pytest tests
+yarn run lint --fix
 ```
