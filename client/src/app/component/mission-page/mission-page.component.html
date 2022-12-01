@@ -55,20 +55,15 @@
         <div class="col-sm-3 h-100 firmware-container" [hidden]="currentPane !== 'firmware'">
             <app-firmware-panel></app-firmware-panel>
         </div>
-
+        <div class="col-sm-3 h-100 firmware-container" [hidden]="currentPane !== 'history'">
+            <app-history-panel></app-history-panel>
+        </div>
         <div class="col-sm-1 collapse-button-col">
-            <div class="row">
+            <div class="row" *ngFor="let paneName of paneNames">
                 <button
-                    [ngClass]="currentPane == 'logs' ? 'disabled' : 'button'"
-                    (click)="togglePane('logs')">
-                    Logs
-                </button>
-            </div>
-            <div class="row">
-                <button
-                    [ngClass]="currentPane == 'firmware' ? 'disabled' : 'button'"
-                    (click)="togglePane('firmware')">
-                    Firmware
+                    [ngClass]="currentPane == paneName[0] ? 'disabled' : 'button'"
+                    (click)="togglePane(paneName[0])">
+                {{ paneName[1] }}
                 </button>
             </div>
         </div>

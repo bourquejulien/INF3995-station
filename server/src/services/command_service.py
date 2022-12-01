@@ -43,7 +43,7 @@ class CommandService:
             with self._mutex:
                 self._disabled_guard()
 
-                mission = self._mission_service.start_mission()
+                mission = self._mission_service.start_mission(len(self._swarm_client.uris))
                 self._swarm_client.start_mission()
                 self._logging_service.log(_format_command(self.start_mission, f"id: {mission.id}"))
         except CustomException as e:

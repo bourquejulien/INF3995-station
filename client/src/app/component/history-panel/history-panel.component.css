@@ -1,0 +1,38 @@
+.button{
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--font-color);
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+    width: 100%;
+}
+
+.button:hover{
+    background-color: var(--secondary);
+}
+
+.dropdown-button{
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--font-color);
+    text-align: center;
+    width: 100%;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.dropdown-button:hover{
+    background-color: var(--secondary);
+}
+
+.card{
+    padding: 0;
+    border: 1px;
+    background-color: var(--accent);
+    border: var(--primary);
+}
+
+.card:hover{
+    background-color: var(--secondary);
+}

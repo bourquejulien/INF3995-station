@@ -12,9 +12,11 @@ export interface Log {
 export interface Mission {
     id: string,
     is_simulation: boolean,
+    total_distance: number,
+    drone_count: number,
     start_time_ms: number,
     end_time_ms: number,
-} 
+}
 
 export interface Position {
     x: number,

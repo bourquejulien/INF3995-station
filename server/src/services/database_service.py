@@ -42,8 +42,8 @@ class DatabaseService:
 
     def get_metrics(self, mission_id: str):
         cursor = self._collections["metric"].find({"mission_id": mission_id}).sort("timestamp_ms", pymongo.DESCENDING)
-        for log in cursor:
-            yield Metric(**DatabaseService._convert_from(log))
+        for metric in cursor:
+            yield Metric(**DatabaseService._convert_from(metric))
 
     def get_mission(self, id: str):
         return DatabaseService._convert_from(self._collections["mission"].find_one(id))
