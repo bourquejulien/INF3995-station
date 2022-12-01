@@ -59,3 +59,7 @@
     background-color: var(--accent);  
     cursor: pointer;
 }
+
+.caret{
+    float: right;
+}

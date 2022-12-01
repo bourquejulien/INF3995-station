@@ -1,4 +1,4 @@
-<div class="d-flex flex-column">
+<div class="d-flex flex-column h-100">
     <div class="row header">
         <span class="col">Logs de la mission {{formatMissionId(selectedMissionId)}}</span>
     </div>
@@ -9,6 +9,7 @@
             [attr.aria-expanded]="!collapsed"
             aria-controls="collapseExample">
             Choisir une mission
+            <span class="material-icons caret">{{collapsed ? "expand_more" : "expand_less"}}</span>
         </button>
     </div>
 
