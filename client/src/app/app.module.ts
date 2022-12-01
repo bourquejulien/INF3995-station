@@ -13,7 +13,7 @@ import { MapComponent } from '@app/component/map/map.component';
 import { CodeEditorComponent } from './component/code-editor/code-editor.component';
 import { FirmwarePanelComponent } from './component/firmware-panel/firmware-panel.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CommandHistoryPanelComponent } from './component/command-history-panel/command-history-panel.component';
+import { HistoryPanelComponent } from './component/history-panel/history-panel.component';
 
 
 @NgModule({
@@ -25,7 +25,7 @@ import { CommandHistoryPanelComponent } from './component/command-history-panel/
         MapComponent,
         CodeEditorComponent,
         FirmwarePanelComponent,
-        CommandHistoryPanelComponent,
+        HistoryPanelComponent,
     ],
     imports: [
         HttpClientModule,

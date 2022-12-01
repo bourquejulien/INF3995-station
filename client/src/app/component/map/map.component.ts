@@ -252,6 +252,7 @@ export class MapComponent implements OnInit, AfterViewInit {
         
         this.positionscanvas.nativeElement.width = this.canvasSize;
         this.positionscanvas.nativeElement.height = this.canvasSize;
+
         this.currentcanvas.nativeElement.width = this.canvasSize;
         this.currentcanvas.nativeElement.height = this.canvasSize;
         this.obstaclecanvas.nativeElement.width = this.canvasSize;

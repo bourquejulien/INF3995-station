@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommandService } from '@app/services/command/command.service';
 import { MissionService } from '@app/services/mission/mission.service';
 
@@ -12,7 +12,6 @@ type Pane = "none" | "logs" | "firmware" | "history";
 export class MissionPageComponent implements OnInit {
     selectedUris: string[];
     currentMissionId: string;
-    isLinkCollapsed: boolean;
     currentPane: Pane;
     paneNames: Array<[Pane, string]>;
 
@@ -20,14 +19,16 @@ export class MissionPageComponent implements OnInit {
         this.selectedUris = [];
         this.currentMissionId = "";
         this.currentPane = "none";
-        this.isLinkCollapsed = true;
         this.paneNames = [["logs", "Logs"], ["firmware", "Firmware"], ["history", "Historique"]];
     }
 
     ngOnInit(): void {
         this.commandService.getUris();
         this.commandService.retrieveMode();
-        this.isLinkCollapsed = true;
+    }
+
+    isMissionOngoing(): boolean {
+        return this.missionService.isMissionOngoing;
     }
 
     connect(): void {

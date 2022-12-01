@@ -3,56 +3,67 @@
         <span class="col-sm-9 title">Système aérien d'exploration</span>
     </div>
     <div class="row body h-80">
-        <div class="col-sm-2 commands">
+        <div class="col-sm-2 h-100 d-flex flex-column commands">
             <div class="row"><h1 class="col command-name">Commandes</h1></div>
+
+            <div class="row command-type justify-content-center">Liaison Radio</div>
+            <div class="row"><button class="col button" (click)="connect()">Connecter</button></div>
+            <div class="row"><button class="col button" (click)="disconnect()">Déconnecter</button></div>
+
+            <div class="row command-type justify-content-center">Mission</div>
             <div class="row">
-                <button
-                    class="button primary"
-                    (click)="collapse.toggle()"
-                    aria-controls="collapseExample">
-                    Liaison radio
-                </button>
+                <button class="col" [ngClass]="isMissionOngoing() ? 'disabled' : 'button'" (click)="startMission()">Lancer la mission</button>
             </div>
-            <div #collapse="ngbCollapse" [(ngbCollapse)]="isLinkCollapsed">
-                <div class="row"><button class="col button accent" (click)="connect()">Connexion</button></div>
-                <div class="row"><button class="col button accent" (click)="disconnect()">Déconnexion</button></div>
+            <div class="row">
+                <button class="col" [ngClass]="isMissionOngoing() ? 'button' : 'disabled'" (click)="endMission()">Terminer la mission</button>
             </div>
-            <div class="row"><button class="col button primary" (click)="identify()">Identifier</button></div>
-            <div class="row"><button class="col button primary" (click)="toggleSync()">Basculer la synchronisation (p2p)</button></div>
-            <div class="row"><button class="col button primary" (click)="startMission()">Lancer la mission</button></div>
-            <div class="row"><button class="col button primary" (click)="endMission()">Terminer la mission</button></div>
-            <div class="row"><button class="col button primary" (click)="forceEndMission()">Forcer la fin de mission</button></div>
-            <div class="row"><button class="col button primary" (click)="returnToBase()">Retourner à la base</button></div>
-            <div class="row"><h1 class="col command-name">Interfaces</h1></div>
-            <div class="row" *ngFor="let uri of commandService.uris">
-                <app-drone-panel class="col drone-panel" uri={{uri}}></app-drone-panel>
+            <div class="row">
+                <button class="col" [ngClass]="isMissionOngoing() ? 'button' : 'disabled'" (click)="forceEndMission()">Forcer la fin de mission</button>
+            </div>
+            <div class="row">
+                <button class="col" [ngClass]="isMissionOngoing() ? 'button' : 'disabled'" (click)="returnToBase()">Retourner à la base</button>
+            </div>
+
+            <div class="row command-type justify-content-center">Utilitaires</div>
+            <div class="row"><button class="col button" (click)="identify()">Identifier</button></div>
+            <div class="row"><button class="col button" (click)="toggleSync()">Basculer la synchronisation (p2p)</button></div>
+
+            <div class="row"><h1 class="col command-name">Interfaces connectés</h1></div>
+
+            <div class="row flex-grow-1 drone-panels">
+                <div class="col h-100">
+                    <div class="row" *ngFor="let uri of commandService.uris">
+                        <app-drone-panel class="col h-100 drone-panel" uri={{uri}}></app-drone-panel>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="mission col d-flex flex-column">
+
+        <div class="col h-100 d-flex flex-column">
             <div class="row">
                 <h1 class="col command-name">Carte</h1>
             </div>
-            <div class="row flex-grow-1">
-                <app-map></app-map>
+            <div class="row flex-grow-1 map-container">
+                <app-map class="h-100"></app-map>
             </div>
         </div>
 
         <div class="col-sm-3 h-100 log-container" [hidden]="currentPane !== 'logs'">
             <app-log></app-log>
         </div>
+
         <div class="col-sm-3 h-100 firmware-container" [hidden]="currentPane !== 'firmware'">
             <app-firmware-panel></app-firmware-panel>
         </div>
         <div class="col-sm-3 h-100 firmware-container" [hidden]="currentPane !== 'history'">
-            <app-command-history-panel></app-command-history-panel>
+            <app-history-panel></app-history-panel>
         </div>
-
         <div class="col-sm-1 collapse-button-col">
             <div class="row" *ngFor="let paneName of paneNames">
                 <button
-                    class="button primary"
+                    [ngClass]="currentPane == paneName[0] ? 'disabled' : 'button'"
                     (click)="togglePane(paneName[0])">
-                    {{paneName[1]}}
+                {{ paneName[1] }}
                 </button>
             </div>
         </div>

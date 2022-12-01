@@ -1,19 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CommandHistoryPanelComponent } from './command-history-panel.component';
-import { FirmwarePanelComponent } from '@app/component/firmware-panel/firmware-panel.component';
-import { FirmwareService } from '@app/services/firmware/firmware.service';
+import { HistoryPanelComponent } from './history-panel.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { HttpClient } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-describe('CommandHistoryPanelComponent', () => {
-    let component: CommandHistoryPanelComponent;
-    let fixture: ComponentFixture<CommandHistoryPanelComponent>;
+describe('HistoryPanelComponent', () => {
+    let component: HistoryPanelComponent;
+    let fixture: ComponentFixture<HistoryPanelComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [CommandHistoryPanelComponent],
+            declarations: [HistoryPanelComponent],
             providers: [],
             imports: [
                 NgbModule,
@@ -23,7 +20,7 @@ describe('CommandHistoryPanelComponent', () => {
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(CommandHistoryPanelComponent);
+        fixture = TestBed.createComponent(HistoryPanelComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

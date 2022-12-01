@@ -1,9 +1,12 @@
+.map-container{
+    min-height: 0;
+}
+
 .mission{
-    background-color: var(--background);
-    background-color: var(--map-background);  
+    background-color: var(--background);  
     display: grid;
-    height: 100%;
     justify-content: center;
+    height: 100%;
 }
 
 .mission canvas {
@@ -28,12 +31,24 @@
 }
 
 .selection{
+    padding-top: 2px;
+    padding-bottom: 2px;
     background-color: var(--secondary);
     margin: 0px;
 }
 
+.drone-select-bar{
+    background-color: var(--secondary);
+}
+
 .drone-selector{
-    border-left: solid var(--primary) 1px;
+    background-color: var(--primary);
+    border-right: solid var(--secondary) 1px;
     display: flex;
     align-items: center;
+    margin: 0px;
+}
+
+.form-check-input:hover{
+    cursor: pointer;
 }

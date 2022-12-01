@@ -13,11 +13,11 @@ type Attribute = keyof MissionInfo;
 type AttributeTypes = boolean | number | string;
 
 @Component({
-    selector: 'app-command-history-panel',
-    templateUrl: './command-history-panel.component.html',
-    styleUrls: ['./command-history-panel.component.css'],
+    selector: 'app-history-panel',
+    templateUrl: './history-panel.component.html',
+    styleUrls: ['./history-panel.component.css'],
 })
-export class CommandHistoryPanelComponent implements OnInit {
+export class HistoryPanelComponent implements OnInit {
     collapsed: boolean;
     selectedMission: MissionInfo | undefined;
     attributes: Array<[Attribute, string]>;
