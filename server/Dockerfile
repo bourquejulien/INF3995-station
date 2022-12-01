@@ -29,9 +29,14 @@ ENV PATH="/usr/app/venv/bin:$PATH"
 ENTRYPOINT ["python"]
 CMD ["app.py"]
 
+FROM build AS lint
+
+ENTRYPOINT ["python", "format.py"]
+
 FROM build AS test
 
 ENV IS_SIMULATION=True
 
 ENTRYPOINT ["pytest", "tests"]
+
 

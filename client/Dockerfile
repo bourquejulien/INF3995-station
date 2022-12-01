@@ -21,6 +21,8 @@ WORKDIR /usr/share/nginx/html
 COPY ./nginx.conf /etc/nginx/
 COPY --from=build /usr/local/app/dist/out/ ./
 
-FROM build as test
+FROM build as lint
+ENTRYPOINT ["yarn", "run", "lint"]
 
+FROM build as test
 ENTRYPOINT ["yarn", "run", "test", "--browsers=ChromeHeadlessNoSandbox", "--watch=false"]
