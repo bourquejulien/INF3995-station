@@ -10,20 +10,6 @@ from src.services.logging_service import LoggingService
 from src.services.mission_service import MissionService
 
 
-def _compute_position(position: Position, distance: Distance, trigger: float, is_simulation: bool, drone_angle: float = 0):
-    points = []
-
-    if distance.front < trigger:
-        points.append(Position(position.x, position.y + distance.front, position.z))
-    if distance.back < trigger:
-        points.append(Position(position.x, position.y - distance.back, position.z))
-    if distance.left < trigger:
-        points.append(Position(position.x - distance.left, position.y, position.z))
-    if distance.right < trigger:
-        points.append(Position(position.x + distance.right, position.y, position.z))
-
-    return points
-
 def _remove_duplicate(points: list[Position], new_points: list[Position], duplicate_distance: float):
     distance = lambda a, b: math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2 + (a.z - b.z) ** 2)
 
@@ -52,11 +38,10 @@ class MappingService:
         swarm_client.add_callback("mapping", self._add)
         mission_service.add_flush_action(self.flush)
 
-    def _add(self, uri, position: Position, distance: Distance):
-        self._logging_service.log(f"Received distance: {distance}, Position: {position}, Uri: {uri}")
-        distance_points = _compute_position(position, distance, self._is_simulation, float(self._config["mapping"]["trigger_distance"]))
-        new_map_info = generate_mapInfo(uri, position, distance_points)
-
+    def _add(self, uri, position: Position, distances):
+        self._logging_service.log(f"Received distance: {distances}, Position: {position}, Uri: {uri}")
+        new_map_info = generate_mapInfo(uri, position, distances)
+        
         if uri in self._maps:
             self._maps[uri].append(new_map_info)
         else:
