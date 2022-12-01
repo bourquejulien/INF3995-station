@@ -1,11 +1,14 @@
-<div class="d-flex flex-column h-100">
+<div class="d-flex flex-column">
+    <div class="row header">
+        <span class="col">Logs de la mission {{formatMissionId(selectedMissionId)}}</span>
+    </div>
     <div class="row">
         <button
             class="button"
             (click)="collapse.toggle()"
             [attr.aria-expanded]="!collapsed"
             aria-controls="collapseExample">
-            Mission {{formatMissionId(selectedMissionId)}}
+            Choisir une mission
         </button>
     </div>
 
