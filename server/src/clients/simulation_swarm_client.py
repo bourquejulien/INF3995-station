@@ -2,6 +2,7 @@ import logging
 import time
 from threading import Thread
 
+from src.classes.events.log import generate_log
 from src.clients.drone_clients.simulation_drone_client import SimulationDroneClient
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.classes.position import Position
@@ -10,6 +11,27 @@ from src.classes.events.metric import generate_metric
 
 logger = logging.getLogger(__name__)
 
+def distance_to_position(distanceObstacle):
+        front = distanceObstacle.front / 100
+        back = distanceObstacle.back / 100
+        left = distanceObstacle.left / 100
+        right = distanceObstacle.right / 100
+        positionDroneX = distanceObstacle.position.x
+        positionDroneY = distanceObstacle.position.y
+
+        positionObstacle = []
+        trigger = 5.0
+
+        if front > 0 and front < trigger:
+            positionObstacle.append(Position(positionDroneX, positionDroneY - front, 0))
+        if back > 0 and back < trigger:
+            positionObstacle.append(Position(positionDroneX, positionDroneY + back, 0))
+        if left > 0 and left < trigger:
+            positionObstacle.append(Position(positionDroneX + left, positionDroneY, 0))
+        if right > 0 and right < trigger:
+            positionObstacle.append(Position(positionDroneX - right, positionDroneY, 0))
+
+        return positionObstacle
 
 class SimulationSwarmClient(AbstractSwarmClient):
     daemon: Thread | None
@@ -104,12 +126,12 @@ class SimulationSwarmClient(AbstractSwarmClient):
 
     def _get_distances(self):
         for drone in self._drone_clients:
-            distances = drone.get_distances().distanceObstacle
-            if len(distances) > 0:
-                d = distances[0]
-                position = d.position
+            distanceObstacle = drone.get_distances().distanceObstacle
+            if len(distanceObstacle) > 0:
+                distances = distance_to_position(distanceObstacle[0])
+                position = distanceObstacle[0].position
                 self._callbacks["mapping"](drone.uri, Position(position.x, position.y, position.z),
-                                           Distance(d.front, d.back, d.left, d.right))
+                                           distances)
 
     def _get_logs(self):
         for drone in self._drone_clients:
@@ -125,3 +147,4 @@ class SimulationSwarmClient(AbstractSwarmClient):
                 self._get_logs()
             except Exception as e:
                 logger.exception("Error during simulation pulling")
+
