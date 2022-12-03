@@ -86,7 +86,7 @@ class CommandService:
             with self._mutex:
                 self._disabled_guard()
                 self._swarm_client.return_to_base()
-                mission = self._mission_service.return_to_base()
+                mission = self._mission_service.end_mission()
                 if mission is not None:
                     self._logging_service.log(_format_command(self.return_to_base, f"id: {mission.id}"))
                 else:

@@ -19,7 +19,16 @@ from src.clients.drone_clients.physical_drone_client import identify, start_miss
 @pytest.fixture()
 def swarm_client(mocker):
     mocker.patch('src.clients.physical_swarm_client.crtp')
-    yield PhysicalSwarmClient({})
+    swarm_client = PhysicalSwarmClient({})
+
+    swarm_client._swarm = types.SimpleNamespace()
+    swarm_client._base_return_syncer = types.SimpleNamespace()
+    swarm_client._base_return_syncer.close = mocker.stub()
+    swarm_client._base_return_syncer.remove_uri = mocker.stub()
+    swarm_client._base_return_syncer.release = mocker.stub()
+    swarm_client._swarm.close_links = mocker.stub()
+
+    yield swarm_client
 
 
 @pytest.fixture()
@@ -35,6 +44,8 @@ def test_connect(app, mocker, swarm_client):
     mocker.patch('src.clients.physical_swarm_client.Swarm', return_value=swarm_mock)
     swarm_mock.parallel_safe = mocker.stub()
     swarm_mock.open_links = mocker.stub()
+
+    swarm_mock._cfs = {}
 
     swarm_client.connect(uris)
 
@@ -138,13 +149,9 @@ def test_packet_received_callback(app, mocker, swarm_client):
     assert generate_metric(Position(2.0, 2.5, 3.0), 'Idle', 'abc') == generated_metrics[0]
 
 
-def test_disconnect(app, mocker, swarm_client):
-    swarm_client._swarm = types.SimpleNamespace()
-    stub = mocker.stub()
-    swarm_client._swarm.close_links = stub
-
+def test_disconnect(app, swarm_client):
+    stub = swarm_client._swarm.close_links
     swarm_client.disconnect()
-
     stub.assert_called_once()
 
 

@@ -1,4 +1,3 @@
-from contextlib import contextmanager
 from threading import Lock
 
 from dependency_injector.providers import Configuration
@@ -33,17 +32,6 @@ class MissionService:
             return self._mission
 
     def end_mission(self):
-        with self._mutex:
-            mission = self.flush()
-
-        if mission is None:
-            return None
-
-        mission.end_time_ms = get_timestamp_ms()
-
-        self._database_service.add(mission)
-
-    def return_to_base(self):
         with self._mutex:
             mission = self.flush()
 
