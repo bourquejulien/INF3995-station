@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 
 class AbstractSwarmClient(ABC):
-    status = ["Idle", "Identify", "Takeoff", "Exploration", "Landing", "EmergencyStop", "ChooseAngle", "Crashed", "Return"]
+    status = ["Idle", "Identify", "Takeoff", "Exploration", "Landing", "Return", "EmergencyStop", "ChooseAngle", "Crashed"]
 
     def __init__(self):
         self._callbacks = {}
@@ -33,6 +33,10 @@ class AbstractSwarmClient(ABC):
 
     @abstractmethod
     def disconnect(self):
+        pass
+
+    @abstractmethod
+    def return_to_base(self):
         pass
 
     @abstractmethod
