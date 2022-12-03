@@ -23,7 +23,7 @@ class DroneSyncer:
                 self._event.clear()
                 self._blocked_uris = self._uris
 
-        self._event.wait(timeout)
+        return self._event.wait(timeout)
 
     def release(self, uri: str):
         if self._event.is_set():

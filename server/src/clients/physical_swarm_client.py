@@ -131,10 +131,9 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         self.disconnect()
         self._swarm = Swarm(uris, factory=self._factory)
         self._swarm.open_links()
+        self._base_return_syncer = DroneSyncer(self.uris)
         self._swarm.parallel_safe(self._enable_callbacks)
         self._swarm.parallel_safe(self._set_params)
-
-        self._base_return_syncer = DroneSyncer(self.uris)
 
     def disconnect(self):
         if self._swarm is not None:
@@ -151,7 +150,8 @@ class PhysicalSwarmClient(AbstractSwarmClient):
 
     def return_to_base(self):
         self._swarm.parallel_safe(end_mission)
-        self._base_return_syncer.wait()
+        if not self._base_return_syncer.wait():
+            logger.warning("Return to base timed out")
 
     def force_end_mission(self):
         self._swarm.parallel_safe(force_end_mission)
