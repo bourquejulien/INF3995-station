@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FirmwareService } from '@app/services/firmware/firmware.service';
 import { PartialObserver } from 'rxjs';
 
-type Mode = "file" | "editor";
+type Mode = "file" | "editor" | "none";
 
 @Component({
   selector: 'app-firmware-panel',
@@ -21,15 +21,15 @@ export class FirmwarePanelComponent implements OnInit {
         this.collapsed = true;
         this.isFlashError = false;
         this.isFlashing = false;
-        this.currentMode = "file";
-        this.modes = [["file", "Téléversement"],["editor", "Depuis un fichier"]]
+        this.currentMode = "none";
+        this.modes = [["file", "Téléverser un fichier binaire"],["editor", "Utiliser l'éditeur en ligne"]]
         this.file = null;
     }
 
     ngOnInit(): void {
         this.isFlashError = false;
         this.isFlashing = false;
-        this.currentMode = "file";
+        this.currentMode = "none";
         this.file = null;
     }
 
