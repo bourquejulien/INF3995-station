@@ -9,12 +9,18 @@ from src.classes.events.log import generate_log
 from src.classes.events.metric import generate_metric
 from src.classes.position import Position
 from src.classes.distance import Distance
-from src.clients.drone_clients.physical_drone_client import identify, start_mission, end_mission, force_end_mission, \
-    set_synchronization
+from src.clients.drone_clients.physical_drone_client import (
+    identify,
+    start_mission,
+    end_mission,
+    force_end_mission,
+    set_synchronization,
+)
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 
+from src.clients.drone_syncer import DroneSyncer
 from src.exceptions.custom_exception import CustomException
 from src.exceptions.hardware_exception import HardwareException
 
@@ -27,11 +33,13 @@ class PhysicalSwarmClient(AbstractSwarmClient):
     base_uri = 0xE7E7E7E750
     _is_sync_enabled: bool
     _swarm: Swarm | None
+    _base_return_syncer: DroneSyncer | None
 
     def __init__(self, config):
         super().__init__()
         self._is_sync_enabled = False
         self._swarm = None
+        self._base_return_syncer = None
         self._factory = CachedCfFactory(rw_cache="./cache")
         crtp.init_drivers(enable_debug_driver=False)
         self.config = config
@@ -44,20 +52,34 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         scf.cf.connection_failed.add_callback(self._connection_failed)
         scf.cf.connection_lost.add_callback(self._connection_lost)
 
-        scf.cf.console.receivedChar.add_callback(lambda data: self._console_incoming(uri, data))
-        scf.cf.appchannel.packet_received.add_callback(lambda text: self._packet_received(uri, text))
-        scf.cf.param.add_update_callback(group="deck", name="bcFlow2", cb=self._param_deck_flow)
+        scf.cf.console.receivedChar.add_callback(
+            lambda data: self._console_incoming(uri, data)
+        )
+        scf.cf.appchannel.packet_received.add_callback(
+            lambda text: self._packet_received(uri, text)
+        )
+        scf.cf.param.add_update_callback(
+            group="deck", name="bcFlow2", cb=self._param_deck_flow
+        )
 
     def _set_params(self, scf: SyncCrazyflie):
-        scf.cf.param.set_value("app.updateTime", self.config['clients']['drones']['update_time'])
-        scf.cf.param.set_value("app.defaultZ", self.config['clients']['drones']['default_z'])
-        scf.cf.param.set_value("app.distanceTrigger", self.config['clients']['drones']['trigger_distance'])
+        scf.cf.param.set_value(
+            "app.updateTime", self.config["clients"]["drones"]["update_time"]
+        )
+        scf.cf.param.set_value(
+            "app.defaultZ", self.config["clients"]["drones"]["default_z"]
+        )
+        scf.cf.param.set_value(
+            "app.distanceTrigger", self.config["clients"]["drones"]["trigger_distance"]
+        )
 
     def _param_deck_flow(self, scf, value_str):
         try:
             int_value = int(value_str)
         except Exception as e:
-            raise CustomException("Callback error: ", "expected an integer as string") from e
+            raise CustomException(
+                "Callback error: ", "expected an integer as string"
+            ) from e
 
         if int_value != 0:
             logger.info("Deck is attached")
@@ -68,6 +90,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         logger.info("Connected to %s", link_uri)
 
     def _disconnected(self, link_uri):
+        self._base_return_syncer.remove_uri(link_uri)
         logger.info("Disconnected from %s", link_uri)
 
     def _connection_failed(self, link_uri, msg):
@@ -77,7 +100,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         logger.warning("Connection to %s lost: %s", link_uri, msg)
 
     def _console_incoming(self, uri, console_text):
-        log = generate_log('', console_text, "INFO", uri)
+        log = generate_log("", console_text, "INFO", uri)
         self._callbacks["logging"](log)
 
     def _packet_received(self, uri: str, data):
@@ -89,6 +112,9 @@ class PhysicalSwarmClient(AbstractSwarmClient):
                 position = Position(*struct.unpack("<fff", data[1:]))
                 metric = generate_metric(position, self.status[status], uri)
 
+                if metric.status == "Idle":
+                    self._base_return_syncer.release(uri)
+
                 self._callbacks["metric"](metric)
 
             case 1:
@@ -97,18 +123,25 @@ class PhysicalSwarmClient(AbstractSwarmClient):
                 self._callbacks["mapping"](uri, position, distance)
 
             case _:
-                raise CustomException("Unpack error: ", f"Unknown data type: {data_type}")
+                raise CustomException(
+                    "Unpack error: ", f"Unknown data type: {data_type}"
+                )
 
     def connect(self, uris):
+        self.disconnect()
         self._swarm = Swarm(uris, factory=self._factory)
         self._swarm.open_links()
         self._swarm.parallel_safe(self._enable_callbacks)
         self._swarm.parallel_safe(self._set_params)
 
+        self._base_return_syncer = DroneSyncer(self.uris)
+
     def disconnect(self):
         if self._swarm is not None:
             self._swarm.close_links()
+            self._base_return_syncer.close()
         self._swarm = None
+        self._base_return_syncer = None
 
     def start_mission(self):
         self._swarm.parallel_safe(start_mission)
@@ -116,15 +149,24 @@ class PhysicalSwarmClient(AbstractSwarmClient):
     def end_mission(self):
         self._swarm.parallel_safe(end_mission)
 
+    def return_to_base(self):
+        self._swarm.parallel_safe(end_mission)
+        self._base_return_syncer.wait()
+
     def force_end_mission(self):
         self._swarm.parallel_safe(force_end_mission)
 
     def identify(self, uris):
-        self._swarm.parallel_safe(identify, {uri: [uri in uris] for uri in self._swarm._cfs})
+        self._swarm.parallel_safe(
+            identify, {uri: [uri in uris] for uri in self._swarm._cfs}
+        )
 
     def toggle_drone_synchronisation(self):
         self._is_sync_enabled = not self._is_sync_enabled
-        self._swarm.parallel_safe(set_synchronization, {uri: [self._is_sync_enabled] for uri in self._swarm._cfs})
+        self._swarm.parallel_safe(
+            set_synchronization,
+            {uri: [self._is_sync_enabled] for uri in self._swarm._cfs},
+        )
 
     def discover(self, with_limit: bool = True):
         error_code = "Crazyradio not found"
@@ -138,7 +180,9 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         for i in range(start, end + 1):
             devices_on_address = cflib.crtp.scan_interfaces(i)
             available_devices.extend(device[0] for device in devices_on_address)
-        return [f"{uri}{RATE_LIMIT}" if with_limit else uri for uri in available_devices]
+        return [
+            f"{uri}{RATE_LIMIT}" if with_limit else uri for uri in available_devices
+        ]
 
     @property
     def uris(self):

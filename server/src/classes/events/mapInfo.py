@@ -5,8 +5,10 @@ from src.classes.position import Position
 
 FLOATING_PRECISION = 2
 
+
 def generate_mapInfo(uri: str, position: Position, distance: list[Position]):
     return MapInfo(None, get_timestamp_ms(), uri, position, distance)
+
 
 @dataclass
 class MapInfo(Event):
