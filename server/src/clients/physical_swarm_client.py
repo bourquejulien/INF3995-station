@@ -15,6 +15,7 @@ from src.clients.drone_clients.physical_drone_client import (
     end_mission,
     force_end_mission,
     set_synchronization,
+    return_to_base,
 )
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 
@@ -149,7 +150,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         self._swarm.parallel_safe(end_mission)
 
     def return_to_base(self):
-        self._swarm.parallel_safe(end_mission)
+        self._swarm.parallel_safe(return_to_base)
         if not self._base_return_syncer.wait():
             logger.warning("Return to base timed out")
 
