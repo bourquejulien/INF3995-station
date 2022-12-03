@@ -1,14 +1,15 @@
+import logging
 import math
 
 from dependency_injector.providers import Configuration
 from src.classes.events.mapInfo import MapInfo, generate_mapInfo
 
-from src.classes.distance import Distance
 from src.classes.position import Position
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.services.logging_service import LoggingService
 from src.services.mission_service import MissionService
 
+logger = logging.getLogger(__name__)
 
 def _remove_duplicate(points: list[Position], new_points: list[Position], duplicate_distance: float):
     distance = lambda a, b: math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2 + (a.z - b.z) ** 2)
@@ -24,7 +25,7 @@ def _remove_duplicate(points: list[Position], new_points: list[Position], duplic
 class MappingService:
     _config: Configuration
     _logging_service: LoggingService
-    _maps: dict[str, list[MapInfo]] # For live map on client
+    _maps: dict[str, list[MapInfo]]  # For live map on client
     _latest: dict[str, MapInfo]
     _is_simulation: bool
 
@@ -38,15 +39,17 @@ class MappingService:
         swarm_client.add_callback("mapping", self._add)
         mission_service.add_flush_action(self.flush)
 
-    def _add(self, uri, position: Position, distances):
-        self._logging_service.log(f"Received distance: {distances}, Position: {position}, Uri: {uri}")
+    def _add(self, uri, position: Position, distances: list[Position]):
+        log = f"Received distance: {distances}, Position: {position}, Uri: {uri}"
+        logger.info(log)
+        self._logging_service.log(log)
         new_map_info = generate_mapInfo(uri, position, distances)
-        
+
         if uri in self._maps:
             self._maps[uri].append(new_map_info)
         else:
             self._maps[uri] = []
-            self._maps[uri].append(new_map_info) 
+            self._maps[uri].append(new_map_info)
 
         self._latest[uri] = new_map_info
 

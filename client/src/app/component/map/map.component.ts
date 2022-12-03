@@ -37,7 +37,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     mapDrones: Map<string, MapDrone>;
     allUris: string[];
     selectedUris: Map<string, boolean>;
-    
+
     ngOnInit(): void {
         window.addEventListener("resize", this.resizeCanvas.bind(this), false); // Redraws the map when the window is resized
         this.commandService.getUris().then(() => { // Waiting for all uris then proceed
@@ -78,7 +78,7 @@ export class MapComponent implements OnInit, AfterViewInit {
                 let positionDrone: Position = {x: 0, y: 0, z: 0};
                 for(let p = 0; p < oldMaps.length; p++){
                     positionDrone.x = oldMaps[p].position.x * this.scalingFactor + (this.resolution / 2);
-                    positionDrone.y = oldMaps[p].position.y * this.scalingFactor + (this.resolution / 2); 
+                    positionDrone.y = oldMaps[p].position.y * this.scalingFactor + (this.resolution / 2);
                     oldPositions.push(positionDrone);
                     for(let obstacle = 0; obstacle < oldMaps[p].distance.length; obstacle++){
                         positionObstacle.x = oldMaps[p].distance[obstacle].x * this.scalingFactor + (this.resolution / 2);
@@ -88,12 +88,12 @@ export class MapComponent implements OnInit, AfterViewInit {
                 }
                 lastDronePosition = oldPositions[oldPositions.length - 1];
             }
-            let new_mapDrone: MapDrone = 
+            let new_mapDrone: MapDrone =
                 {
-                    uri : uri, 
-                    color: this.generateRandomColor(), 
-                    positions: oldPositions, 
-                    distances: oldObstacles, 
+                    uri : uri,
+                    color: this.generateRandomColor(),
+                    positions: oldPositions,
+                    distances: oldObstacles,
                     currentPosition: lastDronePosition,
                     lastPosition: lastDronePosition,
                     currentDistances: [],
@@ -125,14 +125,14 @@ export class MapComponent implements OnInit, AfterViewInit {
             }
             this.mapDrones.get(uri)!.currentDistances = currentDistances;
         }
-    } 
+    }
 
     initializeCanvas(): void {
         this.baseCtx = this.basecanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.positionsCtx = this.positionscanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.currentCtx = this.currentcanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.obstacleCtx = this.obstaclecanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        
+
         this.resizeCanvas();
     }
 
@@ -166,7 +166,7 @@ export class MapComponent implements OnInit, AfterViewInit {
             if (this.selectedUris.get(this.allUris[uri])){
                 this.positionsCtx!.strokeStyle = this.mapDrones.get(this.allUris[uri])!.color;
                 this.positionsCtx!.fillStyle = this.mapDrones.get(this.allUris[uri])!.color;
-                
+
                 let positions: Position[] = [this.mapDrones.get(this.allUris[uri])!.lastPosition!, this.mapDrones.get(this.allUris[uri])!.currentPosition!];
                 this.drawPathPositions(positions, this.positionsCtx);
             }
@@ -187,7 +187,7 @@ export class MapComponent implements OnInit, AfterViewInit {
     drawOldPositions(): void {
         this.positionsCtx.clearRect(0,0, this.canvasSize, this.canvasSize);
         this.positionsCtx!.lineWidth = this.pixelSize / 3;
-        
+
         for(let uri = 0; uri < this.allUris.length; uri++){
             if (this.selectedUris.get(this.allUris[uri])){
                 this.positionsCtx!.strokeStyle = this.mapDrones.get(this.allUris[uri])!.color;
@@ -245,11 +245,11 @@ export class MapComponent implements OnInit, AfterViewInit {
 
     resizeCanvas(): void {
         this.canvasSize = Math.min(this.colMission.nativeElement.offsetWidth, this.colMission.nativeElement.offsetHeight);
-        
+
         this.basecanvas.nativeElement.width = this.canvasSize;
         this.basecanvas.nativeElement.height = this.canvasSize;
         this.whiteBackgroundCanvas();
-        
+
         this.positionscanvas.nativeElement.width = this.canvasSize;
         this.positionscanvas.nativeElement.height = this.canvasSize;
 
@@ -259,7 +259,7 @@ export class MapComponent implements OnInit, AfterViewInit {
         this.obstaclecanvas.nativeElement.height = this.canvasSize;
 
         this.pixelSize = this.canvasSize / this.resolution;
-        
+
         if (this.mapDrones.size > 0){
             this.drawOldPositions();
             this.drawOldObstacles();
@@ -283,7 +283,7 @@ export class MapComponent implements OnInit, AfterViewInit {
         for (var i = 0; i < checked.length; i++) {
             this.selectedUris.set(checked[i].id, true);
         }
-        
+
         this.drawOldPositions();
         this.drawOldObstacles();
         this.redrawMap();

@@ -1,4 +1,5 @@
 import logging
+from collections import deque
 
 import cflib
 import struct
@@ -23,13 +24,71 @@ logger = logging.getLogger(__name__)
 RATE_LIMIT = "?rate_limit=100"
 
 
+class MappingAdapter:
+    _history: deque[(Position, Distance)]
+    _average_size: int
+
+    def __init__(self, average_size: int):
+        self._history = deque()
+        self._average_size = average_size
+
+    def append(self, position: Position, distance: Distance):
+        if len(self._history) >= self._average_size:
+            self._history.pop()
+        self._history.appendleft((position, distance))
+
+    def clear(self):
+        self._history.clear()
+
+    def get_average(self):
+        totalPosition = Position(0, 0, 0)
+        totalDistance = Distance(0, 0, 0, 0)
+
+        for position, distance in self._history:
+            totalPosition = totalPosition + position
+            totalDistance = totalDistance + distance
+
+        return totalPosition * (1 / len(self._history)), totalDistance * (1 / len(self._history))
+
+    def append_and_get(self, position, distance):
+        self.append(position, distance)
+        return self.get_average()
+
+
+def _mapping_cast(position: Position, distance: Distance):
+    front = distance.front
+    back = distance.back
+    left = distance.left
+    right = distance.right
+    x = position.y
+    y = -position.x
+
+    position_distances = []
+    trigger = 10.0
+
+    print(distance)
+
+    if 0.01 < front < trigger:
+        position_distances.append(Position(x, y + front, 0))
+    if 0.01 < back < trigger:
+        position_distances.append(Position(x, y - back, 0))
+    if 0.01 < left < trigger:
+        position_distances.append(Position(x - left, y, 0))
+    if 0.01 < right < trigger:
+        position_distances.append(Position(x + right, y, 0))
+
+    return Position(x, y, position.z), position_distances
+
+
 class PhysicalSwarmClient(AbstractSwarmClient):
     base_uri = 0xE7E7E7E750
+    _mapping_adapter: MappingAdapter
     _is_sync_enabled: bool
     _swarm: Swarm | None
 
     def __init__(self, config):
         super().__init__()
+        self._mapping_adapter = MappingAdapter(5)
         self._is_sync_enabled = False
         self._swarm = None
         self._factory = CachedCfFactory(rw_cache="./cache")
@@ -93,8 +152,12 @@ class PhysicalSwarmClient(AbstractSwarmClient):
 
             case 1:
                 distance = Distance(*struct.unpack("<ffff", data[:16]))
-                position = Position(*struct.unpack("<fff", data[16:]))
-                self._callbacks["mapping"](uri, position, distance)
+                position = Position(*struct.unpack("<ff", data[16:24]), 0)
+                print(f"position: {position}")
+
+                yaw = struct.unpack("<f", data[24:])
+                position, distance = self._mapping_adapter.append_and_get(position, distance)
+                self._callbacks["mapping"](uri, *_mapping_cast(position, distance))
 
             case _:
                 raise CustomException("Unpack error: ", f"Unknown data type: {data_type}")
@@ -109,6 +172,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         if self._swarm is not None:
             self._swarm.close_links()
         self._swarm = None
+        self._mapping_adapter.clear()
 
     def start_mission(self):
         self._swarm.parallel_safe(start_mission)
