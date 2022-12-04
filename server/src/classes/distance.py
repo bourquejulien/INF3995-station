@@ -14,17 +14,8 @@ class Distance:
         return f"front: {round(self.front, FLOATING_PRECISION)}, back: {round(self.back, FLOATING_PRECISION)}, left: {round(self.left, FLOATING_PRECISION)}, right: {round(self.right, FLOATING_PRECISION)}"
 
     def __add__(self, other):
-        self.front += other.front
-        self.back += other.back
-        self.left += other.left
-        self.right += other.right
-
         return Distance(self.front + other.front, self.back + other.back, self.left + other.left, self.right + other.right)
 
     def __mul__(self, other):
-        self.front *= other
-        self.back *= other
-        self.left *= other
-        self.right *= other
+        return Distance(self.front * other, self.back * other, self.left * other, self.right * other)
 
-        return self

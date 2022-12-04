@@ -1,5 +1,4 @@
 import logging
-from collections import deque
 
 import cflib
 import struct
@@ -10,87 +9,38 @@ from src.classes.events.log import generate_log
 from src.classes.events.metric import generate_metric
 from src.classes.position import Position
 from src.classes.distance import Distance
-from src.clients.drone_clients.physical_drone_client import identify, start_mission, end_mission, force_end_mission, \
-    set_synchronization
+from src.clients.drone_clients.physical_drone_client import (
+    identify,
+    start_mission,
+    end_mission,
+    force_end_mission,
+    set_synchronization,
+)
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 
+from src.clients.position_adapter import PositionAdapter
 from src.exceptions.custom_exception import CustomException
 from src.exceptions.hardware_exception import HardwareException
 
 logger = logging.getLogger(__name__)
 
 RATE_LIMIT = "?rate_limit=100"
-
-
-class MappingAdapter:
-    _history: deque[(Position, Distance)]
-    _average_size: int
-
-    def __init__(self, average_size: int):
-        self._history = deque()
-        self._average_size = average_size
-
-    def append(self, position: Position, distance: Distance):
-        if len(self._history) >= self._average_size:
-            self._history.pop()
-        self._history.appendleft((position, distance))
-
-    def clear(self):
-        self._history.clear()
-
-    def get_average(self):
-        totalPosition = Position(0, 0, 0)
-        totalDistance = Distance(0, 0, 0, 0)
-
-        for position, distance in self._history:
-            totalPosition = totalPosition + position
-            totalDistance = totalDistance + distance
-
-        return totalPosition * (1 / len(self._history)), totalDistance * (1 / len(self._history))
-
-    def append_and_get(self, position, distance):
-        self.append(position, distance)
-        return self.get_average()
-
-
-def _mapping_cast(position: Position, distance: Distance):
-    front = distance.front
-    back = distance.back
-    left = distance.left
-    right = distance.right
-    x = position.y
-    y = -position.x
-
-    position_distances = []
-    trigger = 10.0
-
-    print(distance)
-
-    if 0.01 < front < trigger:
-        position_distances.append(Position(x, y + front, 0))
-    if 0.01 < back < trigger:
-        position_distances.append(Position(x, y - back, 0))
-    if 0.01 < left < trigger:
-        position_distances.append(Position(x - left, y, 0))
-    if 0.01 < right < trigger:
-        position_distances.append(Position(x + right, y, 0))
-
-    return Position(x, y, position.z), position_distances
+POSITION_HISTORY_SIZE = 3
 
 
 class PhysicalSwarmClient(AbstractSwarmClient):
     base_uri = 0xE7E7E7E750
-    _mapping_adapter: MappingAdapter
     _is_sync_enabled: bool
     _swarm: Swarm | None
+    _position_adapters: dict[str, PositionAdapter]
 
     def __init__(self, config):
         super().__init__()
-        self._mapping_adapter = MappingAdapter(5)
         self._is_sync_enabled = False
         self._swarm = None
+        self._position_adapters = {}
         self._factory = CachedCfFactory(rw_cache="./cache")
         crtp.init_drivers(enable_debug_driver=False)
         self.config = config
@@ -108,9 +58,12 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         scf.cf.param.add_update_callback(group="deck", name="bcFlow2", cb=self._param_deck_flow)
 
     def _set_params(self, scf: SyncCrazyflie):
-        scf.cf.param.set_value("app.updateTime", self.config['clients']['drones']['update_time'])
-        scf.cf.param.set_value("app.defaultZ", self.config['clients']['drones']['default_z'])
-        scf.cf.param.set_value("app.distanceTrigger", self.config['clients']['drones']['trigger_distance'])
+        self._position_adapters[scf.cf.link_uri] = PositionAdapter(
+            self.config["mapping"]["trigger_distance"], POSITION_HISTORY_SIZE
+        )
+        scf.cf.param.set_value("app.updateTime", self.config["clients"]["drones"]["update_time"])
+        scf.cf.param.set_value("app.defaultZ", self.config["clients"]["drones"]["default_z"])
+        scf.cf.param.set_value("app.distanceTrigger", self.config["clients"]["drones"]["trigger_distance"])
 
     def _param_deck_flow(self, scf, value_str):
         try:
@@ -127,6 +80,8 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         logger.info("Connected to %s", link_uri)
 
     def _disconnected(self, link_uri):
+        if link_uri in self._position_adapters:
+            self._position_adapters.pop(link_uri)
         logger.info("Disconnected from %s", link_uri)
 
     def _connection_failed(self, link_uri, msg):
@@ -136,7 +91,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         logger.warning("Connection to %s lost: %s", link_uri, msg)
 
     def _console_incoming(self, uri, console_text):
-        log = generate_log('', console_text, "INFO", uri)
+        log = generate_log("", console_text, "INFO", uri)
         self._callbacks["logging"](log)
 
     def _packet_received(self, uri: str, data):
@@ -145,7 +100,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         match data_type:
             case 0:
                 status = int.from_bytes(data[0:1], "little")
-                position = Position(*struct.unpack("<fff", data[1:]))
+                position = self._position_adapters[uri].adapt(Position(*struct.unpack("<fff", data[1:])))
                 metric = generate_metric(position, self.status[status], uri)
 
                 self._callbacks["metric"](metric)
@@ -156,8 +111,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
                 print(f"position: {position}")
 
                 yaw = struct.unpack("<f", data[24:])
-                position, distance = self._mapping_adapter.append_and_get(position, distance)
-                self._callbacks["mapping"](uri, *_mapping_cast(position, distance))
+                self._callbacks["mapping"](uri, *self._position_adapters[uri].compute_distances(position, distance))
 
             case _:
                 raise CustomException("Unpack error: ", f"Unknown data type: {data_type}")
@@ -165,14 +119,14 @@ class PhysicalSwarmClient(AbstractSwarmClient):
     def connect(self, uris):
         self._swarm = Swarm(uris, factory=self._factory)
         self._swarm.open_links()
-        self._swarm.parallel_safe(self._enable_callbacks)
         self._swarm.parallel_safe(self._set_params)
+        self._swarm.parallel_safe(self._enable_callbacks)
 
     def disconnect(self):
         if self._swarm is not None:
             self._swarm.close_links()
         self._swarm = None
-        self._mapping_adapter.clear()
+        self._position_adapters = {}
 
     def start_mission(self):
         self._swarm.parallel_safe(start_mission)
@@ -189,6 +143,14 @@ class PhysicalSwarmClient(AbstractSwarmClient):
     def toggle_drone_synchronisation(self):
         self._is_sync_enabled = not self._is_sync_enabled
         self._swarm.parallel_safe(set_synchronization, {uri: [self._is_sync_enabled] for uri in self._swarm._cfs})
+
+    def set_initial_positions(self, initial_data: list[(str, Position, float)]):
+        current_position = self._swarm.get_estimated_positions()
+
+        for uri, desired_position, yaw in initial_data:
+            if uri in current_position:
+                current_position = current_position.get(uri)
+                self._position_adapters.get(uri).set_position(current_position, desired_position, yaw)
 
     def discover(self, with_limit: bool = True):
         error_code = "Crazyradio not found"

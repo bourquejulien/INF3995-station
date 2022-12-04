@@ -97,6 +97,9 @@ class SimulationSwarmClient(AbstractSwarmClient):
             drone.disconnect()
         self._drone_clients.clear()
 
+    def set_initial_positions(self, initial_data: list[(str, Position, float)]):
+        pass
+
     def discover(self, with_limit: bool = False):
         start = int(self.config["argos"]["port_start"])
         end = int(self.config["argos"]["port_end"])

@@ -1,8 +1,20 @@
 from abc import ABC, abstractmethod
 
+from src.classes.position import Position
+
 
 class AbstractSwarmClient(ABC):
-    status = ["Idle", "Identify", "Takeoff", "Exploration", "Landing", "EmergencyStop", "ChooseAngle", "Crashed", "Return"]
+    status = [
+        "Idle",
+        "Identify",
+        "Takeoff",
+        "Exploration",
+        "Landing",
+        "EmergencyStop",
+        "ChooseAngle",
+        "Crashed",
+        "Return",
+    ]
 
     def __init__(self):
         self._callbacks = {}
@@ -33,6 +45,10 @@ class AbstractSwarmClient(ABC):
 
     @abstractmethod
     def disconnect(self):
+        pass
+
+    @abstractmethod
+    def set_initial_positions(self, initial_data: list[(str, Position, float)]):
         pass
 
     @abstractmethod
