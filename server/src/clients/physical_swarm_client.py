@@ -15,12 +15,14 @@ from src.clients.drone_clients.physical_drone_client import (
     end_mission,
     force_end_mission,
     set_synchronization,
+    return_to_base,
 )
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 
 from src.clients.position_adapter import PositionAdapter
+from src.clients.drone_syncer import DroneSyncer
 from src.exceptions.custom_exception import CustomException
 from src.exceptions.hardware_exception import HardwareException
 
@@ -35,12 +37,14 @@ class PhysicalSwarmClient(AbstractSwarmClient):
     _is_sync_enabled: bool
     _swarm: Swarm | None
     _position_adapters: dict[str, PositionAdapter]
+    _base_return_syncer: DroneSyncer | None
 
     def __init__(self, config):
         super().__init__()
         self._is_sync_enabled = False
         self._swarm = None
         self._position_adapters = {}
+        self._base_return_syncer = None
         self._factory = CachedCfFactory(rw_cache="./cache")
         crtp.init_drivers(enable_debug_driver=False)
         self.config = config
@@ -82,6 +86,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
     def _disconnected(self, link_uri):
         if link_uri in self._position_adapters:
             self._position_adapters.pop(link_uri)
+        self._base_return_syncer.remove_uri(link_uri)
         logger.info("Disconnected from %s", link_uri)
 
     def _connection_failed(self, link_uri, msg):
@@ -103,13 +108,14 @@ class PhysicalSwarmClient(AbstractSwarmClient):
                 position = self._position_adapters[uri].adapt(Position(*struct.unpack("<fff", data[1:])))
                 metric = generate_metric(position, self.status[status], uri)
 
+                if metric.status == "Idle":
+                    self._base_return_syncer.release(uri)
+
                 self._callbacks["metric"](metric)
 
             case 1:
                 distance = Distance(*struct.unpack("<ffff", data[:16]))
                 position = Position(*struct.unpack("<ff", data[16:24]), 0)
-                print(f"position: {position}")
-
                 yaw = struct.unpack("<f", data[24:])
                 self._callbacks["mapping"](uri, *self._position_adapters[uri].compute_distances(position, distance))
 
@@ -117,15 +123,19 @@ class PhysicalSwarmClient(AbstractSwarmClient):
                 raise CustomException("Unpack error: ", f"Unknown data type: {data_type}")
 
     def connect(self, uris):
+        self.disconnect()
         self._swarm = Swarm(uris, factory=self._factory)
         self._swarm.open_links()
-        self._swarm.parallel_safe(self._set_params)
+        self._base_return_syncer = DroneSyncer(self.uris)
         self._swarm.parallel_safe(self._enable_callbacks)
+        self._swarm.parallel_safe(self._set_params)
 
     def disconnect(self):
         if self._swarm is not None:
             self._swarm.close_links()
+            self._base_return_syncer.close()
         self._swarm = None
+        self._base_return_syncer = None
         self._position_adapters = {}
 
     def start_mission(self):
@@ -133,6 +143,11 @@ class PhysicalSwarmClient(AbstractSwarmClient):
 
     def end_mission(self):
         self._swarm.parallel_safe(end_mission)
+
+    def return_to_base(self):
+        self._swarm.parallel_safe(return_to_base)
+        if not self._base_return_syncer.wait():
+            logger.warning("Return to base timed out")
 
     def force_end_mission(self):
         self._swarm.parallel_safe(force_end_mission)
@@ -142,7 +157,10 @@ class PhysicalSwarmClient(AbstractSwarmClient):
 
     def toggle_drone_synchronisation(self):
         self._is_sync_enabled = not self._is_sync_enabled
-        self._swarm.parallel_safe(set_synchronization, {uri: [self._is_sync_enabled] for uri in self._swarm._cfs})
+        self._swarm.parallel_safe(
+            set_synchronization,
+            {uri: [self._is_sync_enabled] for uri in self._swarm._cfs},
+        )
 
     def set_initial_positions(self, initial_data: list[(str, Position, float)]):
         current_position = self._swarm.get_estimated_positions()

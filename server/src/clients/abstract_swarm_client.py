@@ -11,9 +11,9 @@ class AbstractSwarmClient(ABC):
         "Exploration",
         "Landing",
         "EmergencyStop",
+        "Return",
         "ChooseAngle",
         "Crashed",
-        "Return",
     ]
 
     def __init__(self):
@@ -45,6 +45,10 @@ class AbstractSwarmClient(ABC):
 
     @abstractmethod
     def disconnect(self):
+        pass
+
+    @abstractmethod
+    def return_to_base(self):
         pass
 
     @abstractmethod

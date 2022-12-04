@@ -6,7 +6,7 @@
     <div class="modal-body" *ngIf="selectedMission">
         <div *ngFor="let attribute of attributes">
             <label class="text-black">{{attribute[1]}}:
-                {{isDate(attribute[0]) ? (getAttributeAsNumber(selectedMission, attribute[0]) | date:"yyyy-MM-dd HH:mm") : (selectedMission[currentAttribute])}}
+                {{isDate(attribute[0]) ? (getAttributeAsNumber(selectedMission, attribute[0]) | date:"yyyy-MM-dd HH:mm") : (selectedMission[attribute[0]])}}
             </label>
             <br>
         </div>
