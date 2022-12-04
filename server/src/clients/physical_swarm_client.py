@@ -115,8 +115,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
 
             case 1:
                 distance = Distance(*struct.unpack("<ffff", data[:16]))
-                position = Position(*struct.unpack("<ff", data[16:24]), 0)
-                yaw = struct.unpack("<f", data[24:])
+                position = Position(*struct.unpack("<fff", data[16:]))
                 self._callbacks["mapping"](uri, *self._position_adapters[uri].compute_distances(position, distance))
 
             case _:
