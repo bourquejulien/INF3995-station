@@ -1,6 +1,6 @@
 <div class="d-flex flex-column h-100">
     <div class="row header">
-        <span class="col">Logs de la mission {{formatMissionId(selectedMissionId)}}</span>
+        <span class="col">Logs de la mission {{formatId(selectedMissionId)}}</span>
     </div>
     <div class="row">
         <button
@@ -21,13 +21,13 @@
                     <span>Mission en cours</span>
                 </div>
                 <div (click)="selectMission(mission.id)" class="dropdown-button" *ngFor="let mission of missionService.missions">
-                    <span>Mission {{formatMissionId(mission.id)}}</span>
+                    <span>Mission {{formatId(mission.id)}}</span>
                 </div>
             </div>
         </div>
     </div>
     <div class="col h-100 log-box">
-        <div class="row log" *ngFor="let log of logs() | async">
+        <div class="row log" *ngFor="let log of logs | async">
             <span>{{log.timestamp_ms | date:"yyyy-MM-dd HH:mm:ss.S"}}: {{log.message}}</span>
         </div>
     </div>

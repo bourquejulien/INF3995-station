@@ -78,10 +78,11 @@ export class HistoryPanelComponent implements OnInit {
     }
 
     get missions(): Array<MissionInfo> {
-        return this.missionService.missions
+        let missions = JSON.parse(JSON.stringify(this.missionService.missions)) as Mission[];
+        return missions
             .map(e => {
                 const missionInfo: any = e;
-                missionInfo.id = e.id.slice(0, ID_LENGTH);
+                missionInfo.id = e.id.split("-")[0];
                 missionInfo.total_time = e.end_time_ms - e.start_time_ms;
                 return missionInfo as MissionInfo;
             })
