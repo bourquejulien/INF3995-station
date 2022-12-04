@@ -20,12 +20,12 @@ Ce répertoire inclut le client Web de la station au sol.
 
 1. Node.js et npm. La version 16.17.1 est conseillée
 2. yarn avec la commande ``npm install --global yarn``
-3. 
+
 ### Procédure
 
 1. Lancer la commande ``yarn install``
 2. Pour compiler il suffit ensuite de lancer ``ng build``
-3. La commande ``ng serve`` permet de lancer la simulation
+3. La commande ``ng serve --open`` permet de lancer la simulation
 4. Enfin, il faut naviguer à l'adresse ``http://localhost:4200/``
 
 ## Tests
