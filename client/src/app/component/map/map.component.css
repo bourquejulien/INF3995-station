@@ -3,7 +3,7 @@
 }
 
 .mission{
-    background-color: var(--background);  
+    background-color: var(--background);
     display: grid;
     justify-content: center;
     height: 100%;
@@ -12,6 +12,12 @@
 .mission canvas {
     grid-row-start: 1;
     grid-column-start: 1;
+}
+
+.button{
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--font-color);
 }
 
 #basecanvas{

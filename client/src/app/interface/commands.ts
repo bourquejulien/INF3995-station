@@ -24,6 +24,12 @@ export interface Position {
     z: number,
 }
 
+export interface DefaultPosition {
+    x: number,
+    y: number,
+    yaw: number,
+}
+
 export interface Metric {
     _id: string,
     timestamp_ms: number,

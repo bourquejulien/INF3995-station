@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { MapDrone, MapMetric } from '@app/interface/mapdrone';
-import { Position } from '@app/interface/commands';
+import { DefaultPosition, Position } from "@app/interface/commands";
 import { CommandService } from '@app/services/command/command.service';
 import { DroneInfoService } from '@app/services/drone-info/drone-info.service';
+import { stringify } from "@angular/compiler/src/util";
 
 @Component({
     selector: 'app-map',
@@ -16,12 +17,15 @@ export class MapComponent implements OnInit, AfterViewInit {
     @ViewChild('obstaclecanvas', { static: false }) obstaclecanvas!: ElementRef;
     @ViewChild('colMission', { static: false }) colMission!: ElementRef;
 
+    defaultPosition: [string, string, string];
+
     constructor(public droneInfoService: DroneInfoService, public commandService: CommandService) {
         this.resolution = 100;
         this.scalingFactor = 10;
         this.mapDrones = new Map();
         this.allUris = [];
         this.selectedUris = new Map();
+        this.defaultPosition = ["", "", ""];
     }
 
     // Canvas
@@ -39,6 +43,8 @@ export class MapComponent implements OnInit, AfterViewInit {
     selectedUris: Map<string, boolean>;
 
     ngOnInit(): void {
+        this.defaultPosition = ["", "", ""];
+
         window.addEventListener("resize", this.resizeCanvas.bind(this), false); // Redraws the map when the window is resized
         this.commandService.getUris().then(() => { // Waiting for all uris then proceed
             this.allUris = this.commandService.uris;
@@ -63,6 +69,26 @@ export class MapComponent implements OnInit, AfterViewInit {
         this.initializeCanvas();
         this.updateSelected();
         this.redrawMap();
+    }
+
+    setDefaultPosition(): void {
+        if (this.defaultPosition[0] == "" || this.defaultPosition[1] == "" || this.selectedUris.size == 0) {
+            return;
+        }
+
+        const x = parseInt(this.defaultPosition[0]);
+        const y = parseInt(this.defaultPosition[1]);
+        const yaw = this.defaultPosition[2] === "" ? 0 : parseInt(this.defaultPosition[2]);
+
+        const defaultPositions: any = {};
+
+        for (const uri of this.selectedUris.keys()) {
+            defaultPositions[uri] = { x, y, yaw };
+        }
+
+        console.log(defaultPositions)
+
+        this.commandService.setInitialPositions(defaultPositions);
     }
 
     createNewMapDrone(): void{

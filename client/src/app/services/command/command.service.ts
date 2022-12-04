@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '@environment';
-import { Identify } from '@app/interface/commands';
+import { DefaultPosition, Identify } from "@app/interface/commands";
 
 @Injectable({
     providedIn: 'root',
@@ -41,6 +41,13 @@ export class CommandService {
 
     async toggleSync(): Promise<void> {
         await this.httpClient.post(`${environment.serverURL}/action/toggle_sync`, null,{
+            responseType: 'text',
+        })
+            .toPromise();
+    }
+
+    async setInitialPositions(defaultPositions: Map<string, DefaultPosition>): Promise<void> {
+        await this.httpClient.post(`${environment.serverURL}/action/initial_positions`, defaultPositions,{
             responseType: 'text',
         })
             .toPromise();

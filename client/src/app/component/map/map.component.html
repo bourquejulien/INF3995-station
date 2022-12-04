@@ -1,18 +1,33 @@
 <div class="col h-100 d-flex flex-column">
     <div class="row drone-select-bar">
         <div class="col-sm-1 selection">Drones:</div>
-        <div *ngFor="let selected of commandService.uris; let i=index" class="drone-selector col-sm-2">
+        <div *ngFor="let selected of commandService.uris; let i = index" class="drone-selector col-sm-2">
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" [value]="selected.valueOf" id="{{selected}}" (click)="updateSelected()">
+                <input class="form-check-input" type="checkbox" [value]="selected.valueOf" id="{{ selected }}" (click)="updateSelected()" />
                 <label class="form-check-label" for="flexCheckDefault">
-                    {{selected}}
+                    {{ selected }}
                 </label>
             </div>
         </div>
+
+        <div class="col-sm mx-5">
+            <div class="row" *ngIf="!commandService.isSimulation">
+                <div class="col col-sm mx-5">
+                    <div class="row">
+                        <input class="col-sm form-control" type="text" placeholder="x" name="xpos" [(ngModel)]="defaultPosition[0]" />
+                        <input class="col-sm form-control" type="text" placeholder="y" name="ypos" [(ngModel)]="defaultPosition[1]" />
+                        <input class="col-sm form-control" type="text" placeholder="yaw" name="yaw" [(ngModel)]="defaultPosition[2]" />
+                    </div>
+                </div>
+
+                <button class="col-sm-5 button px-4" (click)="setDefaultPosition()">Modifier les positions</button>
+            </div>
+        </div>
+
     </div>
     <div #colMission class="row flex-grow-1 map-container">
         <div class="col mission">
-            <canvas id="basecanvas" #basecanvas></canvas> 
+            <canvas id="basecanvas" #basecanvas></canvas>
             <canvas id="positionscanvas" #positionscanvas></canvas>
             <canvas id="currentcanvas" #currentcanvas></canvas>
             <canvas id="obstaclecanvas" #obstaclecanvas></canvas>
