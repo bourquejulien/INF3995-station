@@ -4,7 +4,7 @@ Contiens le code de la section "serveur" de la station au sol.
 
 ## Prérequis
 
-### Base de données Mongo :
+### Base de données Mongo
 
 Il est nécessaire de donner accès au serveur à une base de données de type Mongo.
 Pour ce faire il est possible d'indiquer à l'aide de la variable d'environnement ``DB_CONNECTION_STRING`` une chaine de
@@ -18,7 +18,7 @@ fichier ``docker-compose.db.yml`` :
 docker compose -f docker-compose.db.yml up -d
 ```
 
-**À noter** : Cette commande lance également *mongoexpress* sur le port 8081. Ce second conteneur permet de mettre à
+> **À noter** : Cette commande lance également *mongoexpress* sur le port 8081. Ce second conteneur permet de mettre à
 jour manuellement la BD.
 
 ### Optionnel - Remote compiler
@@ -32,7 +32,7 @@ utilisée.
 
 Pour plus de détails, voir : ``firmware/remote-compiler``.
 
-### Optionnel - Sans docker :
+### Optionnel - Sans docker
 
 On exécute le serveur dans un environnement virtuel python nommé venv (garder le même nom pour que le gitignore fonctionne
 bien).
@@ -62,7 +62,7 @@ Toujours dans l'environnement virtuel, on fait :
 python3 app.py
 ```
 
-### Avec docker :
+### Avec docker
 
 1. Exécuter la commande ``docker build --target=final -t server .``
 2. Lancer le conteneur à l'aide de la commande ``docker run -p 5000:5000 server``
