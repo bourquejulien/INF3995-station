@@ -21,6 +21,7 @@ from src.clients.abstract_swarm_client import AbstractSwarmClient
 
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 
+from src.clients.position_adapter import PositionAdapter
 from src.clients.drone_syncer import DroneSyncer
 from src.exceptions.custom_exception import CustomException
 from src.exceptions.hardware_exception import HardwareException
@@ -28,18 +29,21 @@ from src.exceptions.hardware_exception import HardwareException
 logger = logging.getLogger(__name__)
 
 RATE_LIMIT = "?rate_limit=100"
+POSITION_HISTORY_SIZE = 3
 
 
 class PhysicalSwarmClient(AbstractSwarmClient):
     base_uri = 0xE7E7E7E750
     _is_sync_enabled: bool
     _swarm: Swarm | None
+    _position_adapters: dict[str, PositionAdapter]
     _base_return_syncer: DroneSyncer | None
 
     def __init__(self, config):
         super().__init__()
         self._is_sync_enabled = False
         self._swarm = None
+        self._position_adapters = {}
         self._base_return_syncer = None
         self._factory = CachedCfFactory(rw_cache="./cache")
         crtp.init_drivers(enable_debug_driver=False)
@@ -58,6 +62,9 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         scf.cf.param.add_update_callback(group="deck", name="bcFlow2", cb=self._param_deck_flow)
 
     def _set_params(self, scf: SyncCrazyflie):
+        self._position_adapters[scf.cf.link_uri] = PositionAdapter(
+            self.config["mapping"]["trigger_distance"], POSITION_HISTORY_SIZE
+        )
         scf.cf.param.set_value("app.updateTime", self.config["clients"]["drones"]["update_time"])
         scf.cf.param.set_value("app.defaultZ", self.config["clients"]["drones"]["default_z"])
         scf.cf.param.set_value("app.distanceTrigger", self.config["clients"]["drones"]["trigger_distance"])
@@ -77,6 +84,8 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         logger.info("Connected to %s", link_uri)
 
     def _disconnected(self, link_uri):
+        if link_uri in self._position_adapters:
+            self._position_adapters.pop(link_uri)
         self._base_return_syncer.remove_uri(link_uri)
         logger.info("Disconnected from %s", link_uri)
 
@@ -96,7 +105,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         match data_type:
             case 0:
                 status = int.from_bytes(data[0:1], "little")
-                position = Position(*struct.unpack("<fff", data[1:]))
+                position = self._position_adapters[uri].adapt(Position(*struct.unpack("<fff", data[1:])))
                 metric = generate_metric(position, self.status[status], uri)
 
                 if metric.status == "Idle":
@@ -107,7 +116,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
             case 1:
                 distance = Distance(*struct.unpack("<ffff", data[:16]))
                 position = Position(*struct.unpack("<fff", data[16:]))
-                self._callbacks["mapping"](uri, position, distance)
+                self._callbacks["mapping"](uri, *self._position_adapters[uri].compute_distances(position, distance))
 
             case _:
                 raise CustomException("Unpack error: ", f"Unknown data type: {data_type}")
@@ -126,6 +135,7 @@ class PhysicalSwarmClient(AbstractSwarmClient):
             self._base_return_syncer.close()
         self._swarm = None
         self._base_return_syncer = None
+        self._position_adapters = {}
 
     def start_mission(self):
         self._swarm.parallel_safe(start_mission)
@@ -150,6 +160,14 @@ class PhysicalSwarmClient(AbstractSwarmClient):
             set_synchronization,
             {uri: [self._is_sync_enabled] for uri in self._swarm._cfs},
         )
+
+    def set_initial_positions(self, initial_data: list[(str, Position, float)]):
+        current_position = self._swarm.get_estimated_positions()
+
+        for uri, desired_position, yaw in initial_data:
+            if uri in current_position:
+                current_position = current_position.get(uri)
+                self._position_adapters.get(uri).set_position(current_position, desired_position, yaw)
 
     def discover(self, with_limit: bool = True):
         error_code = "Crazyradio not found"

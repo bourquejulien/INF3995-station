@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 from threading import Lock
 
+from src.classes.position import Position
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.exceptions.custom_exception import CustomException
 from src.services.logging_service import LoggingService
@@ -106,6 +107,14 @@ class CommandService:
         try:
             self._swarm_client.toggle_drone_synchronisation()
             self._logging_service.log(_format_command(self.toggle_synchronization))
+        except CustomException as e:
+            raise e
+
+    def set_initial_positions(self, initial_data: list[(str, Position, float)]) -> list:
+        try:
+            self._disabled_guard()
+            self._logging_service.log(_format_command(self.set_initial_positions))
+            return self._swarm_client.set_initial_positions(initial_data)
         except CustomException as e:
             raise e
 
