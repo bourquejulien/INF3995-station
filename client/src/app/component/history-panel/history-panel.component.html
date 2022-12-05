@@ -1,6 +1,6 @@
 <ng-template class="modal-lg" #modal let-modal>
     <div class="modal-header">
-        <h4 class="modal-title text-black" id="modal-basic-title">Mission : {{selectedMission?.id}}</h4>
+        <div class="modal-title text-black" id="modal-basic-title">Mission : {{selectedMission?.id}}</div>
         <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')"></button>
     </div>
     <div class="modal-body" *ngIf="selectedMission">
@@ -14,13 +14,17 @@
 </ng-template>
 
 <div class="d-flex flex-column h-100">
+    <div class="row header">
+        <span class="col">Historique des missions</span>
+    </div>
     <div class="row">
         <button
             class="button"
             (click)="collapse.toggle()"
             [attr.aria-expanded]="!collapsed"
             aria-controls="collapseExample">
-            {{getAttributeName(currentAttribute)}}
+            Ordonner par: {{getAttributeName(currentAttribute)}}
+            <span class="material-icons caret">{{collapsed ? "expand_more" : "expand_less"}}</span>
         </button>
     </div>
 
@@ -32,18 +36,19 @@
 
     <div class="row flex-grow-1">
         <div *ngIf="isHistory" class="col h-100 log-box">
-            <div class="row mt-1" *ngFor="let mission of missions">
-                <span class="text-black card" (click)="open(modal, mission)">
-                    Id: {{mission.id}} -
-                    {{getAttributeName(currentAttribute)}}:
-                    {{isDate(currentAttribute) ? (getAttributeAsNumber(mission, currentAttribute) | date:"yyyy-MM-dd HH:mm") : (mission[currentAttribute])}}
-                </span>
+            <div class="row history-entry" *ngFor="let mission of missions">
+                <div class="col">
+                Id: {{mission.id.split("-")[0]}} -
+                {{getAttributeName(currentAttribute)}}:
+                {{isDate(currentAttribute) ? (getAttributeAsNumber(mission, currentAttribute) | date:"yyyy-MM-dd HH:mm") : (mission[currentAttribute])}}
+                </div>
+                <span class="col-sm-1 material-icons more" (click)="open(modal, mission)">more_horiz</span>
             </div>
         </div>
 
         <div *ngIf="!isHistory" class="d-flex align-items-center" >
             <label class="col text-center text-black">
-                Aucune mission historique trouvée
+                Aucune historique de missions trouvée
             </label>
         </div>
     </div>
