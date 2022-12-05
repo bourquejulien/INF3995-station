@@ -14,6 +14,7 @@ class AbstractSwarmClient(ABC):
         "Return",
         "ChooseAngle",
         "Crashed",
+        "Crashing"
     ]
 
     def __init__(self):
