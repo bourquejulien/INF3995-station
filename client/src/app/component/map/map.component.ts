@@ -1,9 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { MapDrone, MapMetric } from '@app/interface/mapdrone';
-import { DefaultPosition, Position } from "@app/interface/commands";
+import { Position } from "@app/interface/commands";
 import { CommandService } from '@app/services/command/command.service';
 import { DroneInfoService } from '@app/services/drone-info/drone-info.service';
-import { stringify } from "@angular/compiler/src/util";
 
 @Component({
     selector: 'app-map',
@@ -55,7 +54,7 @@ export class MapComponent implements OnInit, AfterViewInit {
                     for(let i = 0; i < this.allUris.length; i++){
                         if (metrics.get(this.allUris[i])) {
                             this.updateMapMetrics(metrics.get(this.allUris[i])!, this.allUris[i]);
-                            if (this.mapDrones.size > 0){
+                            if (this.mapDrones.size > 0) {
                                 this.redrawMap();
                             }
                         }
@@ -85,8 +84,6 @@ export class MapComponent implements OnInit, AfterViewInit {
         for (const uri of this.selectedUris.keys()) {
             defaultPositions[uri] = { x, y, yaw };
         }
-
-        console.log(defaultPositions)
 
         this.commandService.setInitialPositions(defaultPositions);
     }
@@ -320,5 +317,4 @@ export class MapComponent implements OnInit, AfterViewInit {
             this.selectedUris.set(this.allUris[i],false);
         }
     }
-
 }
