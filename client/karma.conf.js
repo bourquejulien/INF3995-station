@@ -9,6 +9,7 @@ module.exports = function (config) {
       require('karma-jasmine'),
       require('karma-jasmine-html-reporter'),
       require('karma-firefox-launcher'),
+      require('karma-chrome-launcher'),
       require('karma-coverage'),
       require('@angular-devkit/build-angular/plugins/karma')
     ],
@@ -37,7 +38,7 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['FirefoxHeadless'],
+    browsers: ['FirefoxHeadless', 'ChromeHeadlessNoSandbox'],
     singleRun: false,
     restartOnFileChange: true,
     browserDisconnectTimeout : 5000,
@@ -47,6 +48,10 @@ module.exports = function (config) {
             flags: [
                 '-headless',
             ],
+        },
+        ChromeHeadlessNoSandbox: {
+            base: 'ChromeHeadless',
+            flags: ['--no-sandbox'],
         },
     },
   });
