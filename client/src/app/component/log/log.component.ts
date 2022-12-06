@@ -11,6 +11,7 @@ import { Observable, of } from 'rxjs';
 export class LogComponent implements OnInit {
     collapsed: boolean = true;
     selectedMissionId: string = "en cours";
+    logs: Observable<Log[]> = new Observable();
 
     constructor(public missionService: MissionService) {
     }
@@ -18,27 +19,24 @@ export class LogComponent implements OnInit {
     ngOnInit(): void {
     }
 
-    public logs(): Observable<Log[]> {
+    public selectMission(id: string): void {
+        this.selectedMissionId = id;
+        this.collapsed = true;
         if (this.selectedMissionId === "en cours") {
-            return of(this.missionService.currentLogs);
+            this.logs = of(this.missionService.currentLogs);
         }
         else {
             let logs = this.missionService.getMissionLogs(this.selectedMissionId);
             if (logs instanceof Observable) {
-                return logs;
+                this.logs = logs;
             }
             else {
-                return of(logs);
+                this.logs = of(logs);
             }
         }
     }
 
-    public selectMission(id: string): void {
-        this.selectedMissionId = id;
-        this.collapsed = true;
+    public formatId(id: string): string {
+        return id.split("-")[0];
     }
-
-    public formatMissionId(missionId: string): string {
-        return missionId.split("-")[0];
-    } 
 }

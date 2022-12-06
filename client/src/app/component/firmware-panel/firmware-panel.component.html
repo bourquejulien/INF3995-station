@@ -1,29 +1,27 @@
 <div class="d-flex flex-column h-100">
-    <div class="row">
-        <button
-            class="button"
-            (click)="collapse.toggle()"
-            [attr.aria-expanded]="!collapsed"
-            aria-controls="collapseExample">
-            {{getName(currentMode)}}
-        </button>
+    <div class="row header">
+        <span class="col">Modifier le firmware</span>
     </div>
 
-    <div #collapse="ngbCollapse" class="row" [(ngbCollapse)]="collapsed">
-        <div class="dropdown-button" *ngFor="let mode of modes" (click)="selectMode(mode[0])">
-            <span> {{getName(mode[0])}} </span>
+    <div class="row radio-container">
+        <div class="form-check" *ngFor="let mode of modes">
+            <input class="form-check-input" type="radio" name="flexRadio" id="flexRadio-{{mode}}" (change)="selectMode(mode[0])">
+            <label class="form-check-label" for="flexRadio-{{mode}}">
+                {{mode[1]}} 
+            </label>
         </div>
     </div>
 
-    <br>
-    <div class="row">
-        <input *ngIf="currentMode === 'file'" accept=".bin" type="file" lang="fr" class="upload form-control"
-               (change)="setFile($event)">
-        <app-code-editor class="editor" *ngIf="currentMode === 'editor'"></app-code-editor>
+    <div class="row" *ngIf="currentMode === 'file'">
+        <input accept=".bin" type="file" lang="fr" class="upload form-control" (change)="setFile($event)">
     </div>
+    <div class="row" *ngIf="currentMode === 'editor'">
+        <app-code-editor class="editor"></app-code-editor>
+    </div>
+
     <br>
 
-    <div class="row">
+    <div class="row" *ngIf="currentMode !== 'none'">
         <button class="button" (click)="flash()">
             Programmer!
         </button>
@@ -38,5 +36,4 @@
 
     <br>
     <label *ngIf="isFlashError" class="error">Erreur lors de la programmation</label>
-
 </div>

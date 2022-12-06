@@ -81,7 +81,6 @@ export class HistoryPanelComponent implements OnInit {
         return this.missionService.missions
             .map(e => {
                 const missionInfo: any = e;
-                missionInfo.id = e.id.slice(0, ID_LENGTH);
                 missionInfo.total_time = e.end_time_ms - e.start_time_ms;
                 return missionInfo as MissionInfo;
             })
