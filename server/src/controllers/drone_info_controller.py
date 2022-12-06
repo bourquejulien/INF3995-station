@@ -20,7 +20,6 @@ def get_logs(logging_service: LoggingService = Provide[Container.logging_service
         since_timestamp_ms = request.args.get('since_timestamp', type=int)
         if since_timestamp_ms is not None:
             logs_list = logging_service.get_since(mission_id, since_timestamp_ms)
-            print(logs_list)
         else:
             logs_list = logging_service.get_history(mission_id)
         return jsonify(logs_list), 200

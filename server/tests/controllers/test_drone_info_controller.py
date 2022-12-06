@@ -67,7 +67,7 @@ def test_latest_metric_error(client, app, mocker):
     assert response.status_code == 500
 
 
-def test_get_mao(client, app, mocker):
+def test_get_map(client, app, mocker):
     mapping_service_mock = mocker.patch('src.services.mapping_service')
     mapping_service_mock.get_map.return_value = ["test"]
 
@@ -78,7 +78,7 @@ def test_get_mao(client, app, mocker):
     assert response.status_code == 200
 
 
-def test_get_mao_error(client, app, mocker):
+def test_get_map_error(client, app, mocker):
     mapping_service_mock = mocker.patch('src.services.mapping_service')
     mapping_service_mock.get_map.side_effect = CustomException('test', 'test')
 
@@ -89,7 +89,7 @@ def test_get_mao_error(client, app, mocker):
     assert response.status_code == 500
 
 
-def test_get_latest_mao(client, app, mocker):
+def test_get_latest_map(client, app, mocker):
     mapping_service_mock = mocker.patch('src.services.mapping_service')
     mapping_service_mock.get_latest.return_value = ["test"]
 
@@ -100,7 +100,7 @@ def test_get_latest_mao(client, app, mocker):
     assert response.status_code == 200
 
 
-def test_get_latest_mao_error(client, app, mocker):
+def test_get_latest_map_error(client, app, mocker):
     mapping_service_mock = mocker.patch('src.services.mapping_service')
     mapping_service_mock.get_latest.side_effect = CustomException('test', 'test')
 
