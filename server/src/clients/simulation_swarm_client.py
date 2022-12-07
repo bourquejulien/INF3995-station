@@ -6,8 +6,8 @@ from src.classes.events.log import generate_log
 from src.clients.drone_clients.simulation_drone_client import SimulationDroneClient
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.classes.position import Position
-from src.classes.distance import Distance
 from src.classes.events.metric import generate_metric
+from src.exceptions.simulation_exception import SimulationException
 
 logger = logging.getLogger(__name__)
 
@@ -37,31 +37,31 @@ def distance_to_position(distance_obstacle):
 
 class SimulationSwarmClient(AbstractSwarmClient):
     daemon: Thread | None
-    _drone_clients: list[SimulationDroneClient]
+    _drone_clients: dict[str, SimulationDroneClient]
     _is_active: bool
 
     def __init__(self, config):
         super().__init__()
-        self._drone_clients = []
+        self._drone_clients = {}
         self.config = config
         self.daemon = None
         self._is_active = False
 
     def start_mission(self):
-        for drone in self._drone_clients:
+        for drone in self._drone_clients.values():
             drone.start_mission()
 
     def end_mission(self):
-        for drone in self._drone_clients:
+        for drone in self._drone_clients.values():
             drone.end_mission()
 
     def force_end_mission(self):
-        for drone in self._drone_clients:
+        for drone in self._drone_clients.values():
             drone.force_end_mission()
 
     def return_to_base(self):
         threads = []
-        for drone in self._drone_clients:
+        for drone in self._drone_clients.values():
             thread = Thread(target=drone.return_to_base)
             thread.start()
             threads.append(thread)
@@ -70,7 +70,7 @@ class SimulationSwarmClient(AbstractSwarmClient):
             thread.join()
 
     def identify(self, uris):
-        for drone in self._drone_clients:
+        for drone in self._drone_clients.values():
             if drone.uri in uris:
                 drone.identify()
 
@@ -82,7 +82,7 @@ class SimulationSwarmClient(AbstractSwarmClient):
         for uri in uris:
             client = SimulationDroneClient(self.config["argos"]["hostname"], uri)
             client.connect()
-            self._drone_clients.append(client)
+            self._drone_clients[uri] = client
 
         self._is_active = True
         self.daemon = Thread(target=self._pull_task, args=[], daemon=True, name="simulation_data_pull")
@@ -93,7 +93,7 @@ class SimulationSwarmClient(AbstractSwarmClient):
         self.daemon.join(1)
         self.daemon = None
 
-        for drone in self._drone_clients:
+        for drone in self._drone_clients.values():
             drone.disconnect()
         self._drone_clients.clear()
 
@@ -117,37 +117,42 @@ class SimulationSwarmClient(AbstractSwarmClient):
 
     @property
     def uris(self):
-        return [drone.uri for drone in self._drone_clients]
+        return list(self._drone_clients.keys())
 
-    def _get_telemetrics(self):
-        for drone in self._drone_clients:
-            metrics = drone.get_telemetrics().telemetric
-            if len(metrics) > 0:
-                metric = metrics[0]
-                position = metric.position
-                self._callbacks["metric"](
-                    generate_metric(Position(position.x, position.y, position.z), self.status[metric.status], drone.uri)
-                )
+    def _get_telemetrics(self, drone: SimulationDroneClient):
+        metrics = drone.get_telemetrics().telemetric
+        if len(metrics) > 0:
+            metric = metrics[0]
+            position = metric.position
+            self._callbacks["metric"](
+                generate_metric(Position(position.x, position.y, position.z), self.status[metric.status], drone.uri)
+            )
 
-    def _get_distances(self):
-        for drone in self._drone_clients:
-            distanceObstacle = drone.get_distances().distanceObstacle
-            if len(distanceObstacle) > 0:
-                distances = distance_to_position(distanceObstacle[0])
-                position = distanceObstacle[0].position
-                self._callbacks["mapping"](drone.uri, Position(position.x, position.y, position.z), distances)
+    def _get_distances(self, drone: SimulationDroneClient):
+        distanceObstacle = drone.get_distances().distanceObstacle
+        if len(distanceObstacle) > 0:
+            distances = distance_to_position(distanceObstacle[0])
+            position = distanceObstacle[0].position
+            self._callbacks["mapping"](drone.uri, Position(position.x, position.y, position.z), distances)
 
-    def _get_logs(self):
-        for drone in self._drone_clients:
-            for log in drone.get_logs().logs:
-                self._callbacks["logging"](generate_log("", log.message, log.level, drone.uri))
+    def _get_logs(self, drone: SimulationDroneClient):
+        for log in drone.get_logs().logs:
+            self._callbacks["logging"](generate_log("", log.message, log.level, drone.uri))
 
     def _pull_task(self):
         while self._is_active:
             time.sleep(0.4)
             try:
-                self._get_telemetrics()
-                self._get_distances()
-                self._get_logs()
+                for drone in self._drone_clients.values():
+                    self._get_telemetrics(drone)
+                    self._get_distances(drone)
+                    self._get_logs(drone)
+
+            except SimulationException as e:
+                if e.unavailable:
+                    if drone := self._drone_clients.get(e.uri):
+                        drone.disconnect()
+                        self._drone_clients.pop(e.uri)
+                        logger.info("Drone (%s) disconnected", drone.uri)
             except Exception as e:
                 logger.exception("Error during simulation pulling")
