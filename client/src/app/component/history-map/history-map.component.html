@@ -1,0 +1,29 @@
+<div class="d-flex flex-column h-100">
+    <div class="row header">
+        <span class="col">Historique des cartes</span>
+    </div>
+    <div class="row">
+        <button
+            class="button"
+            (click)="collapse.toggle()"
+            (click)="resizeCanvas()"
+            [attr.aria-expanded]="!collapsed"
+            aria-controls="collapseExample">
+            Mission {{selectedMissionId}}
+        </button>
+    </div>
+    <div #collapse="ngbCollapse" class="row" [(ngbCollapse)]="collapsed">
+        <div class="card">
+            <div class="card-body">
+                <div (click)="selectMission(mission.id)" class="dropdown-button" *ngFor="let mission of missionService.missions">
+                    <span>Mission {{mission.id}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div #mapcontainer class="row flex-grow-1 mapcontainer">
+        <div class="col canvascontainer">
+            <canvas id="historycanvas" #historycanvas></canvas> 
+        </div>
+    </div>
+<div>

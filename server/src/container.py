@@ -83,6 +83,7 @@ class Container(containers.DeclarativeContainer):
         swarm_client=abstract_swarm_client,
         mission_service=mission_service,
         logging_service=logging_service,
+        database_service=database_service
     )
 
     command_service = providers.Singleton(

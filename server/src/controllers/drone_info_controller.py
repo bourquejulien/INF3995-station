@@ -2,6 +2,7 @@ import logging
 
 from flask import Blueprint, request, jsonify
 from dependency_injector.wiring import inject, Provide
+from src.services.database_service import DatabaseService
 from src.container import Container
 from src.exceptions.custom_exception import CustomException
 from src.services.logging_service import LoggingService
@@ -57,4 +58,16 @@ def get_latest_map(mapping_service: MappingService = Provide[Container.mapping_s
         map_list = mapping_service.get_latest()
         return jsonify(map_list)
     except CustomException as e:
+        return f"{e.name}: {e.message}", 500
+
+
+@blueprint.route('/mapDatabase', methods=['get'])
+@inject
+def get_map_by_id(database_service: DatabaseService = Provide[Container.database_service]):
+    try:
+        mission_id = request.args.get("mission_id", type=str)
+        map = database_service.get_map(mission_id)
+        return jsonify(map)
+    except CustomException as e:
+        logger.warning(e, exc_info=True)
         return f"{e.name}: {e.message}", 500

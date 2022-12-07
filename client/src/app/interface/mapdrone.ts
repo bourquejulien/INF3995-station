@@ -16,3 +16,13 @@ export interface MapMetric {
     position: Position,
     distance: Position[],
 }
+
+export interface Vec2 {
+    x: number,
+    y: number,
+}
+
+export interface MapDatabase {
+    obstaclePosition: Vec2[];
+    mission_id: string;
+} 
