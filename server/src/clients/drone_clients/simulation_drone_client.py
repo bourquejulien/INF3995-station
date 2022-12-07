@@ -16,7 +16,7 @@ class SimulationDroneClient:
         try:
             grpc.channel_ready_future(self._channel).result(timeout=timeout)
             return True
-        except grpc.FutureTimeoutError:
+        except Exception:
             return False
 
     def connect(self):
