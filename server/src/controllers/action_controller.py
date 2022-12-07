@@ -42,9 +42,6 @@ def initial_positions(command_service: CommandService = Provide[Container.comman
         received_data: dict = request.json
         positions: list = []
 
-        if len(received_data) == 0:
-            return "Empty request", 202
-
         for key, value in received_data.items():
             positions.append((key, Position(value["x"], value["y"], 0), value["yaw"]))
 
