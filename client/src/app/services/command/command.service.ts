@@ -16,7 +16,6 @@ export class CommandService {
     }
 
     async connect(): Promise<void> {
-        // TODO Sync uris with other clients
         this.uris = await this.httpClient
             .post<Map<string, boolean>>(`${environment.serverURL}/discovery/connect`, undefined)
             .toPromise()
@@ -29,7 +28,9 @@ export class CommandService {
                 responseType: 'text',
             })
             .toPromise();
-        this.uris = [];
+        for (const uri of this.uris) {
+            uri[1] = false;
+        }
     }
 
     async identify(command: Identify): Promise<void> {

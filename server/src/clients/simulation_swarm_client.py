@@ -89,6 +89,9 @@ class SimulationSwarmClient(AbstractSwarmClient):
         self.daemon.start()
 
     def disconnect(self):
+        if self.daemon is None:
+            return
+
         self._is_active = False
         self.daemon.join(1)
         self.daemon = None
