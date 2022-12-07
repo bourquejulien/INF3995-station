@@ -7,7 +7,7 @@ import { DefaultPosition, Identify } from "@app/interface/commands";
     providedIn: 'root',
 })
 export class CommandService {
-    uris: string[];
+    uris: Array<[string, boolean]>;
     isSimulation: boolean;
 
     constructor(private httpClient: HttpClient) {
@@ -18,8 +18,9 @@ export class CommandService {
     async connect(): Promise<void> {
         // TODO Sync uris with other clients
         this.uris = await this.httpClient
-            .post<string[]>(`${environment.serverURL}/discovery/connect`, undefined)
-            .toPromise();
+            .post<Map<string, boolean>>(`${environment.serverURL}/discovery/connect`, undefined)
+            .toPromise()
+            .then((e) => Array.from(e));
     }
 
     async disconnect(): Promise<void> {
@@ -28,7 +29,7 @@ export class CommandService {
                 responseType: 'text',
             })
             .toPromise();
-        this.uris.length = 0;
+        this.uris = [];
     }
 
     async identify(command: Identify): Promise<void> {
@@ -54,9 +55,14 @@ export class CommandService {
     }
 
     async getUris(): Promise<void> {
-        this.uris = await this.httpClient
-            .get<string[]>(`${environment.serverURL}/discovery/uris`)
-            .toPromise();
+        const uris = await this.httpClient
+            .get<Map<number, boolean>>(`${environment.serverURL}/discovery/uris`)
+            .toPromise()
+            .then((e) => Array.from(Object.entries(e)));
+
+        if (JSON.stringify(uris) !== JSON.stringify(this.uris)) {
+            this.uris = uris;
+        }
     }
 
     async retrieveMode(): Promise<void> {

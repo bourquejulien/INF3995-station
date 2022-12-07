@@ -25,8 +25,8 @@ export class DroneInfoService {
                     error(): void {
                         console.log("error");
                     },
-                })
-            })
+                });
+            });
         });
         this.latestMapMetric = new Observable((observer) => {
             interval(1000).subscribe(() => {
@@ -37,11 +37,11 @@ export class DroneInfoService {
                     error(): void {
                         console.log("error");
                     },
-                })
-            })
+                });
+            });
         });
         this.allMapMetrics = new Map();
-        this.oldMap = []
+        this.oldMap = [];
     }
 
     getLatestMetric(): Observable<any>{

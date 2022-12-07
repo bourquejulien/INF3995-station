@@ -7,25 +7,35 @@ from src.exceptions.custom_exception import CustomException
 from dependency_injector.wiring import inject, Provide
 from src.container import Container
 from src.services.command_service import CommandService
+from src.services.telemetrics_service import TelemetricsService
 
 logger = logging.getLogger(__name__)
-blueprint = Blueprint('discovery', __name__)
+blueprint = Blueprint("discovery", __name__)
 
 
-@blueprint.route('/uris', methods=['get'])
+@blueprint.route("/uris", methods=["get"])
 @inject
-def uris(swarm_client: AbstractSwarmClient = Provide[Container.abstract_swarm_client]):
+def uris(
+    swarm_client: AbstractSwarmClient = Provide[Container.abstract_swarm_client],
+    telemetrics_service: TelemetricsService = Provide[Container.telemetrics_service],
+):
     try:
-        return jsonify(swarm_client.uris), 200
+        all_uris = list(telemetrics_service.latest.keys())
+        connected_uris = swarm_client.uris
+        uri_status: dict[str, bool] = {uri: uri in connected_uris for uri in all_uris}
+
+        return jsonify(uri_status), 200
     except CustomException as e:
         logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
 
 
-@blueprint.route('/connect', methods=['post'])
+@blueprint.route("/connect", methods=["post"])
 @inject
-def connect(command_service: CommandService = Provide[Container.command_service],
-            swarm_client: AbstractSwarmClient = Provide[Container.abstract_swarm_client]):
+def connect(
+    command_service: CommandService = Provide[Container.command_service],
+    swarm_client: AbstractSwarmClient = Provide[Container.abstract_swarm_client],
+):
     try:
         command_service.connect(command_service.discover())
         return jsonify(swarm_client.uris), 200
@@ -34,7 +44,7 @@ def connect(command_service: CommandService = Provide[Container.command_service]
         return "{}: {}".format(e.name, e.message), 500
 
 
-@blueprint.route('/disconnect', methods=['post'])
+@blueprint.route("/disconnect", methods=["post"])
 @inject
 def disconnect(command_service: CommandService = Provide[Container.command_service]):
     try:
@@ -42,10 +52,10 @@ def disconnect(command_service: CommandService = Provide[Container.command_servi
     except CustomException as e:
         logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
-    return 'success', 200
+    return "success", 200
 
 
-@blueprint.route('/enabled', methods=['get'])
+@blueprint.route("/enabled", methods=["get"])
 @inject
 def is_enabled(command_service: CommandService = Provide[Container.command_service]):
     try:

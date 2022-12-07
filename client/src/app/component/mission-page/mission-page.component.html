@@ -35,7 +35,7 @@
             <div class="row flex-grow-1 drone-panels">
                 <div class="col h-100">
                     <div class="row" *ngFor="let uri of commandService.uris">
-                        <app-drone-panel class="col h-100 drone-panel" uri="{{ uri }}"></app-drone-panel>
+                        <app-drone-panel class="col h-100 drone-panel" [uri]="uri"></app-drone-panel>
                     </div>
                 </div>
             </div>

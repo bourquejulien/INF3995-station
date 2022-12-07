@@ -5,6 +5,7 @@ import { Vec2 } from '@app/interface/mapdrone';
 import { environment } from '@environment';
 import { interval, Observable, Subscription } from 'rxjs';
 import { DroneInfoService } from '../drone-info/drone-info.service';
+import { CommandService } from "@app/services/command/command.service";
 
 const MISSION_HISTORY_SIZE = 10;
 
@@ -21,7 +22,7 @@ export class MissionService {
 
     private _missions: {"mission": Mission, "logs": Log[]}[] = [];
 
-    constructor(private httpClient: HttpClient, private droneInfoService: DroneInfoService) {
+    constructor(private httpClient: HttpClient, private droneInfoService: DroneInfoService, private commandService: CommandService) {
         let self = this;
 
         this.retrieveMissions(MISSION_HISTORY_SIZE);
@@ -30,6 +31,7 @@ export class MissionService {
             this.getCurrentMission().subscribe({
                 next(response): void {
                     let is_mission = Object.keys(response).length > 0;
+                    self.commandService.getUris();
                     if(!self._isMissionOngoing && is_mission){
                         self.setupMission(response as Mission);
                     }
@@ -194,7 +196,7 @@ export class MissionService {
     }
 
     get missions(): Mission[] {
-        return this._missions.map(e => e.mission);
+        return this._missions.map((e) => e.mission);
     }
 
     get currentLogs() {
