@@ -1,8 +1,6 @@
 import pytest
 import grpc
-from src.clients.simulation_swarm_client import SimulationSwarmClient
 from src.clients.drone_clients.simulation_drone_client import SimulationDroneClient
-from src.exceptions.hardware_exception import HardwareException
 from src.exceptions.custom_exception import CustomException
 
 
