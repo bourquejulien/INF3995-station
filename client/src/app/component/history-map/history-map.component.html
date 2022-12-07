@@ -3,27 +3,20 @@
         <span class="col">Historique des cartes</span>
     </div>
     <div class="row">
-        <button
-            class="button"
-            (click)="collapse.toggle()"
-            (click)="resizeCanvas()"
-            [attr.aria-expanded]="!collapsed"
-            aria-controls="collapseExample">
-            Mission {{selectedMissionId}}
+        <button class="button" (click)="collapse.toggle(); resizeCanvas()" [attr.aria-expanded]="!collapsed" aria-controls="collapseExample">
+            Choisir une mission
+            <span class="material-icons caret">{{ collapsed ? "expand_more" : "expand_less" }}</span>
         </button>
     </div>
     <div #collapse="ngbCollapse" class="row" [(ngbCollapse)]="collapsed">
-        <div class="card">
-            <div class="card-body">
-                <div (click)="selectMission(mission.id)" class="dropdown-button" *ngFor="let mission of missionService.missions">
-                    <span>Mission {{mission.id}}</span>
-                </div>
-            </div>
+        <div (click)="selectMission(mission.id)" class="dropdown-button" *ngFor="let mission of missionService.missions">
+            <span>Mission {{ mission.id }}</span>
         </div>
     </div>
     <div #mapcontainer class="row flex-grow-1 mapcontainer">
         <div class="col canvascontainer">
-            <canvas id="historycanvas" #historycanvas></canvas> 
+            <canvas id="historycanvas" #historycanvas></canvas>
         </div>
     </div>
-<div>
+    <div></div>
+</div>
