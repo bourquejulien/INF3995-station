@@ -145,15 +145,17 @@ export class MissionService {
     public returnToBase(): void {
         if (!this.isMissionOngoing) return;
         const self = this;
-        this.httpClient.post(`${environment.serverURL}/mission/return`, {}, {responseType: 'text'})
-        .subscribe({
-            next() {
-                self.terminateMission();
-            },
-            error(err) {
-                throw err;
-            }
-        });
+        this.httpClient
+            .post(`${environment.serverURL}/mission/return`, {}, {responseType: 'text'})
+            .pipe(catchError(this.handleError))
+            .subscribe({
+                next() {
+                    self.terminateMission();
+                },
+                error(err) {
+                    throw err;
+                }
+            });
     }
 
     getMissionLogs(id: string): Log[] | Observable<Log[]>{

@@ -6,9 +6,10 @@ from dependency_injector.providers import Configuration
 from src.classes.events.log import Log
 from src.classes.events.metric import Metric
 from src.classes.events.mission import Mission, Event
+from src.classes.events.mapDatabase import MapDatabase, generate_mapDatabase
 
-COLLECTIONS = {"log": "logging", "mission": "mission", "metric": "metric"}
-MAPPING = {Log: "log", Mission: "mission", Metric: "metric"}
+COLLECTIONS = {"log": "logging", "mission": "mission", "metric": "metric", "map": "map"}
+MAPPING = {Log: "log", Mission: "mission", Metric: "metric", MapDatabase: "map"}
 
 
 class DatabaseService:
@@ -54,6 +55,11 @@ class DatabaseService:
         for mission in cursor:
             missions.append(Mission(**DatabaseService._convert_from(mission)))
         return missions
+
+    def get_map(self, id: str):
+        cursor = self._collections["map"].find_one({"mission_id": id})
+        map_database = generate_mapDatabase(cursor.get("obstaclePosition", cursor.get("mission_id")))
+        return map_database
 
     def _add_many(self, elems: list, collection_name: str):
         dict_elems = [elem.to_json() for elem in elems]

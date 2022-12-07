@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommandService } from '@app/services/command/command.service';
 import { MissionService } from '@app/services/mission/mission.service';
 
-type Pane = "none" | "logs" | "firmware" | "history";
+type Pane = "none" | "logs" | "firmware" | "history" | "map-history";
 
 @Component({
     selector: 'app-mission-page',
@@ -19,7 +19,7 @@ export class MissionPageComponent implements OnInit {
         this.selectedUris = [];
         this.currentMissionId = "";
         this.currentPane = "none";
-        this.paneNames = [["logs", "Logs"], ["firmware", "Firmware"], ["history", "Historique"]];
+        this.paneNames = [["logs", "Logs"], ["firmware", "Firmware"], ["history", "Historique"], ["map-history", "Historique Cartes"]];
     }
 
     ngOnInit(): void {

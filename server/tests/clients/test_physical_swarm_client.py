@@ -145,6 +145,9 @@ def test_packet_received_callback(app, mocker, swarm_client):
     param = struct.pack('<ccfff', b'\x00', b'\x00', 2, 2.5, 3)
     generated_metrics = []
     swarm_client._callbacks = {"metric": lambda x: generated_metrics.append(x)}
+    stub = types.SimpleNamespace()
+    stub.adapt = lambda x:  x
+    swarm_client._position_adapters = {"abc": stub}
     swarm_client._packet_received('abc', param)
     assert generate_metric(Position(2.0, 2.5, 3.0), 'Idle', 'abc') == generated_metrics[0]
 

@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+from src.classes.position import Position
+
 
 class AbstractSwarmClient(ABC):
     status = [
@@ -12,6 +14,7 @@ class AbstractSwarmClient(ABC):
         "Return",
         "ChooseAngle",
         "Crashed",
+        "Crashing"
     ]
 
     def __init__(self):
@@ -47,6 +50,10 @@ class AbstractSwarmClient(ABC):
 
     @abstractmethod
     def return_to_base(self):
+        pass
+
+    @abstractmethod
+    def set_initial_positions(self, initial_data: list[(str, Position, float)]):
         pass
 
     @abstractmethod

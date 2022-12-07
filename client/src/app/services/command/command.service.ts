@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '@environment';
 import { catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
+import { DefaultPosition } from "@app/interface/commands";
 
 @Injectable({
     providedIn: 'root',
@@ -42,6 +43,13 @@ export class CommandService {
         await this.httpClient
             .post(`${environment.serverURL}/action/toggle_sync`, null)
             .pipe(catchError(this.handleError))
+            .toPromise();
+    }
+
+    async setInitialPositions(defaultPositions: Map<string, DefaultPosition>): Promise<void> {
+        await this.httpClient.post(`${environment.serverURL}/action/initial_positions`, defaultPositions,{
+            responseType: 'text',
+        })
             .toPromise();
     }
 

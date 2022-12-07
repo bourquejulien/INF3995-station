@@ -7,7 +7,7 @@ database:
     connection_string: ${DB_CONNECTION_STRING:mongodb://local:lacol@localhost:5002/}
     name: ${DB_NAME:server}
 mapping:
-    trigger_distance: 5.0
+    trigger_distance: 10.0
     duplicate_distance: 0.5
 clients:
     uri_start: 0

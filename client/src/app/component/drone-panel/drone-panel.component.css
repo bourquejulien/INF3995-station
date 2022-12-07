@@ -29,3 +29,7 @@
 .coord{
     padding-left: 10%; 
 }
+
+.caret{
+    float: right;
+}

@@ -4,6 +4,7 @@
     [attr.aria-expanded]="!collapsed"
     aria-controls="collapseExample">
     {{uri}}
+    <span class="material-icons caret">{{collapsed ? "expand_more" : "expand_less"}}</span>
 </button>
 
 <div #collapse="ngbCollapse"

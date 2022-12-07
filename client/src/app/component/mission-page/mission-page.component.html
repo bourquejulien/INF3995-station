@@ -58,11 +58,15 @@
         <div class="col-sm-3 h-100 firmware-container" [hidden]="currentPane !== 'history'">
             <app-history-panel></app-history-panel>
         </div>
+        <div class="col-sm-3 h-100 firmware-container" [hidden]="currentPane !== 'map-history'">
+            <app-history-map></app-history-map>
+        </div>
         <div class="col-sm-1 collapse-button-col">
             <div class="row" *ngFor="let paneName of paneNames">
                 <button
                     [ngClass]="currentPane == paneName[0] ? 'disabled' : 'button'"
                     (click)="togglePane(paneName[0])">
+                <span class="material-icons caret">{{currentPane == paneName[0] ? "chevron_right" : "chevron_left"}}</span>
                 {{ paneName[1] }}
                 </button>
             </div>
