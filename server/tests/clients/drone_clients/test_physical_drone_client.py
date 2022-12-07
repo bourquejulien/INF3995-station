@@ -1,4 +1,3 @@
-import pytest
 from src.clients.drone_clients.physical_drone_client import _send_packet, \
         identify, start_mission, end_mission, return_to_base, \
         force_end_mission, set_synchronization
