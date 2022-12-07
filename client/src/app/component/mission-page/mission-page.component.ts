@@ -1,25 +1,31 @@
-import { Component, OnInit } from '@angular/core';
-import { CommandService } from '@app/services/command/command.service';
-import { MissionService } from '@app/services/mission/mission.service';
+import { Component, OnInit } from "@angular/core";
+import { CommandService } from "@app/services/command/command.service";
+import { MissionService } from "@app/services/mission/mission.service";
 
 type Pane = "none" | "logs" | "firmware" | "history" | "map-history";
 
 @Component({
-    selector: 'app-mission-page',
-    templateUrl: './mission-page.component.html',
-    styleUrls: ['./mission-page.component.css'],
+    selector: "app-mission-page",
+    templateUrl: "./mission-page.component.html",
+    styleUrls: ["./mission-page.component.css"],
 })
 export class MissionPageComponent implements OnInit {
     selectedUris: string[];
     currentMissionId: string;
     currentPane: Pane;
-    paneNames: Array<[Pane, string]>;
+    paneNamesDefault: Array<[Pane, string]>;
+    paneNamesFirmware: Array<[Pane, string]>;
 
     constructor(public commandService: CommandService, public missionService: MissionService) {
         this.selectedUris = [];
         this.currentMissionId = "";
         this.currentPane = "none";
-        this.paneNames = [["logs", "Logs"], ["firmware", "Firmware"], ["history", "Historique"], ["map-history", "Historique Cartes"]];
+        this.paneNamesDefault = [
+            ["logs", "Logs"],
+            ["history", "Historique"],
+            ["map-history", "Historique Cartes"],
+        ];
+        this.paneNamesFirmware = [["firmware", "Firmware"]];
     }
 
     ngOnInit(): void {
@@ -40,7 +46,7 @@ export class MissionPageComponent implements OnInit {
     }
 
     identify(): void {
-        this.commandService.identify({ uris: this.commandService.uris});
+        this.commandService.identify({ uris: this.commandService.uris });
     }
 
     toggleSync(): void {
@@ -69,5 +75,12 @@ export class MissionPageComponent implements OnInit {
             return;
         }
         this.currentPane = pane;
+    }
+
+    get paneNames() {
+        if (!this.commandService.isSimulation) {
+            return this.paneNamesDefault.concat(this.paneNamesFirmware);
+        }
+        return this.paneNamesDefault;
     }
 }

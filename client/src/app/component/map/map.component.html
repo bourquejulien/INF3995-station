@@ -10,9 +10,9 @@
             </div>
         </div>
 
-        <div class="col-sm mx-5">
+        <div class="col-sm justify-content-md-auto mx-5">
             <div class="row" *ngIf="!commandService.isSimulation">
-                <div class="col col-sm mx-5">
+                <div class="col justify-content-md-center col-sm mx-5">
                     <div class="row">
                         <input class="col-sm form-control" type="text" placeholder="x" name="xpos" [(ngModel)]="defaultPosition[0]" />
                         <input class="col-sm form-control" type="text" placeholder="y" name="ypos" [(ngModel)]="defaultPosition[1]" />
@@ -20,7 +20,7 @@
                     </div>
                 </div>
 
-                <button class="col-sm-5 button px-4" (click)="setDefaultPosition()">Modifier les positions</button>
+                <button class="col-sm-4 button" (click)="setDefaultPosition()">Modifier les positions</button>
             </div>
         </div>
 
