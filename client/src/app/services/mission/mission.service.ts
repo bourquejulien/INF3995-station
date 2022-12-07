@@ -1,9 +1,9 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Log, Mission } from '@app/interface/commands';
-import { Vec2 } from '@app/interface/mapdrone';
 import { environment } from '@environment';
-import { interval, Observable, Subscription } from 'rxjs';
+import { interval, Observable, Subscription, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { DroneInfoService } from '../drone-info/drone-info.service';
 
 const MISSION_HISTORY_SIZE = 10;
@@ -37,8 +37,8 @@ export class MissionService {
                         self.terminateMission();
                     }
                 },
-                error(): void {
-                    console.log("ERROR: could not get current mission from server");
+                error(err): void {
+                    console.error(err);
                 },
             })
         });
@@ -47,13 +47,15 @@ export class MissionService {
     private getLastMissions(missions_number: number): Observable<Mission[]>{
         let queryParams = new HttpParams();
         queryParams = queryParams.append("missions_number", missions_number);
-        return this.httpClient.get<Mission[]>(`${environment.serverURL}/mission/`,
-            {params: queryParams},
-        );
+        return this.httpClient
+            .get<Mission[]>(`${environment.serverURL}/mission/`, {params: queryParams})
+            .pipe(catchError(this.handleError));
     }
 
     private getCurrentMission(): Observable<Mission | {}> {
-        return this.httpClient.get<Mission>(`${environment.serverURL}/mission/current_mission`);
+        return this.httpClient
+            .get<Mission>(`${environment.serverURL}/mission/current_mission`)
+            .pipe(catchError(this.handleError));
     }
 
     private logSubscribe(missionId: string): void {
@@ -67,8 +69,8 @@ export class MissionService {
                 next(response: Log[]): void {
                     self._currentLogs = self.currentLogs.concat(response);
                 },
-                error(): void {
-                    console.log("ERROR: could not get LOG from server");
+                error(err): void {
+                    console.error(err);
                 },
             });
         });
@@ -95,57 +97,65 @@ export class MissionService {
     startMission(): void {
         if (this.isMissionOngoing) return;
         const self = this;
-        this.httpClient.post<Mission>(`${environment.serverURL}/mission/start`, {}, {responseType: 'json'})
-        .subscribe({
-            next(response: Mission): void {
-                self.setupMission(response)
-            },
-            error(): void {
-                console.log("ERROR: could not start mission");
-            },
-        });
+        this.httpClient
+            .post<Mission>(`${environment.serverURL}/mission/start`, {}, {responseType: 'json'})
+            .pipe(catchError(this.handleError))
+            .subscribe({
+                next(response: Mission): void {
+                    self.setupMission(response)
+                },
+                error(err) {
+                    throw err;
+                }
+            });
     }
 
     endMission(): void {
         if (!this.isMissionOngoing) return;
         const self = this;
-        this.httpClient.post(`${environment.serverURL}/mission/end`, {}, {responseType: 'text'})
-        .subscribe({
-            next() {
-                self.terminateMission();
-            },
-            error(): void {
-                console.log("ERROR: could not end mission");
-            }
+        this.httpClient
+            .post(`${environment.serverURL}/mission/end`, {}, {responseType: 'text'})
+            .pipe(catchError(this.handleError))
+            .subscribe({
+                next() {
+                    self.terminateMission();
+                },
+                error(err) {
+                    throw err;
+                }
         });
     }
 
     forceEndMission(): void {
         if (!this.isMissionOngoing) return;
         const self = this;
-        this.httpClient.post(`${environment.serverURL}/mission/force_end`, {}, {responseType: 'text'})
-        .subscribe({
-            next() {
-                self.terminateMission();
-            },
-            error(): void {
-                console.log("ERROR: could not get force end mission");
-            }
-        });
+        this.httpClient
+            .post(`${environment.serverURL}/mission/force_end`, {}, {responseType: 'text'})
+            .pipe(catchError(this.handleError))
+            .subscribe({
+                next() {
+                    self.terminateMission();
+                },
+                error(err) {
+                    throw err;
+                }
+            });
     }
 
     public returnToBase(): void {
         if (!this.isMissionOngoing) return;
         const self = this;
-        this.httpClient.post(`${environment.serverURL}/mission/return`, {}, {responseType: 'text'})
-        .subscribe({
-            next() {
-                self.terminateMission();
-            },
-            error(): void {
-                console.log("Return to base error");
-            }
-        });
+        this.httpClient
+            .post(`${environment.serverURL}/mission/return`, {}, {responseType: 'text'})
+            .pipe(catchError(this.handleError))
+            .subscribe({
+                next() {
+                    self.terminateMission();
+                },
+                error(err) {
+                    throw err;
+                }
+            });
     }
 
     getMissionLogs(id: string): Log[] | Observable<Log[]>{
@@ -201,4 +211,8 @@ export class MissionService {
         return this._currentLogs;
     }
 
+    private handleError(error: HttpErrorResponse): Observable<never> {
+        if (error.status === 0) return throwError(new Error('Server is unavailable'));
+        return throwError(error);
+    }
 }

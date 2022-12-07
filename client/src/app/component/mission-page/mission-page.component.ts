@@ -23,8 +23,8 @@ export class MissionPageComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.commandService.getUris();
-        this.commandService.retrieveMode();
+        this.commandService.getUris().then(() => {}, this.handleError);
+        this.commandService.retrieveMode().then(() => {}, this.handleError);
     }
 
     isMissionOngoing(): boolean {
@@ -32,19 +32,19 @@ export class MissionPageComponent implements OnInit {
     }
 
     connect(): void {
-        this.commandService.connect();
+        this.commandService.connect().then(() => {}, this.handleError);
     }
 
     disconnect(): void {
-        this.commandService.disconnect();
+        this.commandService.disconnect().then(() => {}, this.handleError);
     }
 
     identify(): void {
-        this.commandService.identify({ uris: this.commandService.uris});
+        this.commandService.identify({uris: this.commandService.uris}).then(() => {}, this.handleError);
     }
 
     toggleSync(): void {
-        this.commandService.toggleSync();
+        this.commandService.toggleSync().then(() => {}, this.handleError);
     }
 
     startMission(): void {
@@ -69,5 +69,9 @@ export class MissionPageComponent implements OnInit {
             return;
         }
         this.currentPane = pane;
+    }
+
+    handleError(error: Error): void {
+        console.log(error)
     }
 }
