@@ -14,6 +14,7 @@ import { CodeEditorComponent } from './component/code-editor/code-editor.compone
 import { FirmwarePanelComponent } from './component/firmware-panel/firmware-panel.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HistoryPanelComponent } from './component/history-panel/history-panel.component';
+import { HistoryMapComponent } from './component/history-map/history-map.component';
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import { HistoryPanelComponent } from './component/history-panel/history-panel.c
         CodeEditorComponent,
         FirmwarePanelComponent,
         HistoryPanelComponent,
+        HistoryMapComponent,
     ],
     imports: [
         HttpClientModule,

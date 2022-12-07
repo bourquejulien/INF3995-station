@@ -4,7 +4,7 @@ import { catchError } from 'rxjs/operators';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '@environment';
 import { Log, Metric } from '@app/interface/commands';
-import { MapMetric } from '@app/interface/mapdrone';
+import { MapDatabase, MapMetric, Vec2 } from '@app/interface/mapdrone';
 
 @Injectable({
     providedIn: 'root'
@@ -13,6 +13,7 @@ export class DroneInfoService {
     latestMetric: Observable<Map<string, Metric>>;
     latestMapMetric: Observable<Map<string, MapMetric>>;
     allMapMetrics: Map<string, MapMetric[]>;
+    oldMap: any;
 
     constructor(private httpClient: HttpClient) {
         this.latestMetric = new Observable((observer) => {
@@ -40,6 +41,7 @@ export class DroneInfoService {
             })
         });
         this.allMapMetrics = new Map();
+        this.oldMap = []
     }
 
     getLatestMetric(): Observable<any>{
@@ -85,5 +87,14 @@ export class DroneInfoService {
             console.error(error);
             return of(result as T);
         };
+    }
+
+    async getMapById(missionId: string): Promise<void> {
+        let queryParams = new HttpParams();
+        queryParams = queryParams.append("mission_id", missionId);
+        let response = await this.httpClient.get<MapDatabase>(`${environment.serverURL}/drone-info/mapDatabase`,
+            {params: queryParams},
+            ).pipe(catchError(this.handleError('map database', []))).toPromise() as MapDatabase;
+        this.oldMap = response.obstaclePosition;
     }
 }

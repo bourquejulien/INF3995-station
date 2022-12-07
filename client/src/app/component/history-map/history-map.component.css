@@ -1,0 +1,56 @@
+.header{
+    background-color: var(--primary);
+    border-top: 1px var(--border-color) solid;
+    border-bottom: 1px var(--border-color) solid;
+    color: var(--font-color);
+    padding: 10px;
+    text-align: center;
+}
+
+#historycanvas{
+    z-index: 0;
+}
+
+.button:hover{
+    background-color: var(--accent);  
+}
+
+.card{
+    padding: 0px;
+    border: 0px;
+}
+
+.card-body{
+    background-color: var(--primary);
+}
+
+.dropdown-button{
+    background-color: var(--secondary);
+    border-bottom: 1px var(--primary) solid;
+    color: var(--font-color);
+    text-align: center;
+    width: 100%;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.dropdown-button:hover{
+    background-color: var(--accent);  
+    cursor: pointer;
+}
+
+.canvascontainer{
+    background-color: var(--background);  
+    display: grid;
+    justify-content: center;
+    height: 100%;
+}
+
+.canvascontainer canvas{
+    grid-row-start: 1;
+    grid-column-start: 1;
+}
+
+.mapcontainer{
+    min-height: 0;
+}

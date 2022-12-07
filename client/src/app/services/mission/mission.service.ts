@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Log, Mission } from '@app/interface/commands';
+import { Vec2 } from '@app/interface/mapdrone';
 import { environment } from '@environment';
 import { interval, Observable, Subscription } from 'rxjs';
 import { DroneInfoService } from '../drone-info/drone-info.service';
@@ -199,4 +200,5 @@ export class MissionService {
     get currentLogs() {
         return this._currentLogs;
     }
+
 }
