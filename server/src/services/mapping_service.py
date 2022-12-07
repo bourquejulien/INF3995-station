@@ -11,7 +11,10 @@ from src.services.mission_service import MissionService
 
 logger = logging.getLogger(__name__)
 
-def _remove_duplicate(points: list[Position], new_points: list[Position], duplicate_distance: float):
+
+def _remove_duplicate(points: list[Position],
+                      new_points: list[Position],
+                      duplicate_distance: float):
     distance = lambda a, b: math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2 + (a.z - b.z) ** 2)
 
     for point in points:
@@ -22,6 +25,7 @@ def _remove_duplicate(points: list[Position], new_points: list[Position], duplic
         for x in reversed(duplicates):
             new_points.pop(x)
 
+
 class MappingService:
     _config: Configuration
     _logging_service: LoggingService
@@ -29,7 +33,9 @@ class MappingService:
     _latest: dict[str, MapInfo]
     _is_simulation: bool
 
-    def __init__(self, config: Configuration, swarm_client: AbstractSwarmClient, mission_service: MissionService,
+    def __init__(self, config: Configuration,
+                 swarm_client: AbstractSwarmClient,
+                 mission_service: MissionService,
                  logging_service: LoggingService):
         self._maps = {}
         self._latest = {}
