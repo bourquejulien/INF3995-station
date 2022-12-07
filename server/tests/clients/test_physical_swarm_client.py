@@ -142,14 +142,14 @@ def test_console_incoming_callback(app, mocker, swarm_client):
 
 @freeze_time("2022-01-01")
 def test_packet_received_callback(app, mocker, swarm_client):
-    param = struct.pack('<ccfff', b'\x00', b'\x00', 2, 2.5, 3)
+    param = struct.pack('<ccffff', b'\x00', b'\x00', 2, 2.5, 3, 3.5)
     generated_metrics = []
     swarm_client._callbacks = {"metric": lambda x: generated_metrics.append(x)}
     stub = types.SimpleNamespace()
     stub.adapt = lambda x:  x
     swarm_client._position_adapters = {"abc": stub}
     swarm_client._packet_received('abc', param)
-    assert generate_metric(Position(2.0, 2.5, 3.0), 'Idle', 'abc') == generated_metrics[0]
+    assert generate_metric(Position(2.0, 2.5, 3.0), 'Idle', 'abc', battery_level=3.5) == generated_metrics[0]
 
 
 def test_disconnect(app, swarm_client):
