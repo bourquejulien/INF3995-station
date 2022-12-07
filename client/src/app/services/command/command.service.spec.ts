@@ -52,7 +52,7 @@ describe('CommandService', () => {
     it('should identify', () => {
         let mockUris = ["test1", "test2"]
 
-        service.identify(mockUris);
+        service.identify({uris: mockUris});
 
         const req = httpMock.expectOne(`${environment.serverURL}/action/identify`);
         expect(req.request.method).toEqual('POST');

@@ -28,6 +28,6 @@ export class DronePanelComponent implements OnInit {
         if (this.uri.length == 0) {
             return;
         }
-        this.commandService.identify([this.uri]);
+        this.commandService.identify({ uris: [this.uri] });
     }
 }
