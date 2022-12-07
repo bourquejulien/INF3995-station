@@ -6,7 +6,6 @@ from src.classes.events.log import generate_log
 from src.clients.drone_clients.simulation_drone_client import SimulationDroneClient
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.classes.position import Position
-from src.classes.distance import Distance
 from src.classes.events.metric import generate_metric
 
 logger = logging.getLogger(__name__)
