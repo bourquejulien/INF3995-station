@@ -63,7 +63,7 @@ export class MissionService {
             if (this._currentLogs.length > 0) {
                 sinceTimestamp = this._currentLogs[this._currentLogs.length - 1].timestamp_ms;
             }
-            this.droneInfoService.getLogs(missionId, sinceTimestamp=sinceTimestamp).subscribe({
+            this.droneInfoService.getLogs(missionId, sinceTimestamp).subscribe({
                 next(response: Log[]): void {
                     self._currentLogs = self.currentLogs.concat(response);
                 },
@@ -98,7 +98,7 @@ export class MissionService {
         this.httpClient.post<Mission>(`${environment.serverURL}/mission/start`, {}, {responseType: 'json'})
         .subscribe({
             next(response: Mission): void {
-                self.setupMission(response)
+                self.setupMission(response);
             },
             error(): void {
                 console.log("ERROR: could not start mission");
@@ -175,7 +175,7 @@ export class MissionService {
         this.getLastMissions(missions_number).subscribe({
             next(response: Mission[]): void {
                 self._missions.length = 0;
-                for(let mission of response) {
+                for(const mission of response) {
                     self._missions.push({"mission": mission, "logs": [] as Log[]})
                 }
             },
@@ -200,5 +200,4 @@ export class MissionService {
     get currentLogs() {
         return this._currentLogs;
     }
-
 }
