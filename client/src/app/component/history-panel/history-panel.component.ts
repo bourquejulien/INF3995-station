@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { MissionService } from '@app/services/mission/mission.service';
-import { Mission } from '@app/interface/commands';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit } from "@angular/core";
+import { MissionService } from "@app/services/mission/mission.service";
+import { Mission } from "@app/interface/commands";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
 const ID_LENGTH = 5;
 
@@ -13,9 +13,9 @@ type Attribute = keyof MissionInfo;
 type AttributeTypes = boolean | number | string;
 
 @Component({
-    selector: 'app-history-panel',
-    templateUrl: './history-panel.component.html',
-    styleUrls: ['./history-panel.component.css'],
+    selector: "app-history-panel",
+    templateUrl: "./history-panel.component.html",
+    styleUrls: ["./history-panel.component.css"],
 })
 export class HistoryPanelComponent implements OnInit {
     collapsed: boolean;
@@ -32,7 +32,7 @@ export class HistoryPanelComponent implements OnInit {
             ["drone_count", "Nb. de drones"],
             ["total_time", "Durée totale"],
             ["start_time_ms", "Heure de début"],
-            ["end_time_ms", "Heure de fin"]
+            ["end_time_ms", "Heure de fin"],
         ];
         this.currentAttribute = "start_time_ms";
     }
@@ -44,12 +44,11 @@ export class HistoryPanelComponent implements OnInit {
     }
 
     getAttributeName(attribute: Attribute): string {
-        const result = this.attributes.find(e => e[0] === attribute);
+        const result = this.attributes.find((e) => e[0] === attribute);
         return result == undefined ? "Aucun" : result[1];
     }
 
-    getAttributeAsNumber(mission: MissionInfo, attribute: Attribute): number
-    {
+    getAttributeAsNumber(mission: MissionInfo, attribute: Attribute): number {
         return mission[attribute] as number;
     }
 
@@ -58,16 +57,16 @@ export class HistoryPanelComponent implements OnInit {
         this.collapsed = true;
     }
 
-    isDate(attribute: Attribute): boolean
-    {
-        const index = ["start_time_ms", "end_time_ms"].findIndex(e => e === attribute);
+    isDate(attribute: Attribute): boolean {
+        const index = ["start_time_ms", "end_time_ms"].findIndex((e) => e === attribute);
         return index != -1;
     }
 
     open(modal: any, mission: MissionInfo) {
         this.selectedMission = mission;
-        this.modalService.open(modal, { ariaLabelledBy: "Mission", size: 'l'}).dismissed
-            .toPromise()
+        this.modalService
+            .open(modal, { ariaLabelledBy: "Mission", size: "l" })
+            .dismissed.toPromise()
             .then(() => {
                 this.selectedMission = undefined;
             });
@@ -79,19 +78,15 @@ export class HistoryPanelComponent implements OnInit {
 
     get missions(): Array<MissionInfo> {
         return this.missionService.missions
-            .map(e => {
+            .map((e) => {
                 const missionInfo: any = e;
                 missionInfo.total_time = e.end_time_ms - e.start_time_ms;
                 return missionInfo as MissionInfo;
             })
-            .sort((a, b) =>
-                this.toNumber(b[this.currentAttribute]) -
-                this.toNumber(a[this.currentAttribute])
-            );
+            .sort((a, b) => this.toNumber(b[this.currentAttribute]) - this.toNumber(a[this.currentAttribute]));
     }
 
-    private toNumber(elem: AttributeTypes): number
-    {
+    private toNumber(elem: AttributeTypes): number {
         if (typeof elem == "boolean") {
             return elem ? 1 : 0;
         }
@@ -104,6 +99,6 @@ export class HistoryPanelComponent implements OnInit {
             return value;
         }
 
-        return elem
+        return elem;
     }
 }

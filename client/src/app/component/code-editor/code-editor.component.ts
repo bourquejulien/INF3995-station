@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FirmwareService } from '@app/services/firmware/firmware.service';
+import { Component, OnInit } from "@angular/core";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { FirmwareService } from "@app/services/firmware/firmware.service";
 
 const DEFAULT_PATH = "main.c";
 
 @Component({
-  selector: 'app-code-editor',
-  templateUrl: './code-editor.component.html',
-  styleUrls: ['./code-editor.component.css']
+    selector: "app-code-editor",
+    templateUrl: "./code-editor.component.html",
+    styleUrls: ["./code-editor.component.css"],
 })
 export class CodeEditorComponent implements OnInit {
     filePath: string;
@@ -31,7 +31,7 @@ export class CodeEditorComponent implements OnInit {
 
     handleKey(event: KeyboardEvent): void {
         if (event.key === "Enter") {
-            this.getFile()
+            this.getFile();
         }
     }
 
@@ -43,8 +43,8 @@ export class CodeEditorComponent implements OnInit {
         }
 
         this.firmwareService.getFile(this.filePath).subscribe(
-            fileContent => this.fileContent = fileContent,
-            () => this.isPathError = true,
+            (fileContent) => (this.fileContent = fileContent),
+            () => (this.isPathError = true),
         );
     }
 
@@ -56,12 +56,12 @@ export class CodeEditorComponent implements OnInit {
         }
 
         this.firmwareService.editFile(this.filePath, this.fileContent).subscribe({
-            next: () => { },
-            error: () => this.isEditError = true,
+            next: () => {},
+            error: () => (this.isEditError = true),
         });
     }
 
     open(content: any) {
-        this.modalService.open(content, { ariaLabelledBy: "Éditeur", size: 'xl' });
+        this.modalService.open(content, { ariaLabelledBy: "Éditeur", size: "xl" });
     }
 }

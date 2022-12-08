@@ -45,29 +45,31 @@ export class MapComponent implements OnInit, AfterViewInit {
         this.defaultPosition = ["", "", ""];
 
         window.addEventListener("resize", this.resizeCanvas.bind(this), false); // Redraws the map when the window is resized
-        this.commandService.urisObservable.subscribe((uris) => {
-            // Waiting for all uris then proceed
-            this.allUris = uris.map((e) => e[0]);
-            this.droneInfoService.getAllMapMetric().then(() => {
-                this.createNewMapDrone();
-                this.resetSelectedUris();
-                this.droneInfoService.latestMapMetric.subscribe((metrics: Map<string, MapMetric>) => {
-                    for (const uri of this.allUris) {
-                        const mapMetric = metrics.get(uri);
-                        if (mapMetric) {
-                            this.updateMapMetrics(mapMetric, uri);
+        this.commandService.urisObservable.subscribe(
+            (uris) => {
+                // Waiting for all uris then proceed
+                this.allUris = uris.map((e) => e[0]);
+                this.droneInfoService.getAllMapMetric().then(() => {
+                    this.createNewMapDrone();
+                    this.resetSelectedUris();
+                    this.droneInfoService.latestMapMetric.subscribe((metrics: Map<string, MapMetric>) => {
+                        for (const uri of this.allUris) {
+                            const mapMetric = metrics.get(uri);
+                            if (mapMetric) {
+                                this.updateMapMetrics(mapMetric, uri);
 
-                            if (this.mapDrones.size > 0) {
-                                this.redrawMap();
+                                if (this.mapDrones.size > 0) {
+                                    this.redrawMap();
+                                }
                             }
                         }
-                    }
+                    });
                 });
-            });
-        },
-        (err) => {
-            console.error(err);
-        });
+            },
+            (err) => {
+                console.error(err);
+            },
+        );
     }
 
     ngAfterViewInit(): void {

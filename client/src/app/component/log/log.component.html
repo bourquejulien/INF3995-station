@@ -1,34 +1,29 @@
 <div class="d-flex flex-column h-100">
     <div class="row header">
-        <span class="col">Logs de la mission {{formatId(selectedMissionId)}}</span>
+        <span class="col">Logs de la mission {{ formatId(selectedMissionId) }}</span>
     </div>
     <div class="row">
-        <button
-            class="button"
-            (click)="collapse.toggle()"
-            [attr.aria-expanded]="!collapsed"
-            aria-controls="collapseExample">
+        <button class="button" (click)="collapse.toggle()" [attr.aria-expanded]="!collapsed" aria-controls="collapseExample">
             Choisir une mission
-            <span class="material-icons caret">{{collapsed ? "expand_more" : "expand_less"}}</span>
+            <span class="material-icons caret">{{ collapsed ? "expand_more" : "expand_less" }}</span>
         </button>
     </div>
 
-    <div #collapse="ngbCollapse" class="row"
-        [(ngbCollapse)]="collapsed">
+    <div #collapse="ngbCollapse" class="row" [(ngbCollapse)]="collapsed">
         <div class="card">
             <div class="card-body">
-                <div (click)="selectMission('en cours')" class="dropdown-button" *ngIf="missionService.missions.length != 0">
+                <div (click)="selectMission('en cours')" class="dropdown-button" *ngIf="missionService.missions.length !== 0">
                     <span>Mission en cours</span>
                 </div>
                 <div (click)="selectMission(mission.id)" class="dropdown-button" *ngFor="let mission of missionService.missions">
-                    <span>Mission {{formatId(mission.id)}}</span>
+                    <span>Mission {{ formatId(mission.id) }}</span>
                 </div>
             </div>
         </div>
     </div>
     <div class="col h-100 log-box">
         <div class="row log" *ngFor="let log of getLogs() | async">
-            <span>{{log.timestamp_ms | date:"yyyy-MM-dd HH:mm:ss.S"}}: {{log.message}}</span>
+            <span>{{ log.timestamp_ms | date : "yyyy-MM-dd HH:mm:ss.S" }}: {{ log.message }}</span>
         </div>
     </div>
 </div>

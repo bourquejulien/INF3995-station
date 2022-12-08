@@ -1,23 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { Log } from '@app/interface/commands';
-import { MissionService } from '@app/services/mission/mission.service';
-import { Observable, of } from 'rxjs';
+import { Component, OnInit } from "@angular/core";
+import { Log } from "@app/interface/commands";
+import { MissionService } from "@app/services/mission/mission.service";
+import { Observable, of } from "rxjs";
 
 @Component({
-    selector: 'app-log',
-    templateUrl: './log.component.html',
-    styleUrls: ['./log.component.css']
+    selector: "app-log",
+    templateUrl: "./log.component.html",
+    styleUrls: ["./log.component.css"],
 })
 export class LogComponent implements OnInit {
     collapsed: boolean = true;
     selectedMissionId: string = "en cours";
     logs: Observable<Log[]> = new Observable();
 
-    constructor(public missionService: MissionService) {
-    }
+    constructor(public missionService: MissionService) {}
 
-    ngOnInit(): void {
-    }
+    ngOnInit(): void {}
 
     public selectMission(id: string): void {
         this.selectedMissionId = id;
@@ -27,13 +25,11 @@ export class LogComponent implements OnInit {
     public getLogs(): Observable<Log[]> {
         if (this.selectedMissionId === "en cours") {
             return of(this.missionService.currentLogs);
-        }
-        else {
+        } else {
             let logs = this.missionService.getMissionLogs(this.selectedMissionId);
             if (logs instanceof Observable) {
                 return logs;
-            }
-            else {
+            } else {
                 return of(logs);
             }
         }

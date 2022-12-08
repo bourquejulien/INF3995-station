@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { FirmwareService } from '@app/services/firmware/firmware.service';
+import { Component, OnInit } from "@angular/core";
+import { FirmwareService } from "@app/services/firmware/firmware.service";
 import { MissionService } from "@app/services/mission/mission.service";
 
 type Mode = "file" | "editor" | "none";
 
 @Component({
-  selector: 'app-firmware-panel',
-  templateUrl: './firmware-panel.component.html',
-  styleUrls: ['./firmware-panel.component.css']
+    selector: "app-firmware-panel",
+    templateUrl: "./firmware-panel.component.html",
+    styleUrls: ["./firmware-panel.component.css"],
 })
 export class FirmwarePanelComponent implements OnInit {
     collapsed: boolean;
@@ -22,7 +22,10 @@ export class FirmwarePanelComponent implements OnInit {
         this.isFlashError = false;
         this.isFlashing = false;
         this.currentMode = "none";
-        this.modes = [["file", "Téléverser un fichier binaire"],["editor", "Utiliser l'éditeur en ligne"]]
+        this.modes = [
+            ["file", "Téléverser un fichier binaire"],
+            ["editor", "Utiliser l'éditeur en ligne"],
+        ];
         this.file = null;
     }
 
@@ -34,28 +37,27 @@ export class FirmwarePanelComponent implements OnInit {
     }
 
     getName(mode: Mode): string {
-        return this.modes.filter(e => e[0] == mode).map(e => e[1])[0];
+        return this.modes.filter((e) => e[0] == mode).map((e) => e[1])[0];
     }
 
     selectMode(mode: Mode): void {
-       this.currentMode = mode;
-       this.collapsed = true;
-       this.file = null;
+        this.currentMode = mode;
+        this.collapsed = true;
+        this.file = null;
     }
 
-    setFile(event: Event) : void {
+    setFile(event: Event): void {
         const input: any = event.target as HTMLInputElement;
-        this.file = input.files[0]
+        this.file = input.files[0];
     }
 
     flash(): void {
         this.isFlashError = false;
-        if (this.currentMode == "editor")
-        {
+        if (this.currentMode == "editor") {
             this.firmwareService.buildFlash().subscribe(this.flashHandler());
         }
 
-        if (this.file == null){
+        if (this.file == null) {
             return;
         }
 
@@ -65,11 +67,11 @@ export class FirmwarePanelComponent implements OnInit {
     private flashHandler() {
         this.isFlashing = true;
         return {
-            complete: () => this.isFlashing = false,
+            complete: () => (this.isFlashing = false),
             error: (err: string) => {
                 this.isFlashError = true;
                 this.isFlashing = false;
             },
-        }
+        };
     }
 }

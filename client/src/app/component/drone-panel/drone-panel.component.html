@@ -8,7 +8,7 @@
         <div class="card-body">
             <div>Dernier statut : {{ metric?.status }}</div>
             <div>Connexion : {{ uri[1] ? "Connecté" : "Déconnecté" }}</div>
-            <div>Batterie: {{metric?.battery_level ?? 0 | number: '1.0-2'}}{{commandService.isSimulation ? " %" : " V"}}</div>
+            <div>Batterie: {{ metric?.battery_level ?? 0 | number : "1.0-2" }}{{ commandService.isSimulation ? " %" : " V" }}</div>
             <div>
                 Position :
                 <div class="coord">x: {{ metric?.position?.x ?? 0 | number : "1.0-2" }}</div>
