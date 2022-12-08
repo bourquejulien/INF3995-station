@@ -9,6 +9,7 @@ from src.services.logging_service import LoggingService
 from src.services.mission_service import MissionService
 from src.services.database_service import DatabaseService
 
+
 class MappingService:
     _config: Configuration
     _logging_service: LoggingService
@@ -17,8 +18,11 @@ class MappingService:
     _maps: dict[str, list[MapInfo]] # For live map on client
     _latest: dict[str, MapInfo]
 
-    def __init__(self, config: Configuration, swarm_client: AbstractSwarmClient, mission_service: MissionService,
-                 logging_service: LoggingService, database_service: DatabaseService):
+    def __init__(self, config: Configuration,
+                 swarm_client: AbstractSwarmClient,
+                 mission_service: MissionService,
+                 logging_service: LoggingService,
+                 database_service: DatabaseService):
         self._maps = {}
         self._latest = {}
         self._logging_service = logging_service

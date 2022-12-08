@@ -45,7 +45,8 @@ export class MapComponent implements OnInit, AfterViewInit {
         this.defaultPosition = ["", "", ""];
 
         window.addEventListener("resize", this.resizeCanvas.bind(this), false); // Redraws the map when the window is resized
-        this.commandService.getUris().then(() => { // Waiting for all uris then proceed
+        this.commandService.getUris()
+        .then(() => { // Waiting for all uris then proceed
             this.allUris = this.commandService.uris;
             this.droneInfoService.getAllMapMetric().then(() => {
                 this.createNewMapDrone();
@@ -61,6 +62,9 @@ export class MapComponent implements OnInit, AfterViewInit {
                     }
                 });
             });
+        },
+        (err) => {
+            console.error(err);
         });
     }
 
