@@ -1,16 +1,16 @@
 # INF3995 - Station au sol - Interface Web
 
-Contiens le code de la section "serveur" de la station au sol.
+Ce répertoire contient le code de la section "serveur" de la station au sol.
 
 ## Prérequis
 
 ### Base de données Mongo
 
 Il est nécessaire de donner accès au serveur à une base de données de type Mongo.
-Pour ce faire il est possible d'indiquer à l'aide de la variable d'environnement ``DB_CONNECTION_STRING`` une chaine de
+Pour ce faire, il est possible d'indiquer à l'aide de la variable d'environnement ``DB_CONNECTION_STRING`` une chaine de
 connexion standardisée (connection string).
 
-Par défaut la chaine utilisée est la suivante : ``mongodb://local:lacol@localhost:5002/``.
+Par défaut, la chaine utilisée est la suivante : ``mongodb://local:lacol@localhost:5002/``.
 Cette chaine permet de se connecter à une base de données locale, celle lancée par le
 fichier ``docker-compose.db.yml`` :
 
@@ -24,10 +24,10 @@ jour manuellement la BD.
 ### Optionnel - Remote compiler
 
 Le "remote compiler" est un petit service permettant de compiler de manière distante.
-Il soit être lancé afin de pouvoir utiliser la fonctionnalité d'édition du firmware à même la station au sol.
+Il doit être lancé afin de pouvoir utiliser la fonctionnalité d'édition du firmware à même la station au sol.
 Le serveur est en mesure de détecter la présence du ``remote compiler``, celui-ci est donc optionnel.
 
-La variable d'environnement ``REMOTE_COMPILER_CONNECTION_STRING`` être initialisé sinon la valeur par défaut sera
+La variable d'environnement ``REMOTE_COMPILER_CONNECTION_STRING`` doit être initialisée, sinon la valeur par défaut sera
 utilisée.
 
 Pour plus de détails, voir : ``firmware/remote-compiler``.
