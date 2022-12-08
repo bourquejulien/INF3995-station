@@ -31,4 +31,9 @@ describe('LogComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    it('should format id', () => {
+        const returnValue = component.formatId("a-b");
+        expect(returnValue).toEqual("a");
+    });
 });
