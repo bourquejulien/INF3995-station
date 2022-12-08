@@ -28,7 +28,7 @@ class RemoteCompilerClient:
         try:
             grpc.channel_ready_future(self._channel).result(timeout=timeout)
             return True
-        except grpc.FutureTimeoutError:
+        except Exception:
             return False
 
     def start_session(self):
