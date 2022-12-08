@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FirmwareService } from '@app/services/firmware/firmware.service';
-import { PartialObserver } from 'rxjs';
+import { MissionService } from "@app/services/mission/mission.service";
 
 type Mode = "file" | "editor" | "none";
 
@@ -17,7 +17,7 @@ export class FirmwarePanelComponent implements OnInit {
     modes: Array<[Mode, string]>;
     file: File | null;
 
-    constructor(protected firmwareService: FirmwareService) {
+    constructor(private readonly firmwareService: FirmwareService, readonly missionService: MissionService) {
         this.collapsed = true;
         this.isFlashError = false;
         this.isFlashing = false;

@@ -22,16 +22,19 @@ export class LogComponent implements OnInit {
     public selectMission(id: string): void {
         this.selectedMissionId = id;
         this.collapsed = true;
+    }
+
+    public getLogs(): Observable<Log[]> {
         if (this.selectedMissionId === "en cours") {
-            this.logs = of(this.missionService.currentLogs);
+            return of(this.missionService.currentLogs);
         }
         else {
             let logs = this.missionService.getMissionLogs(this.selectedMissionId);
             if (logs instanceof Observable) {
-                this.logs = logs;
+                return logs;
             }
             else {
-                this.logs = of(logs);
+                return of(logs);
             }
         }
     }

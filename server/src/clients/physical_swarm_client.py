@@ -105,8 +105,9 @@ class PhysicalSwarmClient(AbstractSwarmClient):
         match data_type:
             case 0:
                 status = int.from_bytes(data[0:1], "little")
-                position = self._position_adapters[uri].adapt(Position(*struct.unpack("<fff", data[1:])))
-                metric = generate_metric(position, self.status[status], uri)
+                position = self._position_adapters[uri].adapt(Position(*struct.unpack("<fff", data[1:13])))
+                battery = struct.unpack("f", data[13:])[0]
+                metric = generate_metric(position, self.status[status], uri, battery_level=battery)
 
                 if metric.status == "Idle":
                     self._base_return_syncer.release(uri)

@@ -26,22 +26,21 @@ describe('CommandService', () => {
     });
 
     it('should connect', () => {
-        const mockData = ["test1", "test2"];
-
+        const data: [string, boolean][] = [["test1", false], ["test2", false]];
         service.connect().then(() => {
-            expect(service.uris).toEqual(mockData);
+            expect(service.uris).toEqual(data);
         });
 
         const req = httpMock.expectOne(`${environment.serverURL}/discovery/connect`);
         expect(req.request.method).toEqual('POST');
-        req.flush(mockData);
+        req.flush(data);
     });
 
     it('should disconnect', () => {
-        service.uris = ["test"];
+        service.uris = [["", true], ["", true]];
 
         service.disconnect().then(() => {
-            expect(service.uris).toEqual([]);
+            expect(service.uris).toEqual( [["", false], ["", false]]);
         });
 
         const req = httpMock.expectOne(`${environment.serverURL}/discovery/disconnect`);
@@ -50,7 +49,7 @@ describe('CommandService', () => {
     });
 
     it('should identify', () => {
-        let mockUris = ["test1", "test2"]
+        let mockUris = ["str1", "str2"];
 
         service.identify({uris: mockUris});
 
@@ -69,7 +68,7 @@ describe('CommandService', () => {
 
 
     it('should get uris', () => {
-        let mockUris = ["test1", "test2"]
+        let mockUris: [string, boolean][] = [["0", false]];
 
         service.getUris().then(() => {
             expect(service.uris).toEqual(mockUris);
@@ -77,7 +76,7 @@ describe('CommandService', () => {
 
         const req = httpMock.expectOne(`${environment.serverURL}/discovery/uris`);
         expect(req.request.method).toEqual('GET');
-        req.flush(mockUris);
+        req.flush({"0": false});
     });
 
     it('should retrieve mode', () => {
@@ -92,4 +91,3 @@ describe('CommandService', () => {
         req.flush(true);
     });
 });
-

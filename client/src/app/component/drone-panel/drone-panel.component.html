@@ -1,21 +1,19 @@
-<button
-    class="button"
-    (click)="collapse.toggle()"
-    [attr.aria-expanded]="!collapsed"
-    aria-controls="collapseExample">
-    {{uri}}
-    <span class="material-icons caret">{{collapsed ? "expand_more" : "expand_less"}}</span>
+<button class="button" (click)="collapse.toggle()" [attr.aria-expanded]="!collapsed" aria-controls="collapseExample">
+    {{ uri[0] }}
+    <span class="material-icons caret">{{ collapsed ? "expand_more" : "expand_less" }}</span>
 </button>
 
-<div #collapse="ngbCollapse"
-    [(ngbCollapse)]="collapsed">
+<div #collapse="ngbCollapse" [(ngbCollapse)]="collapsed">
     <div class="card">
         <div class="card-body">
-            <div>Statut: {{metric?.status}}</div>
-            <div>Position:
-                <div class="coord">x: {{metric?.position?.x ?? 0 | number: '1.0-2'}}</div>
-                <div class="coord">y: {{metric?.position?.y ?? 0 | number: '1.0-2'}}</div>
-                <div class="coord">z: {{metric?.position?.z ?? 0 | number: '1.0-2'}}</div>
+            <div>Dernier statut : {{ metric?.status }}</div>
+            <div>Connexion : {{ uri[1] ? "Connecté" : "Déconnecté" }}</div>
+            <div>Batterie: {{metric?.battery_level ?? 0 | number: '1.0-2'}}{{commandService.isSimulation ? " %" : " V"}}</div>
+            <div>
+                Position :
+                <div class="coord">x: {{ metric?.position?.x ?? 0 | number : "1.0-2" }}</div>
+                <div class="coord">y: {{ metric?.position?.y ?? 0 | number : "1.0-2" }}</div>
+                <div class="coord">z: {{ metric?.position?.z ?? 0 | number : "1.0-2" }}</div>
             </div>
             <button class="button" (click)="identify()">Identifier</button>
         </div>

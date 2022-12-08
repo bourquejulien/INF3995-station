@@ -18,6 +18,7 @@
     background-color: var(--primary);
     border-color: var(--primary);
     color: var(--font-color);
+    padding: 0;
 }
 
 #basecanvas{

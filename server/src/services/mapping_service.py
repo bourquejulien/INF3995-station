@@ -49,7 +49,7 @@ class MappingService:
         return self._latest
 
     def get_map(self):
-        return self._maps
+        return self._maps.copy()
 
     def _convert_database_map(self):
         position_obstacle = []

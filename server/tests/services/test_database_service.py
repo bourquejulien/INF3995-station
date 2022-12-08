@@ -55,9 +55,9 @@ def test_get_logs(app, mocker, db_service):
 
 def test_get_metrics(app, mocker, db_service):
     metric1 = {'mission_id': 'test', 'timestamp_ms': 0,
-               'position': '', 'status': '', 'uri': ''}
+               'position': '', 'status': '', 'uri': '', 'battery_level': 0.0}
     metric2 = {'mission_id': 'patate', 'timestamp_ms': 0,
-               'position': '', 'status': '', 'uri': ''}
+               'position': '', 'status': '', 'uri': '', 'battery_level': 0.0}
     db_service._collections['metric'].insert_one(metric1)
     db_service._collections['metric'].insert_one(metric2)
 

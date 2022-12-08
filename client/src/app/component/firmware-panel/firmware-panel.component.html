@@ -5,35 +5,33 @@
 
     <div class="row radio-container">
         <div class="form-check" *ngFor="let mode of modes">
-            <input class="form-check-input" type="radio" name="flexRadio" id="flexRadio-{{mode}}" (change)="selectMode(mode[0])">
-            <label class="form-check-label" for="flexRadio-{{mode}}">
-                {{mode[1]}} 
+            <input class="form-check-input" type="radio" name="flexRadio" id="flexRadio-{{ mode }}" (change)="selectMode(mode[0])" />
+            <label class="form-check-label" for="flexRadio-{{ mode }}">
+                {{ mode[1] }}
             </label>
         </div>
     </div>
 
     <div class="row" *ngIf="currentMode === 'file'">
-        <input accept=".bin" type="file" lang="fr" class="upload form-control" (change)="setFile($event)">
+        <input accept=".bin" type="file" lang="fr" class="upload form-control" (change)="setFile($event)" />
     </div>
     <div class="row" *ngIf="currentMode === 'editor'">
         <app-code-editor class="editor"></app-code-editor>
     </div>
 
-    <br>
+    <br />
 
     <div class="row" *ngIf="currentMode !== 'none'">
-        <button class="button" (click)="flash()">
-            Programmer!
-        </button>
+        <button class="button" [disabled]="missionService.isMissionOngoing" (click)="flash()">Programmer!</button>
     </div>
 
-    <br>
+    <br />
     <div *ngIf="isFlashing" class="spinner">
         <div class="spinner-border" role="status"></div>
-        <br>
+        <br />
         <label>Programmation en cours</label>
     </div>
 
-    <br>
+    <br />
     <label *ngIf="isFlashError" class="error">Erreur lors de la programmation</label>
 </div>
