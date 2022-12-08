@@ -15,14 +15,17 @@ class MappingService:
     _logging_service: LoggingService
     _mission_service: MissionService
     _database_service: DatabaseService
-    _maps: dict[str, list[MapInfo]] # For live map on client
+    _maps: dict[str, list[MapInfo]]  # For live map on client
     _latest: dict[str, MapInfo]
 
-    def __init__(self, config: Configuration,
-                 swarm_client: AbstractSwarmClient,
-                 mission_service: MissionService,
-                 logging_service: LoggingService,
-                 database_service: DatabaseService):
+    def __init__(
+        self,
+        config: Configuration,
+        swarm_client: AbstractSwarmClient,
+        mission_service: MissionService,
+        logging_service: LoggingService,
+        database_service: DatabaseService,
+    ):
         self._maps = {}
         self._latest = {}
         self._logging_service = logging_service

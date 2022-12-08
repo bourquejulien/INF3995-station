@@ -38,7 +38,7 @@ def _init_firmware_service(config, command_service, swarm_client):
 
 class Container(containers.DeclarativeContainer):
     config = providers.Configuration(strict=True)
-    config.from_yaml(f'{os.path.dirname(__file__)}/../config.yml', required=True)
+    config.from_yaml(f"{os.path.dirname(__file__)}/../config.yml", required=True)
 
     if config.get("is_simulation"):
         abstract_swarm_client = providers.Singleton(
@@ -83,7 +83,7 @@ class Container(containers.DeclarativeContainer):
         swarm_client=abstract_swarm_client,
         mission_service=mission_service,
         logging_service=logging_service,
-        database_service=database_service
+        database_service=database_service,
     )
 
     command_service = providers.Singleton(

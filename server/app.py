@@ -18,11 +18,14 @@ logger = logging.getLogger(__name__)
 
 
 @inject
-def main(app, command_service: CommandService = Provide[Container.command_service],
-         mapping_service: MappingService = Provide[Container.mapping_service],
-         telemetrics_service: TelemetricsService = Provide[Container.telemetrics_service],
-         firmware_service: AbstractFirmwareService = Provide[Container.firmware_service],
-         database_service: DatabaseService = Provide[Container.database_service]):
+def main(
+    app,
+    command_service: CommandService = Provide[Container.command_service],
+    mapping_service: MappingService = Provide[Container.mapping_service],
+    telemetrics_service: TelemetricsService = Provide[Container.telemetrics_service],
+    firmware_service: AbstractFirmwareService = Provide[Container.firmware_service],
+    database_service: DatabaseService = Provide[Container.database_service],
+):
     database_service.connect()
     command_service.connect(command_service.discover())
     app.run(host="0.0.0.0")

@@ -6,7 +6,7 @@ from src.exceptions.custom_exception import CustomException
 
 from src.services.logging_service import LoggingService
 
-ERROR = CustomException('test', 'test')
+ERROR = CustomException("test", "test")
 
 
 @pytest.fixture()
@@ -34,7 +34,7 @@ def test_start_mission_error(app, command_service):
         command_service.start_mission()
     except CustomException as e:
         error = e
-    assert error.message == 'test'
+    assert error.message == "test"
 
 
 def test_end_mission(app, command_service):
@@ -49,7 +49,7 @@ def test_end_mission_error(app, command_service):
         command_service.end_mission()
     except CustomException as e:
         error = e
-    assert error.message == 'test'
+    assert error.message == "test"
 
 
 def test_force_end_mission(app, command_service):
@@ -64,7 +64,7 @@ def test_force_end_mission_error(app, command_service):
         command_service.force_end_mission()
     except CustomException as e:
         error = e
-    assert error.message == 'test'
+    assert error.message == "test"
 
 
 def test_return_to_base(app, command_service):
@@ -79,11 +79,11 @@ def test_return_to_base_error(app, command_service):
         command_service.return_to_base()
     except CustomException as e:
         error = e
-    assert error.message == 'test'
+    assert error.message == "test"
 
 
 def test_identify(app, command_service):
-    uris = ['test']
+    uris = ["test"]
 
     command_service.identify(uris)
 
@@ -92,13 +92,13 @@ def test_identify(app, command_service):
 
 def test_identify_error(app, command_service):
     command_service._swarm_client.identify.side_effect = ERROR
-    uris = ['test']
+    uris = ["test"]
 
     try:
         command_service.identify(uris)
     except CustomException as e:
         error = e
-    assert error.message == 'test'
+    assert error.message == "test"
 
 
 def test_toggle_synchronization(app, mocker, command_service):
@@ -114,7 +114,7 @@ def test_toggle_synchronization_error(app, command_service):
         command_service.toggle_synchronization()
     except CustomException as e:
         error = e
-    assert error.message == 'test'
+    assert error.message == "test"
 
 
 def test_set_initial_positions(app, mocker, command_service):
@@ -130,11 +130,11 @@ def test_set_initial_positions_error(app, command_service):
         command_service.set_initial_positions([])
     except CustomException as e:
         error = e
-    assert error.message == 'test'
+    assert error.message == "test"
 
 
 def test_connect(app, command_service):
-    uris = ['test']
+    uris = ["test"]
 
     command_service.connect(uris)
 
@@ -143,13 +143,13 @@ def test_connect(app, command_service):
 
 def test_connect_error(app, command_service):
     command_service._swarm_client.connect.side_effect = ERROR
-    uris = ['test']
+    uris = ["test"]
 
     try:
         command_service.connect(uris)
     except CustomException as e:
         error = e
-    assert error.message == 'test'
+    assert error.message == "test"
 
 
 def test_disconnect(app, command_service):
@@ -167,7 +167,7 @@ def test_disconnect_error(app, command_service):
         command_service.disconnect()
     except CustomException as e:
         error = e
-    assert error.message == 'test'
+    assert error.message == "test"
 
 
 def test_discover(app, command_service):
@@ -185,4 +185,4 @@ def test_discover_error(app, command_service):
         command_service.discover()
     except CustomException as e:
         error = e
-    assert error.message == 'test'
+    assert error.message == "test"

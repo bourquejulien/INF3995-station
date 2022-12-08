@@ -12,9 +12,9 @@ class LoggingService:
     _database_service: DatabaseService
     _mutex: Lock
 
-    def __init__(self, swarm_client: AbstractSwarmClient,
-                 mission_service: MissionService,
-                 database_service: DatabaseService):
+    def __init__(
+        self, swarm_client: AbstractSwarmClient, mission_service: MissionService, database_service: DatabaseService
+    ):
         self._logs = []
         self._mutex = Lock()
         self._mission_service = mission_service
@@ -30,7 +30,11 @@ class LoggingService:
         with self._mutex:
             self._logs.append(log)
 
-    def log(self, message: str, origin="server", ):
+    def log(
+        self,
+        message: str,
+        origin="server",
+    ):
         self._add(generate_log("", message, "INFO", origin))
 
     def get_since(self, mission_id: str, timestamp_ms: int):

@@ -40,7 +40,7 @@ def test_add_with_current_mission(app, log_service):
 def test_log(app, mocker, log_service):
     log_service._add = mocker.Mock()
 
-    log_service.log('test_id', 'test_origin')
+    log_service.log("test_id", "test_origin")
 
     log_service._add.assert_called_once()
 
@@ -52,7 +52,7 @@ def test_get_since(app, mocker, log_service):
     log_service._logs.append(log1)
     log_service._logs.append(log2)
 
-    result = log_service.get_since('test', 0)
+    result = log_service.get_since("test", 0)
 
     assert result == [log2]
 
@@ -60,9 +60,9 @@ def test_get_since(app, mocker, log_service):
 def test_get_history(app, mocker, log_service):
     log_service._database_service.get_logs = mocker.Mock()
 
-    log_service.get_history('test')
+    log_service.get_history("test")
 
-    log_service._database_service.get_logs.assert_called_once_with('test')
+    log_service._database_service.get_logs.assert_called_once_with("test")
 
 
 def test_flush(app, mocker, log_service):

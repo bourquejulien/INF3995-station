@@ -10,15 +10,15 @@ from src.services.mapping_service import MappingService
 from src.services.telemetrics_service import TelemetricsService
 
 logger = logging.getLogger(__name__)
-blueprint = Blueprint('drone-info', __name__)
+blueprint = Blueprint("drone-info", __name__)
 
 
-@blueprint.route('/logs', methods=['get'])
+@blueprint.route("/logs", methods=["get"])
 @inject
 def get_logs(logging_service: LoggingService = Provide[Container.logging_service]):
     try:
         mission_id = request.args.get("mission_id", type=str)
-        since_timestamp_ms = request.args.get('since_timestamp', type=int)
+        since_timestamp_ms = request.args.get("since_timestamp", type=int)
         if since_timestamp_ms is not None:
             logs_list = logging_service.get_since(mission_id, since_timestamp_ms)
         else:
@@ -29,7 +29,7 @@ def get_logs(logging_service: LoggingService = Provide[Container.logging_service
         return f"{e.name}: {e.message}", 500
 
 
-@blueprint.route('/latestMetric', methods=['get'])
+@blueprint.route("/latestMetric", methods=["get"])
 @inject
 def get_latest_metric(telemetrics_service: TelemetricsService = Provide[Container.telemetrics_service]):
     try:
@@ -40,7 +40,7 @@ def get_latest_metric(telemetrics_service: TelemetricsService = Provide[Containe
         return f"{e.name}: {e.message}", 500
 
 
-@blueprint.route('/maps', methods=['get'])
+@blueprint.route("/maps", methods=["get"])
 @inject
 def get_map(mapping_service: MappingService = Provide[Container.mapping_service]):
     try:
@@ -51,7 +51,7 @@ def get_map(mapping_service: MappingService = Provide[Container.mapping_service]
         return f"{e.name}: {e.message}", 500
 
 
-@blueprint.route('/latestMap', methods=['get'])
+@blueprint.route("/latestMap", methods=["get"])
 @inject
 def get_latest_map(mapping_service: MappingService = Provide[Container.mapping_service]):
     try:
@@ -61,7 +61,7 @@ def get_latest_map(mapping_service: MappingService = Provide[Container.mapping_s
         return f"{e.name}: {e.message}", 500
 
 
-@blueprint.route('/mapDatabase', methods=['get'])
+@blueprint.route("/mapDatabase", methods=["get"])
 @inject
 def get_map_by_id(database_service: DatabaseService = Provide[Container.database_service]):
     try:

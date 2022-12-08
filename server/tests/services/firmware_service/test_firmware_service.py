@@ -11,7 +11,9 @@ def firmware_service():
 
 
 def test_flash_data(app, mocker, firmware_service):
-    flash_mock = mocker.patch('src.services.firmware_service.no_compiler_firmware_service.NoCompilerFirmwareService.flash_data')
+    flash_mock = mocker.patch(
+        "src.services.firmware_service.no_compiler_firmware_service.NoCompilerFirmwareService.flash_data"
+    )
 
     firmware_service.flash_data([])
 
@@ -21,16 +23,16 @@ def test_flash_data(app, mocker, firmware_service):
 def test_edit(app, mocker, firmware_service):
     firmware_service.remote_compiler_client = mocker.Mock()
 
-    firmware_service.edit('', [])
+    firmware_service.edit("", [])
 
-    firmware_service.remote_compiler_client.edit.assert_called_once_with('', [])
+    firmware_service.remote_compiler_client.edit.assert_called_once_with("", [])
 
 
 def test_get_file(app, mocker, firmware_service):
     firmware_service.remote_compiler_client = mocker.Mock()
-    firmware_service.remote_compiler_client.get.return_value = 'test'
+    firmware_service.remote_compiler_client.get.return_value = "test"
 
-    result = firmware_service.get_file('')
+    result = firmware_service.get_file("")
 
-    firmware_service.remote_compiler_client.get.assert_called_once_with('')
-    assert result == 'test'
+    firmware_service.remote_compiler_client.get.assert_called_once_with("")
+    assert result == "test"
