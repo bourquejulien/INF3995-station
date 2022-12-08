@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { environment } from "@environment";
+import { catchError } from 'rxjs/operators';
 import { DefaultPosition, Identify } from "@app/interface/commands";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject, Observable, throwError } from "rxjs";
 
 @Injectable({
     providedIn: "root",
@@ -22,7 +23,8 @@ export class CommandService {
     async connect(): Promise<void> {
         this.uris = await this.httpClient
             .post<Map<string, boolean>>(`${environment.serverURL}/discovery/connect`, undefined)
-            .toPromise()
+            .pipe(catchError(this.handleError))
+            .toPromise();
             .then((e) => Array.from(e));
     }
 
@@ -31,7 +33,9 @@ export class CommandService {
             .post(`${environment.serverURL}/discovery/disconnect`, undefined, {
                 responseType: "text",
             })
+            .pipe(catchError(this.handleError))
             .toPromise();
+
         for (const uri of this.uris) {
             uri[1] = false;
         }
@@ -42,6 +46,7 @@ export class CommandService {
             .post(`${environment.serverURL}/action/identify`, command, {
                 responseType: "text",
             })
+            .pipe(catchError(this.handleError))
             .toPromise();
     }
 
@@ -50,6 +55,7 @@ export class CommandService {
             .post(`${environment.serverURL}/action/toggle_sync`, null, {
                 responseType: "text",
             })
+            .pipe(catchError(this.handleError))
             .toPromise();
     }
 
@@ -64,7 +70,8 @@ export class CommandService {
     async getUris(): Promise<void> {
         const uris = await this.httpClient
             .get<Map<number, boolean>>(`${environment.serverURL}/discovery/uris`)
-            .toPromise()
+            .pipe(catchError(this.handleError))
+            .toPromise();
             .then((e) => Array.from(Object.entries(e)));
 
         if (JSON.stringify(uris) !== JSON.stringify(this.uris)) {
@@ -74,10 +81,18 @@ export class CommandService {
     }
 
     async retrieveMode(): Promise<void> {
-        this.isSimulation = await this.httpClient.get<boolean>(`${environment.serverURL}/is_simulation`).toPromise();
+        this.isSimulation = await this.httpClient
+            .get<boolean>(`${environment.serverURL}/is_simulation`)
+            .pipe(catchError(this.handleError))
+            .toPromise();
     }
 
     get urisObservable(): Observable<Array<[string, boolean]>> {
         return this.urisSubject.asObservable();
+    }
+
+    private handleError(error: HttpErrorResponse): Observable<never> {
+        if (error.status === 0) return throwError(new Error('Server is unavailable'));
+        return throwError(error);
     }
 }

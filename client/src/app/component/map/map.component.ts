@@ -64,6 +64,9 @@ export class MapComponent implements OnInit, AfterViewInit {
                     }
                 });
             });
+        },
+        (err) => {
+            console.error(err);
         });
     }
 

@@ -12,7 +12,8 @@ class LoggingService:
     _database_service: DatabaseService
     _mutex: Lock
 
-    def __init__(self, swarm_client: AbstractSwarmClient, mission_service: MissionService,
+    def __init__(self, swarm_client: AbstractSwarmClient,
+                 mission_service: MissionService,
                  database_service: DatabaseService):
         self._logs = []
         self._mutex = Lock()

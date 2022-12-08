@@ -1,6 +1,6 @@
 import logging
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify
 
 from src.clients.abstract_swarm_client import AbstractSwarmClient
 from src.exceptions.custom_exception import CustomException
