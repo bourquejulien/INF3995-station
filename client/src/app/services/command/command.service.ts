@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { environment } from "@environment";
-import { catchError } from 'rxjs/operators';
+import { catchError } from "rxjs/operators";
 import { DefaultPosition, Identify } from "@app/interface/commands";
 import { BehaviorSubject, Observable, throwError } from "rxjs";
 
@@ -24,7 +24,7 @@ export class CommandService {
         this.uris = await this.httpClient
             .post<Map<string, boolean>>(`${environment.serverURL}/discovery/connect`, undefined)
             .pipe(catchError(this.handleError))
-            .toPromise();
+            .toPromise()
             .then((e) => Array.from(e));
     }
 
@@ -71,7 +71,7 @@ export class CommandService {
         const uris = await this.httpClient
             .get<Map<number, boolean>>(`${environment.serverURL}/discovery/uris`)
             .pipe(catchError(this.handleError))
-            .toPromise();
+            .toPromise()
             .then((e) => Array.from(Object.entries(e)));
 
         if (JSON.stringify(uris) !== JSON.stringify(this.uris)) {

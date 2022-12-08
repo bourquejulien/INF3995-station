@@ -13,18 +13,20 @@ logger = logging.getLogger(__name__)
 blueprint = Blueprint("discovery", __name__)
 
 
-@blueprint.route("/uris", methods=["get"])
-@inject
-def uris(
+def _get_all_uris(
     swarm_client: AbstractSwarmClient = Provide[Container.abstract_swarm_client],
     telemetrics_service: TelemetricsService = Provide[Container.telemetrics_service],
 ):
-    try:
-        all_uris = list(telemetrics_service.latest.keys())
-        connected_uris = swarm_client.uris
-        uri_status: dict[str, bool] = {uri: uri in connected_uris for uri in all_uris}
+    all_uris = list(telemetrics_service.latest.keys())
+    connected_uris = swarm_client.uris
+    return {uri: uri in connected_uris for uri in all_uris}
 
-        return jsonify(uri_status), 200
+
+@blueprint.route("/uris", methods=["get"])
+@inject
+def uris():
+    try:
+        return jsonify(_get_all_uris()), 200
     except CustomException as e:
         logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
@@ -33,12 +35,10 @@ def uris(
 @blueprint.route("/connect", methods=["post"])
 @inject
 def connect(
-    command_service: CommandService = Provide[Container.command_service],
-    swarm_client: AbstractSwarmClient = Provide[Container.abstract_swarm_client],
-):
+    command_service: CommandService = Provide[Container.command_service]):
     try:
         command_service.connect(command_service.discover())
-        return jsonify(swarm_client.uris), 200
+        return jsonify(_get_all_uris()), 200
     except CustomException as e:
         logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
