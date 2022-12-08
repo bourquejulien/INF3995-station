@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { FirmwarePanelComponent } from './firmware-panel.component';
 import { FirmwareService } from '../../services/firmware/firmware.service';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { of } from 'rxjs';
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 
 describe('FirmwarePanelComponent', () => {

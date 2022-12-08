@@ -12,7 +12,7 @@ describe('MissionPageComponent', () => {
     let mockMissionService: MissionService;
 
     beforeEach(async () => {
-        mockCommandService = jasmine.createSpyObj("CommandService", {"getUris": Promise.resolve(), "retrieveMode": Promise.resolve(), "connect": Promise.resolve(), "disconnect": Promise.resolve(), "identify": Promise.resolve(), "toggleSync": Promise.resolve()});
+        mockCommandService = jasmine.createSpyObj("CommandService", {"getUris": Promise.resolve(), "retrieveMode": Promise.resolve(), "connect": Promise.resolve(), "disconnect": Promise.resolve(), "identify": Promise.resolve(), "toggleSync": Promise.resolve()}, {"uris": []});
         mockMissionService = jasmine.createSpyObj("MissionService", ["startMission", "endMission", "forceEndMission", "returnToBase"], {"isMissionOnGoing": true});
         await TestBed.configureTestingModule({
             declarations: [ MissionPageComponent ],
