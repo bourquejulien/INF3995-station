@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 
 
 class AbstractFirmwareService(ABC):
-
     @abstractmethod
     def flash_data(self, data: bytes):
         pass

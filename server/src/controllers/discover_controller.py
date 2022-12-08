@@ -34,8 +34,7 @@ def uris():
 
 @blueprint.route("/connect", methods=["post"])
 @inject
-def connect(
-    command_service: CommandService = Provide[Container.command_service]):
+def connect(command_service: CommandService = Provide[Container.command_service]):
     try:
         command_service.connect(command_service.discover())
         return jsonify(_get_all_uris()), 200

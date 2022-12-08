@@ -6,14 +6,14 @@
     <div class="modal-body">
         <div>
             <div class="d-flex justify-content-between">
-                <input class="path form-control" type="text" [(ngModel)]="filePath" (keydown)="handleKey($event)"/>
+                <input class="path form-control" type="text" [(ngModel)]="filePath" (keydown)="handleKey($event)" />
                 <button class="button" (click)="getFile()">Ouvrir</button>
             </div>
             <label *ngIf="isPathError" class="error">Impossible d'accéder à ce fichier</label>
-            <br>
+            <br />
             <textarea rows="10" class="code" [(ngModel)]="fileContent"></textarea>
             <label *ngIf="isEditError" class="error">Impossible de modifier ce fichier</label>
-            <br>
+            <br />
             <button class="button" (click)="editFile()">Modifier</button>
         </div>
     </div>

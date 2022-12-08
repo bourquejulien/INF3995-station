@@ -1,30 +1,27 @@
-import { HttpClient } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { DronePanelComponent } from '@app/component/drone-panel/drone-panel.component';
-import { CommandService } from '@app/services/command/command.service';
-import { DroneInfoService } from '@app/services/drone-info/drone-info.service';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { HttpClient } from "@angular/common/http";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { DronePanelComponent } from "@app/component/drone-panel/drone-panel.component";
+import { CommandService } from "@app/services/command/command.service";
+import { DroneInfoService } from "@app/services/drone-info/drone-info.service";
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 
-describe('DronePanelComponent', () => {
+describe("DronePanelComponent", () => {
     let component: DronePanelComponent;
     let fixture: ComponentFixture<DronePanelComponent>;
     let mockCommandService: CommandService;
     let mockDroneInfoService: DroneInfoService;
 
     beforeEach(async () => {
-        mockCommandService = new CommandService({} as HttpClient)
-        mockDroneInfoService = new DroneInfoService({} as HttpClient)
+        mockCommandService = new CommandService({} as HttpClient);
+        mockDroneInfoService = new DroneInfoService({} as HttpClient);
         await TestBed.configureTestingModule({
-            declarations: [ DronePanelComponent ],
+            declarations: [DronePanelComponent],
             providers: [
-                {provide: CommandService, useValue: mockCommandService},
-                {provide: DroneInfoService, useValue: mockDroneInfoService}
+                { provide: CommandService, useValue: mockCommandService },
+                { provide: DroneInfoService, useValue: mockDroneInfoService },
             ],
-            imports: [
-                NgbModule,
-            ]
-        })
-        .compileComponents();
+            imports: [NgbModule],
+        }).compileComponents();
     });
 
     beforeEach(() => {
@@ -33,13 +30,12 @@ describe('DronePanelComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
+    it("should create", () => {
         expect(component).toBeTruthy();
     });
 
-
-    it('should not call commandService if uri is empty string when calling identify', () => {
-        const identifySpy = spyOn(mockCommandService, 'identify');
+    it("should not call commandService if uri is empty string when calling identify", () => {
+        const identifySpy = spyOn(mockCommandService, "identify");
         component.uri = ["", false];
 
         component.identify();
@@ -47,8 +43,8 @@ describe('DronePanelComponent', () => {
         expect(identifySpy).not.toHaveBeenCalled();
     });
 
-    it('should call commandService if uri is not empty string when calling identify', () => {
-        const identifySpy = spyOn(mockCommandService, 'identify');
+    it("should call commandService if uri is not empty string when calling identify", () => {
+        const identifySpy = spyOn(mockCommandService, "identify");
         component.uri = ["test", true];
 
         component.identify();

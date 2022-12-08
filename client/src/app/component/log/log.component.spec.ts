@@ -1,25 +1,20 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { LogComponent } from './log.component';
-import { MissionService } from '@app/services/mission/mission.service';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { LogComponent } from "./log.component";
+import { MissionService } from "@app/services/mission/mission.service";
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 
-describe('LogComponent', () => {
+describe("LogComponent", () => {
     let component: LogComponent;
     let fixture: ComponentFixture<LogComponent>;
     let mockMissionService: MissionService;
 
     beforeEach(async () => {
-        mockMissionService = jasmine.createSpyObj("MissionService", ["getMissionLogs"], {"missions": []});
+        mockMissionService = jasmine.createSpyObj("MissionService", ["getMissionLogs"], { missions: [] });
         await TestBed.configureTestingModule({
-            declarations: [ LogComponent ],
-            providers: [
-                {provide: MissionService, useValue: mockMissionService}
-            ],
-            imports: [
-                NgbModule
-            ]
-        })
-        .compileComponents();
+            declarations: [LogComponent],
+            providers: [{ provide: MissionService, useValue: mockMissionService }],
+            imports: [NgbModule],
+        }).compileComponents();
     });
 
     beforeEach(() => {
@@ -28,11 +23,11 @@ describe('LogComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
+    it("should create", () => {
         expect(component).toBeTruthy();
     });
 
-    it('should format id', () => {
+    it("should format id", () => {
         const returnValue = component.formatId("a-b");
         expect(returnValue).toEqual("a");
     });

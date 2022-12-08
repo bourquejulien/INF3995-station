@@ -16,16 +16,13 @@ def telemetrics_service(mocker):
     mission_service_mock = mock.Mock(MissionService)
     db_service_mock = mock.Mock(DatabaseService)
     logging_service_mock = mock.Mock(LoggingService)
-    telemetrics_service = TelemetricsService(client_mock,
-                                             mission_service_mock,
-                                             db_service_mock,
-                                             logging_service_mock)
+    telemetrics_service = TelemetricsService(client_mock, mission_service_mock, db_service_mock, logging_service_mock)
     yield telemetrics_service
 
 
 def test_add(app, mocker, telemetrics_service):
-    metric = Metric(0, Position(0, 0, 0), '', '', '', 'test', 0)
-    mission = Mission(True, '', 0, 0, 0, 0)
+    metric = Metric(0, Position(0, 0, 0), "", "", "", "test", 0)
+    mission = Mission(True, "", 0, 0, 0, 0)
     telemetrics_service._mission_service.current_mission = mission
 
     telemetrics_service._add(metric)
@@ -35,8 +32,8 @@ def test_add(app, mocker, telemetrics_service):
 
 
 def test_get_since(app, mocker, telemetrics_service):
-    metric1 = Metric(Position(0, 0, 0), 0, '', '', '', 'test', 0)
-    metric2 = Metric(Position(0, 0, 0), 1, '', '', '', 'test', 0)
+    metric1 = Metric(Position(0, 0, 0), 0, "", "", "", "test", 0)
+    metric2 = Metric(Position(0, 0, 0), 1, "", "", "", "test", 0)
     telemetrics_service._metrics = [metric2, metric1]
 
     result = telemetrics_service.get_since(0)
@@ -47,27 +44,27 @@ def test_get_since(app, mocker, telemetrics_service):
 def test_get_history(app, mocker, telemetrics_service):
     telemetrics_service._database_service.get_metrics = mocker.Mock()
 
-    result = telemetrics_service.get_history('test')
+    result = telemetrics_service.get_history("test")
 
-    telemetrics_service._database_service.get_metrics.assert_called_once_with('test')
+    telemetrics_service._database_service.get_metrics.assert_called_once_with("test")
 
 
 def test_flush(app, mocker, telemetrics_service):
-    metric1 = Metric(Position(0, 0, 0), 0, '', '', '', 'test', 0)
-    metric2 = Metric(Position(0, 0, 0), 1, '', '', '', 'test', 0)
+    metric1 = Metric(Position(0, 0, 0), 0, "", "", "", "test", 0)
+    metric2 = Metric(Position(0, 0, 0), 1, "", "", "", "test", 0)
     telemetrics_service._metrics = [metric2, metric1]
-    mission = Mission(True, '', 0, 0, 0, 0)
+    mission = Mission(True, "", 0, 0, 0, 0)
     telemetrics_service._mission_service.current_mission = mission
 
     telemetrics_service.flush()
 
     assert telemetrics_service._metrics == []
-    assert telemetrics_service._latest == {} 
+    assert telemetrics_service._latest == {}
 
 
 def test_latest(app, mocker, telemetrics_service):
-    telemetrics_service._latest = 'test'
+    telemetrics_service._latest = "test"
 
     result = telemetrics_service.latest
 
-    assert result == 'test'
+    assert result == "test"

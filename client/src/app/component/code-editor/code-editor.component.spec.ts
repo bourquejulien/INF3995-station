@@ -1,13 +1,13 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { CodeEditorComponent } from './code-editor.component';
-import { CommandService } from '../../services/command/command.service';
-import { DroneInfoService } from '../../services/drone-info/drone-info.service';
-import { FirmwareService } from '../../services/firmware/firmware.service';
-import { HttpClient } from '@angular/common/http';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CodeEditorComponent } from "./code-editor.component";
+import { CommandService } from "../../services/command/command.service";
+import { DroneInfoService } from "../../services/drone-info/drone-info.service";
+import { FirmwareService } from "../../services/firmware/firmware.service";
+import { HttpClient } from "@angular/common/http";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 
-describe('CodeEditorComponent', () => {
+describe("CodeEditorComponent", () => {
     let component: CodeEditorComponent;
     let fixture: ComponentFixture<CodeEditorComponent>;
     let keyboardEvent: KeyboardEvent;
@@ -17,9 +17,7 @@ describe('CodeEditorComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [CodeEditorComponent],
-            providers: [
-                {provide: FirmwareService, useValue: mockFirmwareService}
-            ],
+            providers: [{ provide: FirmwareService, useValue: mockFirmwareService }],
         }).compileComponents();
     });
 
@@ -29,41 +27,41 @@ describe('CodeEditorComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
+    it("should create", () => {
         expect(component).toBeTruthy();
     });
 
-    it('should call getFile if key pressed is Enter', () => {
+    it("should call getFile if key pressed is Enter", () => {
         keyboardEvent = { key: "Enter" } as KeyboardEvent;
-        const handleKeySpy = spyOn(component, 'getFile');
+        const handleKeySpy = spyOn(component, "getFile");
         component.handleKey(keyboardEvent);
         expect(handleKeySpy).toHaveBeenCalled();
     });
-    
-    it('should not call getFile if key pressed is not Enter', () => {
+
+    it("should not call getFile if key pressed is not Enter", () => {
         keyboardEvent = { key: "a" } as KeyboardEvent;
-        const handleKeySpy = spyOn(component, 'getFile');
+        const handleKeySpy = spyOn(component, "getFile");
         component.handleKey(keyboardEvent);
         expect(handleKeySpy).not.toHaveBeenCalled();
     });
 
-    it('getFile should return if filePath is empty', () => {
+    it("getFile should return if filePath is empty", () => {
         component.filePath = "";
-        const firmwareFileSpy = spyOn(mockFirmwareService, 'getFile');
+        const firmwareFileSpy = spyOn(mockFirmwareService, "getFile");
         component.getFile();
         expect(firmwareFileSpy).not.toHaveBeenCalled();
     });
 
-    it('editFile should return if filePath is empty', () => {
+    it("editFile should return if filePath is empty", () => {
         component.filePath = "";
-        const firmwareFileSpy = spyOn(mockFirmwareService, 'editFile');
+        const firmwareFileSpy = spyOn(mockFirmwareService, "editFile");
         component.editFile();
         expect(firmwareFileSpy).not.toHaveBeenCalled();
     });
 
-    it('editFile should return if fileContent is empty', () => {
+    it("editFile should return if fileContent is empty", () => {
         component.fileContent = "";
-        const firmwareFileSpy = spyOn(mockFirmwareService, 'editFile');
+        const firmwareFileSpy = spyOn(mockFirmwareService, "editFile");
         component.editFile();
         expect(firmwareFileSpy).not.toHaveBeenCalled();
     });

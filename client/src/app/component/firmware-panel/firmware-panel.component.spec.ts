@@ -1,11 +1,11 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FirmwarePanelComponent } from './firmware-panel.component';
-import { FirmwareService } from '../../services/firmware/firmware.service';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { of } from 'rxjs';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { FirmwarePanelComponent } from "./firmware-panel.component";
+import { FirmwareService } from "../../services/firmware/firmware.service";
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { of } from "rxjs";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 
-describe('FirmwarePanelComponent', () => {
+describe("FirmwarePanelComponent", () => {
     let component: FirmwarePanelComponent;
     let fixture: ComponentFixture<FirmwarePanelComponent>;
 
@@ -14,17 +14,13 @@ describe('FirmwarePanelComponent', () => {
     let spyBuildFlash: jasmine.Spy;
     let spyFlashFile: jasmine.Spy;
 
-
     beforeEach(async () => {
-        mockFirmwareService = jasmine.createSpyObj('FirmwareService', ['flashFile', 'buildFlash', 'flashHandler']);
-        spyBuildFlash = jasmine.createSpy('buildFlash').and.returnValue(of({type: 'Observable'}));
+        mockFirmwareService = jasmine.createSpyObj("FirmwareService", ["flashFile", "buildFlash", "flashHandler"]);
+        spyBuildFlash = jasmine.createSpy("buildFlash").and.returnValue(of({ type: "Observable" }));
         await TestBed.configureTestingModule({
             declarations: [FirmwarePanelComponent],
-            providers: [
-                {provide: FirmwareService, useValue: mockFirmwareService}
-            ],
-            imports: [NgbModule, HttpClientTestingModule
-            ]
+            providers: [{ provide: FirmwareService, useValue: mockFirmwareService }],
+            imports: [NgbModule, HttpClientTestingModule],
         }).compileComponents();
     });
 
@@ -34,27 +30,27 @@ describe('FirmwarePanelComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
+    it("should create", () => {
         expect(component).toBeTruthy();
     });
 
-    it('getName should return name', () => {
+    it("getName should return name", () => {
         let result = component.getName("editor");
-        expect(result).toMatch("Utiliser l'éditeur en ligne"); 
+        expect(result).toMatch("Utiliser l'éditeur en ligne");
     });
 
-    it('selectMode should select mode in parameter', () => {
+    it("selectMode should select mode in parameter", () => {
         component.selectMode("file");
         expect(component.currentMode).toMatch("file");
         expect(component.collapsed).toBeTruthy();
         expect(component.file).toBeNull();
     });
-    
-    it('flash should not call flashFile if file is null', () => {
+
+    it("flash should not call flashFile if file is null", () => {
         component.currentMode = "file";
         component.file = null;
         component.flash();
-        expect(mockFirmwareService['buildFlash']).not.toHaveBeenCalled();
-        expect(mockFirmwareService['flashFile']).not.toHaveBeenCalled();
+        expect(mockFirmwareService["buildFlash"]).not.toHaveBeenCalled();
+        expect(mockFirmwareService["flashFile"]).not.toHaveBeenCalled();
     });
 });

@@ -97,7 +97,7 @@ export class CommandService {
     }
 
     private handleError(error: HttpErrorResponse): Observable<never> {
-        if (error.status === 0) return throwError(new Error('Server is unavailable'));
+        if (error.status === 0) return throwError(new Error("Server is unavailable"));
         return throwError(error);
     }
 }

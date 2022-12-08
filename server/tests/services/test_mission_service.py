@@ -6,7 +6,7 @@ from src.exceptions.custom_exception import CustomException
 
 from src.services.database_service import DatabaseService
 
-ERROR = CustomException('test', 'test')
+ERROR = CustomException("test", "test")
 
 
 @pytest.fixture()
@@ -18,16 +18,16 @@ def mission_service():
 
 
 def test_start_mission_not_ongoing(app, mocker, mission_service):
-    generate_mock = mocker.patch('src.services.mission_service.generate_mission')
-    generate_mock.return_value = 'test'
+    generate_mock = mocker.patch("src.services.mission_service.generate_mission")
+    generate_mock.return_value = "test"
 
     result = mission_service.start_mission(0)
 
-    assert result == 'test'
+    assert result == "test"
 
 
 def test_start_mission_ongoing(app, mocker, mission_service):
-    mission_service._mission = 'test'
+    mission_service._mission = "test"
 
     try:
         mission_service.start_mission(0)
@@ -69,17 +69,17 @@ def test_get_last_missions(app, mocker, mission_service):
 
 
 def test_get_mission_by_id(app, mocker, mission_service):
-    mission_service.get_mission_by_id('test')
+    mission_service.get_mission_by_id("test")
 
-    mission_service._database_service.get_mission.assert_called_once_with('test')
+    mission_service._database_service.get_mission.assert_called_once_with("test")
 
 
 def test_add_flush_action(app, mocker, mission_service):
     mission_service._flush_callbacks = mocker.Mock()
 
-    mission_service.add_flush_action('test')
+    mission_service.add_flush_action("test")
 
-    mission_service._flush_callbacks.append.assert_called_once_with('test')
+    mission_service._flush_callbacks.append.assert_called_once_with("test")
 
 
 def test_current_mission(app, mocker, mission_service):

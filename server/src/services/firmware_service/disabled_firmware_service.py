@@ -2,7 +2,6 @@ from src.services.firmware_service.abstract_firmware_service import AbstractFirm
 
 
 class DisabledFirmwareService(AbstractFirmwareService):
-
     def flash_data(self, data: bytes):
         pass
 

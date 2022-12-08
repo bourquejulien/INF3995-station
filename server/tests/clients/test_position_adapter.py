@@ -2,8 +2,7 @@ import pytest
 from math import radians
 from src.classes.position import Position
 from src.classes.distance import Distance
-from src.clients.position_adapter import _convert_coordinate, \
-        _PositionHistory, PositionAdapter
+from src.clients.position_adapter import _convert_coordinate, _PositionHistory, PositionAdapter
 
 
 @pytest.fixture()
@@ -69,7 +68,7 @@ def test_append_and_get(app, mocker, position_history):
 
 def test_adapt(app, mocker, position_adapter):
     position = Position(1, 2, 3)
-    convert_coordinate_mock = mocker.patch('src.clients.position_adapter._convert_coordinate')
+    convert_coordinate_mock = mocker.patch("src.clients.position_adapter._convert_coordinate")
     convert_coordinate_mock.return_value = Position(-2, 1, 3)
     position_adapter._yaw = 0
     position_adapter._desired_position.x = 3
@@ -86,7 +85,7 @@ def test_set_position(app, mocker, position_adapter):
     desired_pos = Position(2, 3, 4)
     yaw_deg = 5.0
     position_adapter._position_history = mocker.Mock()
-    convert_coordinate_mock = mocker.patch('src.clients.position_adapter._convert_coordinate')
+    convert_coordinate_mock = mocker.patch("src.clients.position_adapter._convert_coordinate")
     convert_coordinate_mock.return_value = Position(-2, 1, 3)
 
     result = position_adapter.set_position(current_pos, desired_pos, yaw_deg)

@@ -18,8 +18,7 @@ class _PositionHistory:
         self._average_size = average_size
 
     def append(self, position: Position, distance: Distance):
-        if not len(self._history) == 0 \
-                and len(self._history) >= self._average_size:
+        if not len(self._history) == 0 and len(self._history) >= self._average_size:
             self._history.pop()
         self._history.appendleft((position, distance))
 
@@ -34,8 +33,7 @@ class _PositionHistory:
             totalPosition = totalPosition + position
             totalDistance = totalDistance + distance
 
-        return totalPosition * (1 / len(self._history)), \
-            totalDistance * (1 / len(self._history))
+        return totalPosition * (1 / len(self._history)), totalDistance * (1 / len(self._history))
 
     def append_and_get(self, position, distance):
         self.append(position, distance)
@@ -64,9 +62,7 @@ class PositionAdapter:
         y = position.x * sin(self._yaw) + position.y * cos(self._yaw)
 
         return Position(
-            x + self._desired_position.x,
-            y + self._desired_position.y,
-            position.z + self._desired_position.z
+            x + self._desired_position.x, y + self._desired_position.y, position.z + self._desired_position.z
         )
 
     def set_position(self, current_position: Position, desired_position: Position, yaw_deg: float):

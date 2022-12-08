@@ -34,7 +34,7 @@ class NoCompilerFirmwareService(AbstractFirmwareService):
     def flash_data(self, data: bytes):
         with self.command_service.disable():
             uris = self.swarm_client.uris
-            uris_no_param = [uri[0:uri.find("?")] for uri in self.swarm_client.uris]
+            uris_no_param = [uri[0 : uri.find("?")] for uri in self.swarm_client.uris]
 
             self.swarm_client.disconnect()
             self._flash(data, uris_no_param)

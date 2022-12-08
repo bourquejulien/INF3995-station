@@ -1,6 +1,6 @@
 from unittest import mock
 import pytest
-from src.services.firmware_service.no_compiler_firmware_service import NoCompilerFirmwareService 
+from src.services.firmware_service.no_compiler_firmware_service import NoCompilerFirmwareService
 
 
 @pytest.fixture()

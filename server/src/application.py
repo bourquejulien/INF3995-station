@@ -3,8 +3,14 @@ import sys
 
 from flask import Flask
 from flask_cors import CORS
-from src.controllers import server_status_controller, discover_controller, \
-    mission_controller, action_controller, drone_info_controller, firmware_controller
+from src.controllers import (
+    server_status_controller,
+    discover_controller,
+    mission_controller,
+    action_controller,
+    drone_info_controller,
+    firmware_controller,
+)
 from src.services.command_service import CommandService
 from dependency_injector.wiring import inject, Provide
 from src.container import Container
@@ -28,8 +34,10 @@ def create_app():
 
 
 @inject
-def exit_app(command_service: CommandService = Provide[Container.command_service],
-             firmware_service: AbstractFirmwareService = Provide[Container.firmware_service]):
+def exit_app(
+    command_service: CommandService = Provide[Container.command_service],
+    firmware_service: AbstractFirmwareService = Provide[Container.firmware_service],
+):
     logging.info("Exiting app...")
     firmware_service.close(sys.exc_info())
     command_service.disconnect()

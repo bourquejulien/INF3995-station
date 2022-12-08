@@ -9,19 +9,19 @@ from src.services.logging_service import LoggingService
 from src.services.telemetrics_service import TelemetricsService
 
 logger = logging.getLogger(__name__)
-blueprint = Blueprint('mission', __name__)
+blueprint = Blueprint("mission", __name__)
 
 
-@blueprint.route('/', methods=['get'])
+@blueprint.route("/", methods=["get"])
 @inject
 def get_missions(mission_service: MissionService = Provide[Container.mission_service]):
     try:
-        mission_id = request.args.get('mission_id', type=str)
+        mission_id = request.args.get("mission_id", type=str)
         missions = []
         if mission_id is not None:
             missions.append(mission_service.get_mission_by_id(mission_id))
         else:
-            missions_number = request.args.get('missions_number', type=int)
+            missions_number = request.args.get("missions_number", type=int)
             missions = mission_service.get_last_missions(missions_number)
     except CustomException as e:
         logger.warning(e, exc_info=True)
@@ -29,7 +29,7 @@ def get_missions(mission_service: MissionService = Provide[Container.mission_ser
     return jsonify(missions), 200
 
 
-@blueprint.route('/current_mission', methods=['get'])
+@blueprint.route("/current_mission", methods=["get"])
 @inject
 def current_mission(mission_service: MissionService = Provide[Container.mission_service]):
     try:
@@ -42,7 +42,7 @@ def current_mission(mission_service: MissionService = Provide[Container.mission_
         return "{}: {}".format(e.name, e.message), 500
 
 
-@blueprint.route('/start', methods=['post'])
+@blueprint.route("/start", methods=["post"])
 @inject
 def start(command_service=Provide[Container.command_service]):
     try:
@@ -53,7 +53,7 @@ def start(command_service=Provide[Container.command_service]):
     return jsonify(mission), 200
 
 
-@blueprint.route('/end', methods=['post'])
+@blueprint.route("/end", methods=["post"])
 @inject
 def end(command_service=Provide[Container.command_service]):
     try:
@@ -61,10 +61,10 @@ def end(command_service=Provide[Container.command_service]):
     except CustomException as e:
         logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
-    return 'success', 200
+    return "success", 200
 
 
-@blueprint.route('/force_end', methods=['post'])
+@blueprint.route("/force_end", methods=["post"])
 @inject
 def force_end(command_service=Provide[Container.command_service]):
     try:
@@ -72,24 +72,24 @@ def force_end(command_service=Provide[Container.command_service]):
     except CustomException as e:
         logger.warning(e, exc_info=True)
         return "{}: {}".format(e.name, e.message), 500
-    return 'success', 200
+    return "success", 200
 
 
-@blueprint.route('/return', methods=['post'])
+@blueprint.route("/return", methods=["post"])
 @inject
 def return_to_base(command_service=Provide[Container.command_service]):
     try:
         command_service.return_to_base()
     except CustomException as e:
         return "{}: {}".format(e.name, e.message), 500
-    return 'success', 200
+    return "success", 200
 
 
-@blueprint.route('/logs', methods=['get'])
+@blueprint.route("/logs", methods=["get"])
 @inject
 def get_logs(logging_service: LoggingService = Provide[Container.logging_service]):
     try:
-        mission_id = request.args.get('mission_id', type=str)
+        mission_id = request.args.get("mission_id", type=str)
         logs_list = logging_service.get_history(mission_id)
         return jsonify(logs_list)
     except CustomException as e:
@@ -97,11 +97,11 @@ def get_logs(logging_service: LoggingService = Provide[Container.logging_service
         return f"{e.name}: {e.message}", 500
 
 
-@blueprint.route('/metrics', methods=['get'])
+@blueprint.route("/metrics", methods=["get"])
 @inject
 def get_metrics(telemetrics_service: TelemetricsService = Provide[Container.telemetrics_service]):
     try:
-        mission_id = request.args.get('mission_id', type=str)
+        mission_id = request.args.get("mission_id", type=str)
         metrics_list = telemetrics_service.get_history(mission_id)
         return jsonify(metrics_list)
     except CustomException as e:

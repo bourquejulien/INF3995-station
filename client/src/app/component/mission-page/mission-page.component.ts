@@ -85,6 +85,6 @@ export class MissionPageComponent implements OnInit {
     }
 
     handleError(error: Error): void {
-        console.log(error)
+        console.log(error);
     }
 }
