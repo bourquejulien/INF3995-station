@@ -63,7 +63,7 @@ export class DroneInfoService {
     }
 
     async getAllMapMetric(): Promise<void> {
-        let response = await this.httpClient.get<Map<string, MapMetric[]>>(`${environment.serverURL}/drone-info/maps`,
+        const response = await this.httpClient.get<Map<string, MapMetric[]>>(`${environment.serverURL}/drone-info/maps`,
             ).pipe(catchError(this.handleError('mapMetric', [])))
             .toPromise() as Map<string, MapMetric[]>;
         if (response != null){

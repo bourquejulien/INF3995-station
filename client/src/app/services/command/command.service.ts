@@ -1,18 +1,22 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '@environment';
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { environment } from "@environment";
 import { DefaultPosition, Identify } from "@app/interface/commands";
+import { BehaviorSubject, Observable } from "rxjs";
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: "root",
 })
 export class CommandService {
     uris: Array<[string, boolean]>;
+    private urisSubject: BehaviorSubject<Array<[string, boolean]>>;
+
     isSimulation: boolean;
 
     constructor(private httpClient: HttpClient) {
         this.uris = [];
         this.isSimulation = false;
+        this.urisSubject = new BehaviorSubject<Array<[string, boolean]>>([]);
     }
 
     async connect(): Promise<void> {
@@ -25,7 +29,7 @@ export class CommandService {
     async disconnect(): Promise<void> {
         await this.httpClient
             .post(`${environment.serverURL}/discovery/disconnect`, undefined, {
-                responseType: 'text',
+                responseType: "text",
             })
             .toPromise();
         for (const uri of this.uris) {
@@ -36,22 +40,24 @@ export class CommandService {
     async identify(command: Identify): Promise<void> {
         await this.httpClient
             .post(`${environment.serverURL}/action/identify`, command, {
-                responseType: 'text',
+                responseType: "text",
             })
             .toPromise();
     }
 
     async toggleSync(): Promise<void> {
-        await this.httpClient.post(`${environment.serverURL}/action/toggle_sync`, null,{
-            responseType: 'text',
-        })
+        await this.httpClient
+            .post(`${environment.serverURL}/action/toggle_sync`, null, {
+                responseType: "text",
+            })
             .toPromise();
     }
 
     async setInitialPositions(defaultPositions: Map<string, DefaultPosition>): Promise<void> {
-        await this.httpClient.post(`${environment.serverURL}/action/initial_positions`, defaultPositions,{
-            responseType: 'text',
-        })
+        await this.httpClient
+            .post(`${environment.serverURL}/action/initial_positions`, defaultPositions, {
+                responseType: "text",
+            })
             .toPromise();
     }
 
@@ -63,12 +69,15 @@ export class CommandService {
 
         if (JSON.stringify(uris) !== JSON.stringify(this.uris)) {
             this.uris = uris;
+            this.urisSubject.next(uris);
         }
     }
 
     async retrieveMode(): Promise<void> {
-        this.isSimulation = await this.httpClient
-            .get<boolean>(`${environment.serverURL}/is_simulation`)
-            .toPromise();
+        this.isSimulation = await this.httpClient.get<boolean>(`${environment.serverURL}/is_simulation`).toPromise();
+    }
+
+    get urisObservable(): Observable<Array<[string, boolean]>> {
+        return this.urisSubject.asObservable();
     }
 }
