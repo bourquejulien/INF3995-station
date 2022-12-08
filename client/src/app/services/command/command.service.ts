@@ -21,11 +21,16 @@ export class CommandService {
     }
 
     async connect(): Promise<void> {
-        this.uris = await this.httpClient
+        const uris = await this.httpClient
             .post<Map<string, boolean>>(`${environment.serverURL}/discovery/connect`, undefined)
             .pipe(catchError(this.handleError))
             .toPromise()
             .then((e) => Array.from(e));
+
+        if (JSON.stringify(uris) !== JSON.stringify(this.uris)) {
+            this.uris = uris;
+            this.urisSubject.next(uris);
+        }
     }
 
     async disconnect(): Promise<void> {

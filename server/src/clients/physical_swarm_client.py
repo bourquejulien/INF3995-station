@@ -86,7 +86,8 @@ class PhysicalSwarmClient(AbstractSwarmClient):
     def _disconnected(self, link_uri):
         if link_uri in self._position_adapters:
             self._position_adapters.pop(link_uri)
-        self._base_return_syncer.remove_uri(link_uri)
+        if self._base_return_syncer is not None:
+            self._base_return_syncer.remove_uri(link_uri)
         logger.info("Disconnected from %s", link_uri)
 
     def _connection_failed(self, link_uri, msg):
