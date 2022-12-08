@@ -11,7 +11,7 @@ describe('HistoryPanelComponent', () => {
     let mockMissionService: MissionService;
 
     beforeEach(async () => {
-        mockMissionService = jasmine.createSpyObj("MissionService", {"missions": []});
+        mockMissionService = jasmine.createSpyObj("MissionService", [], {"missions": []});
         await TestBed.configureTestingModule({
             declarations: [HistoryPanelComponent],
             providers: [
@@ -85,5 +85,16 @@ describe('HistoryPanelComponent', () => {
     it('should return false if it is not history', () => {
         const returnValue = component.isHistory;
         expect(returnValue).toEqual(false);
+    });
+
+    it('toNUmber should convert correctly', () => {
+        expect(component["toNumber"](false)).toEqual(0);
+        expect(component["toNumber"](true)).toEqual(1);
+        expect(component["toNumber"]("ab")).toEqual(195);
+        expect(component["toNumber"](10)).toEqual(10);
+    });
+
+    it('should return no missions if missionservice is empty', () => {
+        expect(component.missions).toEqual([]);
     });
 });
