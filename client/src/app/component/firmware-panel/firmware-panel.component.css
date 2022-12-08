@@ -29,9 +29,13 @@
     background-color: var(--accent);
 }
 
+button:disabled{
+    opacity: 0.3;
+}
+
 .card{
-    padding: 0px;
-    border: 0px;
+    padding: 0;
+    border: 0;
 }
 
 .card-body{

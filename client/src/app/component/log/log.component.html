@@ -27,7 +27,7 @@
         </div>
     </div>
     <div class="col h-100 log-box">
-        <div class="row log" *ngFor="let log of logs | async">
+        <div class="row log" *ngFor="let log of getLogs() | async">
             <span>{{log.timestamp_ms | date:"yyyy-MM-dd HH:mm:ss.S"}}: {{log.message}}</span>
         </div>
     </div>

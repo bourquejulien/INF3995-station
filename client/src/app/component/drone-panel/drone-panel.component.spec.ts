@@ -12,7 +12,7 @@ describe('DronePanelComponent', () => {
     let mockDroneInfoService: DroneInfoService;
 
     beforeEach(async () => {
-        mockCommandService = new CommandService({} as HttpClient) 
+        mockCommandService = new CommandService({} as HttpClient)
         mockDroneInfoService = new DroneInfoService({} as HttpClient)
         await TestBed.configureTestingModule({
             declarations: [ DronePanelComponent ],
@@ -40,7 +40,7 @@ describe('DronePanelComponent', () => {
 
     it('should not call commandService if uri is empty string when calling identify', () => {
         const identifySpy = spyOn(mockCommandService, 'identify');
-        component.uri = ""
+        component.uri = ["", false];
 
         component.identify();
 
@@ -49,7 +49,7 @@ describe('DronePanelComponent', () => {
 
     it('should call commandService if uri is not empty string when calling identify', () => {
         const identifySpy = spyOn(mockCommandService, 'identify');
-        component.uri = "test"
+        component.uri = ["test", true];
 
         component.identify();
 

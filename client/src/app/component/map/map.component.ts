@@ -1,20 +1,20 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { MapDrone, MapMetric } from '@app/interface/mapdrone';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from "@angular/core";
+import { MapDrone, MapMetric } from "@app/interface/mapdrone";
 import { Position } from "@app/interface/commands";
-import { CommandService } from '@app/services/command/command.service';
-import { DroneInfoService } from '@app/services/drone-info/drone-info.service';
+import { CommandService } from "@app/services/command/command.service";
+import { DroneInfoService } from "@app/services/drone-info/drone-info.service";
 
 @Component({
-    selector: 'app-map',
-    templateUrl: './map.component.html',
-    styleUrls: ['./map.component.css']
+    selector: "app-map",
+    templateUrl: "./map.component.html",
+    styleUrls: ["./map.component.css"],
 })
 export class MapComponent implements OnInit, AfterViewInit {
-    @ViewChild('basecanvas', { static: false }) basecanvas!: ElementRef;
-    @ViewChild('positionscanvas', { static: false }) positionscanvas!: ElementRef;
-    @ViewChild('currentcanvas', { static: false }) currentcanvas!: ElementRef;
-    @ViewChild('obstaclecanvas', { static: false }) obstaclecanvas!: ElementRef;
-    @ViewChild('colMission', { static: false }) colMission!: ElementRef;
+    @ViewChild("basecanvas", { static: false }) basecanvas!: ElementRef;
+    @ViewChild("positionscanvas", { static: false }) positionscanvas!: ElementRef;
+    @ViewChild("currentcanvas", { static: false }) currentcanvas!: ElementRef;
+    @ViewChild("obstaclecanvas", { static: false }) obstaclecanvas!: ElementRef;
+    @ViewChild("colMission", { static: false }) colMission!: ElementRef;
 
     defaultPosition: [string, string, string];
 
@@ -45,16 +45,18 @@ export class MapComponent implements OnInit, AfterViewInit {
         this.defaultPosition = ["", "", ""];
 
         window.addEventListener("resize", this.resizeCanvas.bind(this), false); // Redraws the map when the window is resized
-        this.commandService.getUris()
-        .then(() => { // Waiting for all uris then proceed
-            this.allUris = this.commandService.uris;
+        this.commandService.urisObservable.subscribe((uris) => {
+            // Waiting for all uris then proceed
+            this.allUris = uris.map((e) => e[0]);
             this.droneInfoService.getAllMapMetric().then(() => {
                 this.createNewMapDrone();
                 this.resetSelectedUris();
                 this.droneInfoService.latestMapMetric.subscribe((metrics: Map<string, MapMetric>) => {
-                    for(let i = 0; i < this.allUris.length; i++){
-                        if (metrics.get(this.allUris[i])) {
-                            this.updateMapMetrics(metrics.get(this.allUris[i])!, this.allUris[i]);
+                    for (const uri of this.allUris) {
+                        const mapMetric = metrics.get(uri);
+                        if (mapMetric) {
+                            this.updateMapMetrics(mapMetric, uri);
+
                             if (this.mapDrones.size > 0) {
                                 this.redrawMap();
                             }
@@ -92,47 +94,63 @@ export class MapComponent implements OnInit, AfterViewInit {
         this.commandService.setInitialPositions(defaultPositions);
     }
 
-    createNewMapDrone(): void{
-        let previousMapDrone = this.droneInfoService.allMapMetrics;
-        for(let i = 0; i < this.allUris.length; i++){
-            let uri = this.allUris[i];
+    updateSelected(): void {
+        this.allUris.forEach((item) => {
+            this.selectedUris.set(item, false);
+        });
+
+        const checked = document.querySelectorAll("input[type=checkbox]:checked");
+        for (let i = 0; i < checked.length; i++) {
+            this.selectedUris.set(checked[i].id, true);
+        }
+
+        this.drawOldPositions();
+        this.drawOldObstacles();
+        this.redrawMap();
+    }
+
+    private createNewMapDrone(): void {
+        const previousMapDrone = this.droneInfoService.allMapMetrics;
+        for (const uri of this.allUris) {
             let oldMaps = previousMapDrone.get(uri);
             let oldPositions = []; // drone positions in server
             let oldObstacles = []; // obstacle positions in server
             let lastDronePosition = null; // last position of the drone
-            if (oldMaps){
-                let positionObstacle: Position = {x: 0, y: 0, z: 0};
-                let positionDrone: Position = {x: 0, y: 0, z: 0};
-                for(let p = 0; p < oldMaps.length; p++){
-                    positionDrone.x = oldMaps[p].position.x * this.scalingFactor + (this.resolution / 2);
-                    positionDrone.y = oldMaps[p].position.y * this.scalingFactor + (this.resolution / 2);
+
+            if (oldMaps !== undefined) {
+                for (let p = 0; p < oldMaps.length; p++) {
+                    let positionObstacle: Position = { x: 0, y: 0, z: 0 };
+                    let positionDrone: Position = { x: 0, y: 0, z: 0 };
+                    positionDrone.x = oldMaps[p].position.x * this.scalingFactor + this.resolution / 2;
+                    positionDrone.y = oldMaps[p].position.y * this.scalingFactor + this.resolution / 2;
                     oldPositions.push(positionDrone);
-                    for(let obstacle = 0; obstacle < oldMaps[p].distance.length; obstacle++){
-                        positionObstacle.x = oldMaps[p].distance[obstacle].x * this.scalingFactor + (this.resolution / 2);
-                        positionObstacle.y = oldMaps[p].distance[obstacle].y * this.scalingFactor + (this.resolution / 2);
+                    for (let obstacle = 0; obstacle < oldMaps[p].distance.length; obstacle++) {
+                        positionObstacle = { x: 0, y: 0, z: 0 };
+                        positionDrone = { x: 0, y: 0, z: 0 };
+                        positionObstacle.x = oldMaps[p].distance[obstacle].x * this.scalingFactor + this.resolution / 2;
+                        positionObstacle.y = oldMaps[p].distance[obstacle].y * this.scalingFactor + this.resolution / 2;
                         oldObstacles.push(positionObstacle);
                     }
                 }
                 lastDronePosition = oldPositions[oldPositions.length - 1];
             }
-            let new_mapDrone: MapDrone =
-                {
-                    uri : uri,
-                    color: this.generateRandomColor(),
-                    positions: oldPositions,
-                    distances: oldObstacles,
-                    currentPosition: lastDronePosition,
-                    lastPosition: lastDronePosition,
-                    currentDistances: [],
-                }
 
-            this.mapDrones.set(uri,new_mapDrone);
+            let new_mapDrone: MapDrone = {
+                uri: uri,
+                color: this.generateRandomColor(),
+                positions: oldPositions.slice(),
+                distances: oldObstacles.slice(),
+                currentPosition: lastDronePosition,
+                lastPosition: lastDronePosition,
+                currentDistances: [],
+            };
+            this.mapDrones.set(uri, new_mapDrone);
         }
     }
 
-    updateMapMetrics(metric: MapMetric, uri: string): void{
+    private updateMapMetrics(metric: MapMetric, uri: string): void {
         // Positions of drone
-        let positionDrone: Position = {x: 0, y: 0, z: 0};
+        let positionDrone: Position = { x: 0, y: 0, z: 0 };
         positionDrone.x = metric!.position.x * this.scalingFactor + this.resolution / 2;
         positionDrone.y = metric!.position.y * this.scalingFactor + this.resolution / 2;
         this.mapDrones.get(uri)!.positions.push(positionDrone);
@@ -141,10 +159,10 @@ export class MapComponent implements OnInit, AfterViewInit {
         // Positions of obstacles
         this.mapDrones.get(uri)!.currentDistances = [];
         let obstacles = metric!.distance;
-        if (obstacles!.length > 0){
+        if (obstacles!.length > 0) {
             let currentDistances = [];
-            for(let d = 0; d < obstacles.length; d++){
-                let positionObstacle: Position = {x: 0, y: 0, z: 0};
+            for (let d = 0; d < obstacles.length; d++) {
+                let positionObstacle: Position = { x: 0, y: 0, z: 0 };
                 positionObstacle.x = obstacles[d].x * this.scalingFactor + this.resolution / 2;
                 positionObstacle.y = obstacles[d].y * this.scalingFactor + this.resolution / 2;
                 this.mapDrones.get(uri)!.distances.push(positionObstacle);
@@ -154,69 +172,76 @@ export class MapComponent implements OnInit, AfterViewInit {
         }
     }
 
-    initializeCanvas(): void {
-        this.baseCtx = this.basecanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.positionsCtx = this.positionscanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.currentCtx = this.currentcanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
-        this.obstacleCtx = this.obstaclecanvas.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+    private initializeCanvas(): void {
+        this.baseCtx = this.basecanvas.nativeElement.getContext("2d") as CanvasRenderingContext2D;
+        this.positionsCtx = this.positionscanvas.nativeElement.getContext("2d") as CanvasRenderingContext2D;
+        this.currentCtx = this.currentcanvas.nativeElement.getContext("2d") as CanvasRenderingContext2D;
+        this.obstacleCtx = this.obstaclecanvas.nativeElement.getContext("2d") as CanvasRenderingContext2D;
 
         this.resizeCanvas();
     }
 
-    drawPixel(x: number, y: number, canvas: CanvasRenderingContext2D) :void{
+    private drawPixel(x: number, y: number, canvas: CanvasRenderingContext2D): void {
         let xPixelized = this.pixelize(x);
         let yPixelized = this.pixelize(y);
         canvas!.fillRect(xPixelized, yPixelized, this.pixelSize, this.pixelSize);
     }
 
-    pixelize(pixel: number): number{
+    private pixelize(pixel: number): number {
         let pixelCanvased = (pixel / 100.0) * this.canvasSize; // Gives the location of the point in the canvas' coordinates
         return Math.floor((pixelCanvased / this.pixelSize) * this.pixelSize); // Rounds to the previous multiple of the pixel size
     }
 
-    drawCurrentPixels(): void {
-        this.currentCtx.clearRect(0,0, this.canvasSize, this.canvasSize);
+    private drawCurrentPixels(): void {
+        this.currentCtx.clearRect(0, 0, this.canvasSize, this.canvasSize);
         this.currentCtx!.fillStyle = "red";
-        for(let uri = 0; uri < this.allUris.length; uri++){
-            if (this.selectedUris.get(this.allUris[uri])){
-                let currentPosition = this.mapDrones.get(this.allUris[uri])!.currentPosition;
-                if (currentPosition != null){
-                    this.drawPixel(this.mapDrones.get(this.allUris[uri])!.currentPosition!.x, this.mapDrones.get(this.allUris[uri])!.currentPosition!.y, this.currentCtx)
+        for (const item of this.allUris) {
+            if (this.selectedUris.get(item)) {
+                let currentPosition = this.mapDrones.get(item)!.currentPosition;
+                if (currentPosition != null) {
+                    this.drawPixel(this.mapDrones.get(item)!.currentPosition!.x, this.mapDrones.get(item)!.currentPosition!.y, this.currentCtx);
                 }
             }
         }
     }
 
-    drawPositions(): void {
+    private drawPositions(): void {
         this.positionsCtx!.lineWidth = this.pixelSize / 3;
-        for(let uri = 0; uri < this.allUris.length; uri++){
-            if (this.selectedUris.get(this.allUris[uri])){
+        for (let uri = 0; uri < this.allUris.length; uri++) {
+            if (this.selectedUris.get(this.allUris[uri])) {
                 this.positionsCtx!.strokeStyle = this.mapDrones.get(this.allUris[uri])!.color;
                 this.positionsCtx!.fillStyle = this.mapDrones.get(this.allUris[uri])!.color;
 
-                let positions: Position[] = [this.mapDrones.get(this.allUris[uri])!.lastPosition!, this.mapDrones.get(this.allUris[uri])!.currentPosition!];
+                let positions: Position[] = [
+                    this.mapDrones.get(this.allUris[uri])!.lastPosition!,
+                    this.mapDrones.get(this.allUris[uri])!.currentPosition!,
+                ];
                 this.drawPathPositions(positions, this.positionsCtx);
             }
         }
     }
 
-    drawObstacles(): void {
+    private drawObstacles(): void {
         this.obstacleCtx!.fillStyle = "black";
-        for(let uri = 0; uri < this.allUris.length; uri++){
-            if (this.selectedUris.get(this.allUris[uri])){
-               for(let obstacle = 0; obstacle < this.mapDrones.get(this.allUris[uri])!.currentDistances.length; obstacle++){
-                    this.drawPixel(this.mapDrones.get(this.allUris[uri])!.currentDistances[obstacle].x, this.mapDrones.get(this.allUris[uri])!.currentDistances[obstacle].y, this.obstacleCtx)
+        for (let uri = 0; uri < this.allUris.length; uri++) {
+            if (this.selectedUris.get(this.allUris[uri])) {
+                for (let obstacle = 0; obstacle < this.mapDrones.get(this.allUris[uri])!.currentDistances.length; obstacle++) {
+                    this.drawPixel(
+                        this.mapDrones.get(this.allUris[uri])!.currentDistances[obstacle].x,
+                        this.mapDrones.get(this.allUris[uri])!.currentDistances[obstacle].y,
+                        this.obstacleCtx,
+                    );
                 }
             }
         }
     }
 
-    drawOldPositions(): void {
-        this.positionsCtx.clearRect(0,0, this.canvasSize, this.canvasSize);
+    private drawOldPositions(): void {
+        this.positionsCtx.clearRect(0, 0, this.canvasSize, this.canvasSize);
         this.positionsCtx!.lineWidth = this.pixelSize / 3;
 
-        for(let uri = 0; uri < this.allUris.length; uri++){
-            if (this.selectedUris.get(this.allUris[uri])){
+        for (let uri = 0; uri < this.allUris.length; uri++) {
+            if (this.selectedUris.get(this.allUris[uri])) {
                 this.positionsCtx!.strokeStyle = this.mapDrones.get(this.allUris[uri])!.color;
                 this.positionsCtx!.fillStyle = this.mapDrones.get(this.allUris[uri])!.color;
                 this.drawPathPositions(this.mapDrones.get(this.allUris[uri])!.positions, this.positionsCtx);
@@ -224,24 +249,28 @@ export class MapComponent implements OnInit, AfterViewInit {
         }
     }
 
-    drawOldObstacles(): void{
-        this.obstacleCtx.clearRect(0,0, this.canvasSize, this.canvasSize);
+    private drawOldObstacles(): void {
+        this.obstacleCtx.clearRect(0, 0, this.canvasSize, this.canvasSize);
         this.obstacleCtx!.fillStyle = "black";
 
-        for(let uri = 0; uri < this.allUris.length; uri++){
-            if (this.selectedUris.get(this.allUris[uri])){
-                for(let obstacle = 0; obstacle < this.mapDrones.get(this.allUris[uri])!.distances.length; obstacle++){
-                    this.drawPixel(this.mapDrones.get(this.allUris[uri])!.distances[obstacle].x, this.mapDrones.get(this.allUris[uri])!.distances[obstacle].y, this.obstacleCtx);
+        for (let uri = 0; uri < this.allUris.length; uri++) {
+            if (this.selectedUris.get(this.allUris[uri])) {
+                for (let obstacle = 0; obstacle < this.mapDrones.get(this.allUris[uri])!.distances.length; obstacle++) {
+                    this.drawPixel(
+                        this.mapDrones.get(this.allUris[uri])!.distances[obstacle].x,
+                        this.mapDrones.get(this.allUris[uri])!.distances[obstacle].y,
+                        this.obstacleCtx,
+                    );
                 }
             }
         }
     }
 
-    drawPathPositions(positions: Position[], canvas: CanvasRenderingContext2D) : void {
+    private drawPathPositions(positions: Position[], canvas: CanvasRenderingContext2D): void {
         let lastPositionX = this.pixelize(positions[0].x);
         let lastPositionY = this.pixelize(positions[0].y);
 
-        for(let pos = 1; pos < positions.length; pos++){
+        for (let pos = 1; pos < positions.length; pos++) {
             let currentPositionX = this.pixelize(positions[pos].x);
             let currentPositionY = this.pixelize(positions[pos].y);
 
@@ -255,22 +284,22 @@ export class MapComponent implements OnInit, AfterViewInit {
         }
     }
 
-    redrawMap(): void {
+    private redrawMap(): void {
         this.drawCurrentPixels();
         this.drawPositions();
         this.drawObstacles();
     }
 
-    generateRandomColor(): string {
-        const letters = '0123456789ABCDEF';
-        let color = '#';
-        for (var i = 0; i < 6; i++) {
+    private generateRandomColor(): string {
+        const letters = "0123456789ABCDEF";
+        let color = "#";
+        for (let i = 0; i < 6; i++) {
             color += letters[Math.floor(Math.random() * 16)];
         }
         return color;
     }
 
-    resizeCanvas(): void {
+    private resizeCanvas(): void {
         this.canvasSize = Math.min(this.colMission.nativeElement.offsetWidth, this.colMission.nativeElement.offsetHeight);
 
         this.basecanvas.nativeElement.width = this.canvasSize;
@@ -287,38 +316,21 @@ export class MapComponent implements OnInit, AfterViewInit {
 
         this.pixelSize = this.canvasSize / this.resolution;
 
-        if (this.mapDrones.size > 0){
+        if (this.mapDrones.size > 0) {
             this.drawOldPositions();
             this.drawOldObstacles();
         }
     }
 
     private whiteBackgroundCanvas(): void {
-        this.baseCtx.beginPath()
+        this.baseCtx.beginPath();
         this.baseCtx.fillStyle = "white";
         this.baseCtx.fillRect(0, 0, this.canvasSize, this.canvasSize);
         this.baseCtx.fill();
         this.baseCtx.closePath();
     }
 
-    updateSelected(): void {
-        for(let i = 0; i < this.allUris.length; i++){
-            this.selectedUris.set(this.allUris[i],false);
-        }
-
-        var checked = document.querySelectorAll('input[type=checkbox]:checked')
-        for (var i = 0; i < checked.length; i++) {
-            this.selectedUris.set(checked[i].id, true);
-        }
-
-        this.drawOldPositions();
-        this.drawOldObstacles();
-        this.redrawMap();
-    }
-
-    resetSelectedUris(): void {
-        for(let i = 0; i < this.allUris.length; i++){
-            this.selectedUris.set(this.allUris[i],false);
-        }
+    private resetSelectedUris(): void {
+        this.selectedUris = new Map(this.allUris.map((e) => [e, false]));
     }
 }
