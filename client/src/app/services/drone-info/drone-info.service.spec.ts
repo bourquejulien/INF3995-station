@@ -20,7 +20,7 @@ describe('DroneInfoService', () => {
         httpMock = TestBed.get(HttpTestingController);
         service = TestBed.inject(DroneInfoService);
 
-        mockMetric = {_id: "test", timestamp_ms: 0, position: {x: 0, y: 0, z: 0}, status: "test", drone_uri: "test", mission_id: "test"};  
+        mockMetric = {_id: "test", timestamp_ms: 0, position: {x: 0, y: 0, z: 0}, status: "test", drone_uri: "test", mission_id: "test", battery_level: 0.0};  
         mockMap = new Map<string, MapMetric>();
         mockLog = {timestamp_ms: 0, mission_id: "test", message: "test", level: "test"};
     });

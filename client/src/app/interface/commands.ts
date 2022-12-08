@@ -37,4 +37,5 @@ export interface Metric {
     status: string,
     drone_uri: string,
     mission_id: string,
+    battery_level: number
 }
