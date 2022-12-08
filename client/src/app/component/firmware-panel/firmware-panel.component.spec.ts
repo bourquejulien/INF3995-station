@@ -2,10 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FirmwarePanelComponent } from './firmware-panel.component';
 import { FirmwareService } from '../../services/firmware/firmware.service';
-import { HttpClient } from '@angular/common/http';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { Component } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 
 describe('FirmwarePanelComponent', () => {
     let component: FirmwarePanelComponent;
@@ -25,7 +23,7 @@ describe('FirmwarePanelComponent', () => {
             providers: [
                 {provide: FirmwareService, useValue: mockFirmwareService}
             ],
-            imports: [NgbModule,
+            imports: [NgbModule, HttpClientTestingModule
             ]
         }).compileComponents();
     });

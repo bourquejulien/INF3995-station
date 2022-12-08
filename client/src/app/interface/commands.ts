@@ -1,5 +1,5 @@
 export interface Identify {
-    uris: string[]
+    uris: string[],
 }
 
 export interface Log {

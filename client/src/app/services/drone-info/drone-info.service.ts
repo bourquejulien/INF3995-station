@@ -25,8 +25,8 @@ export class DroneInfoService {
                     error(err): void {
                         console.error(err);
                     },
-                })
-            })
+                });
+            });
         });
         this.latestMapMetric = new Observable((observer) => {
             interval(1000).subscribe(() => {
@@ -37,11 +37,11 @@ export class DroneInfoService {
                     error(err): void {
                         console.error(err);
                     },
-                })
-            })
+                });
+            });
         });
         this.allMapMetrics = new Map();
-        this.oldMap = []
+        this.oldMap = [];
     }
 
     getLatestMetric(): Observable<Metric>{
@@ -65,8 +65,8 @@ export class DroneInfoService {
     }
 
     async getAllMapMetric(): Promise<void> {
-        let response = await this.httpClient
-            .get<Map<string, MapMetric[]>>(`${environment.serverURL}/drone-info/maps`)
+        const response = await this.httpClient.get<Map<string, MapMetric[]>>(`${environment.serverURL}/drone-info/maps`,
+            )
             .pipe(catchError(this.handleError))
             .toPromise() as Map<string, MapMetric[]>;
 

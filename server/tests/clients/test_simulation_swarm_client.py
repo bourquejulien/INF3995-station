@@ -34,7 +34,7 @@ def test_distance_to_position(app, mocker):
 
 def test_start_mission(app, mocker, swarm_client):
     drone_mock = mocker.Mock(SimulationDroneClient)
-    swarm_client._drone_clients = [drone_mock, drone_mock, drone_mock]
+    swarm_client._drone_clients = {"1": drone_mock, "2": drone_mock, "3": drone_mock}
     calls = [mocker.call(), mocker.call(), mocker.call()]
 
     swarm_client.start_mission()
@@ -44,7 +44,7 @@ def test_start_mission(app, mocker, swarm_client):
 
 def test_end_mission(app, mocker, swarm_client):
     drone_mock = mocker.Mock(SimulationDroneClient)
-    swarm_client._drone_clients = [drone_mock, drone_mock, drone_mock]
+    swarm_client._drone_clients= {"1": drone_mock, "2": drone_mock, "3": drone_mock}
     calls = [mocker.call(), mocker.call(), mocker.call()]
 
     swarm_client.end_mission()
@@ -54,7 +54,7 @@ def test_end_mission(app, mocker, swarm_client):
 
 def test_force_end_mission(app, mocker, swarm_client):
     drone_mock = mocker.Mock(SimulationDroneClient)
-    swarm_client._drone_clients = [drone_mock, drone_mock, drone_mock]
+    swarm_client._drone_clients = {"1": drone_mock, "2": drone_mock, "3": drone_mock}
     calls = [mocker.call(), mocker.call(), mocker.call()]
 
     swarm_client.force_end_mission()
@@ -64,7 +64,7 @@ def test_force_end_mission(app, mocker, swarm_client):
 
 def test_return_to_base(app, mocker, swarm_client):
     drone_mock = mocker.Mock(SimulationDroneClient)
-    swarm_client._drone_clients = [drone_mock, drone_mock, drone_mock]
+    swarm_client._drone_clients = {"1": drone_mock, "2": drone_mock, "3": drone_mock}
     calls = [mocker.call(), mocker.call(), mocker.call()]
 
     swarm_client.return_to_base()
@@ -75,7 +75,7 @@ def test_return_to_base(app, mocker, swarm_client):
 def test_identify(app, mocker, swarm_client):
     drone_mock = mocker.Mock(SimulationDroneClient)
     drone_mock.uri = '6666'
-    swarm_client._drone_clients = [drone_mock, drone_mock, drone_mock]
+    swarm_client._drone_clients = {"1": drone_mock, "2": drone_mock, "3": drone_mock}
     calls = [mocker.call(), mocker.call(), mocker.call()]
 
     swarm_client.identify('6666')

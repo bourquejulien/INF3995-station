@@ -18,7 +18,9 @@
                 <button class="col" [ngClass]="isMissionOngoing() ? 'button' : 'disabled'" (click)="endMission()">Terminer la mission</button>
             </div>
             <div class="row">
-                <button class="col" [ngClass]="isMissionOngoing() ? 'button' : 'disabled'" (click)="forceEndMission()">Forcer la fin de mission</button>
+                <button class="col" [ngClass]="isMissionOngoing() ? 'button' : 'disabled'" (click)="forceEndMission()">
+                    Forcer la fin de mission
+                </button>
             </div>
             <div class="row">
                 <button class="col" [ngClass]="isMissionOngoing() ? 'button' : 'disabled'" (click)="returnToBase()">Retourner à la base</button>
@@ -28,12 +30,12 @@
             <div class="row"><button class="col button" (click)="identify()">Identifier</button></div>
             <div class="row"><button class="col button" (click)="toggleSync()">Basculer la synchronisation (p2p)</button></div>
 
-            <div class="row"><h1 class="col command-name">Interfaces connectés</h1></div>
+            <div class="row"><h1 class="col command-name">Interfaces</h1></div>
 
             <div class="row flex-grow-1 drone-panels">
                 <div class="col h-100">
                     <div class="row" *ngFor="let uri of commandService.uris">
-                        <app-drone-panel class="col h-100 drone-panel" uri={{uri}}></app-drone-panel>
+                        <app-drone-panel class="col h-100 drone-panel" [uri]="uri"></app-drone-panel>
                     </div>
                 </div>
             </div>
@@ -63,11 +65,9 @@
         </div>
         <div class="col-sm-1 collapse-button-col">
             <div class="row" *ngFor="let paneName of paneNames">
-                <button
-                    [ngClass]="currentPane == paneName[0] ? 'disabled' : 'button'"
-                    (click)="togglePane(paneName[0])">
-                <span class="material-icons caret">{{currentPane == paneName[0] ? "chevron_right" : "chevron_left"}}</span>
-                {{ paneName[1] }}
+                <button [ngClass]="currentPane === paneName[0] ? 'disabled' : 'button'" (click)="togglePane(paneName[0])">
+                    <span class="material-icons caret">{{ currentPane === paneName[0] ? "chevron_right" : "chevron_left" }}</span>
+                    {{ paneName[1] }}
                 </button>
             </div>
         </div>
