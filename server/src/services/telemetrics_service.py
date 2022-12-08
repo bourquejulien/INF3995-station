@@ -16,8 +16,10 @@ class TelemetricsService:
     _latest: dict[str, Metric]
     _mutex: Lock
 
-    def __init__(self, swarm_client: AbstractSwarmClient, mission_service: MissionService,
-                 database_service: DatabaseService, logging_service: LoggingService):
+    def __init__(self, swarm_client: AbstractSwarmClient,
+                 mission_service: MissionService,
+                 database_service: DatabaseService,
+                 logging_service: LoggingService):
         self._mission_service = mission_service
         self._database_service = database_service
         self._logging_service = logging_service
@@ -28,7 +30,8 @@ class TelemetricsService:
         mission_service.add_flush_action(self.flush)
 
     def _add(self, metric: Metric):
-        self._logging_service.log(f"Received position: {metric.position}, uri: {metric.uri}")
+        self._logging_service.log(
+                f"Received position: {metric.position}, uri: {metric.uri}")
 
         with self._mutex:
             current_mission = self._mission_service.current_mission
